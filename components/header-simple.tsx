@@ -162,46 +162,46 @@ export function HeaderSimple({
 
         {showInlineNav && (
           <nav className="absolute left-1/2 flex -translate-x-1/2 items-center text-sm font-semibold text-foreground" style={{ gap: navGap }}>
-            <Link href="/" className="hover:text-primary transition-colors py-2">Home</Link>
-            <Link href="/about" className="hover:text-primary transition-colors py-2">About</Link>
+            <Link href="/" className="hover:text-accent transition-colors py-2">Home</Link>
+            <Link href="/about" className="hover:text-accent transition-colors py-2">About</Link>
             
             <div className="relative group py-6 cursor-pointer">
-              <div className="flex items-center gap-1.5 hover:text-primary transition-colors py-2">
+              <div className="flex items-center gap-1.5 hover:text-accent transition-colors py-2">
                 <span>Products</span> 
                 <ChevronDown className="w-3.5 h-3.5 opacity-70 group-hover:rotate-180 transition-transform" />
               </div>
               
               <div className="absolute top-[65px] left-1/2 -translate-x-1/2 hidden group-hover:block w-[360px] bg-background border border-border shadow-2xl rounded-xl p-5 z-50">
-                <div className="text-[11px] font-bold text-muted-foreground mb-4 tracking-widest uppercase">Apparel Categories</div>
+                <div className="text-xs font-bold text-muted-foreground mb-4 tracking-widest uppercase">Apparel Categories</div>
                 <div className="space-y-3.5">
                   <Link href="/services#knitwear" className="flex justify-between items-center group/item p-1.5 rounded-lg hover:bg-muted/50 transition-colors">
-                    <span className="font-semibold text-foreground group-hover/item:text-primary transition-colors text-sm">Knitwear</span>
+                    <span className="font-semibold text-foreground group-hover/item:text-accent transition-colors text-sm">Knitwear</span>
                     <span className="text-muted-foreground text-xs font-normal">T-Shirts, Hoodies, Polos</span>
                   </Link>
                   <Link href="/services#woven" className="flex justify-between items-center group/item p-1.5 rounded-lg hover:bg-muted/50 transition-colors">
-                    <span className="font-semibold text-foreground group-hover/item:text-primary transition-colors text-sm">Woven</span>
+                    <span className="font-semibold text-foreground group-hover/item:text-accent transition-colors text-sm">Woven</span>
                     <span className="text-muted-foreground text-xs font-normal">Shirts, Cargo, Jackets</span>
                   </Link>
                   <Link href="/services#denim" className="flex justify-between items-center group/item p-1.5 rounded-lg hover:bg-muted/50 transition-colors">
-                    <span className="font-semibold text-foreground group-hover/item:text-primary transition-colors text-sm">Denim</span>
+                    <span className="font-semibold text-foreground group-hover/item:text-accent transition-colors text-sm">Denim</span>
                     <span className="text-muted-foreground text-xs font-normal">Jeans, Truckers, Shorts</span>
                   </Link>
                   <Link href="/services#sweaters" className="flex justify-between items-center group/item p-1.5 rounded-lg hover:bg-muted/50 transition-colors">
-                    <span className="font-semibold text-foreground group-hover/item:text-primary transition-colors text-sm">Sweaters</span>
+                    <span className="font-semibold text-foreground group-hover/item:text-accent transition-colors text-sm">Sweaters</span>
                     <span className="text-muted-foreground text-xs font-normal text-right max-w-[130px] leading-tight">Men, Women, Kids (3-12GG)</span>
                   </Link>
                 </div>
                 <div className="mt-4 pt-3 border-t border-border">
-                  <Link href="/services" className="flex items-center text-xs text-primary hover:text-primary/80 font-bold transition-colors">
+                  <Link href="/services" className="flex items-center text-xs text-accent hover:text-accent/80 font-bold transition-colors">
                     View All Products & Services <ArrowRight className="w-3.5 h-3.5 ml-1" />
                   </Link>
                 </div>
               </div>
             </div>
 
-            <Link href="/services" className="hover:text-primary transition-colors py-2">Services</Link>
-            <Link href="/#process" className="hover:text-primary transition-colors py-2">How We Work</Link>
-            <Link href="/contact" className="hover:text-primary transition-colors py-2">Contact</Link>
+            <Link href="/services" className="hover:text-accent transition-colors py-2">Services</Link>
+            <Link href="/#process" className="hover:text-accent transition-colors py-2">How We Work</Link>
+            <Link href="/contact" className="hover:text-accent transition-colors py-2">Contact</Link>
           </nav>
         )}
 
@@ -259,14 +259,14 @@ export function HeaderSimple({
                 className="flex flex-col"
                 style={{ padding: `16px ${horizontalPadding}px 24px` }}
               >
-                <Link href="/" onClick={close} className="py-3 text-base font-semibold text-foreground hover:text-primary border-b border-border">Home</Link>
-                <Link href="/about" onClick={close} className="py-3 text-base font-semibold text-foreground hover:text-primary border-b border-border">About</Link>
+                <Link href="/" onClick={close} className="py-3 text-base font-semibold text-foreground hover:text-accent border-b border-border">Home</Link>
+                <Link href="/about" onClick={close} className="py-3 text-base font-semibold text-foreground hover:text-accent border-b border-border">About</Link>
                 
                 {/* Products Accordion for Mobile */}
                 <div className="border-b border-border py-3">
                   <button
                     onClick={() => setMobileProductsOpen((prev) => !prev)}
-                    className="flex items-center justify-between w-full text-base font-semibold text-foreground hover:text-primary"
+                    className="flex items-center justify-between w-full text-base font-semibold text-foreground hover:text-accent"
                   >
                     <span>Products</span>
                     <ChevronDown className={cn("w-4 h-4 transition-transform duration-200", mobileProductsOpen && "rotate-180")} />
@@ -281,23 +281,23 @@ export function HeaderSimple({
                         transition={{ duration: 0.2 }}
                         className="overflow-hidden flex flex-col gap-3 pt-3 pl-3 text-sm"
                       >
-                        <Link href="/services#knitwear" onClick={close} className="flex justify-between items-center py-1 text-foreground hover:text-primary">
+                        <Link href="/services#knitwear" onClick={close} className="flex justify-between items-center py-1 text-foreground hover:text-accent">
                           <span className="font-semibold">Knitwear</span>
                           <span className="text-muted-foreground text-xs font-normal">T-Shirts, Hoodies, Polos</span>
                         </Link>
-                        <Link href="/services#woven" onClick={close} className="flex justify-between items-center py-1 text-foreground hover:text-primary">
+                        <Link href="/services#woven" onClick={close} className="flex justify-between items-center py-1 text-foreground hover:text-accent">
                           <span className="font-semibold">Woven</span>
                           <span className="text-muted-foreground text-xs font-normal">Shirts, Cargo, Jackets</span>
                         </Link>
-                        <Link href="/services#denim" onClick={close} className="flex justify-between items-center py-1 text-foreground hover:text-primary">
+                        <Link href="/services#denim" onClick={close} className="flex justify-between items-center py-1 text-foreground hover:text-accent">
                           <span className="font-semibold">Denim</span>
                           <span className="text-muted-foreground text-xs font-normal">Jeans, Truckers, Shorts</span>
                         </Link>
-                        <Link href="/services#sweaters" onClick={close} className="flex justify-between items-center py-1 text-foreground hover:text-primary">
+                        <Link href="/services#sweaters" onClick={close} className="flex justify-between items-center py-1 text-foreground hover:text-accent">
                           <span className="font-semibold">Sweaters</span>
                           <span className="text-muted-foreground text-xs font-normal">Men, Women, Kids</span>
                         </Link>
-                        <Link href="/services" onClick={close} className="pt-2 text-xs font-bold text-primary flex items-center">
+                        <Link href="/services" onClick={close} className="pt-2 text-xs font-bold text-accent flex items-center">
                           View All Products & Services <ArrowRight className="w-3.5 h-3.5 ml-1" />
                         </Link>
                       </motion.div>
@@ -305,9 +305,9 @@ export function HeaderSimple({
                   </AnimatePresence>
                 </div>
 
-                <Link href="/services" onClick={close} className="py-3 text-base font-semibold text-foreground hover:text-primary border-b border-border">Services</Link>
-                <Link href="/#process" onClick={close} className="py-3 text-base font-semibold text-foreground hover:text-primary border-b border-border">How We Work</Link>
-                <Link href="/contact" onClick={close} className="py-3 text-base font-semibold text-foreground hover:text-primary border-b border-border mb-4">Contact</Link>
+                <Link href="/services" onClick={close} className="py-3 text-base font-semibold text-foreground hover:text-accent border-b border-border">Services</Link>
+                <Link href="/#process" onClick={close} className="py-3 text-base font-semibold text-foreground hover:text-accent border-b border-border">How We Work</Link>
+                <Link href="/contact" onClick={close} className="py-3 text-base font-semibold text-foreground hover:text-accent border-b border-border mb-4">Contact</Link>
 
                 <div className="flex flex-col gap-4 mt-2">
                   <a href="https://wa.me/8801715645766" className="flex items-center justify-center gap-2 text-green-600 dark:text-green-500 py-2">

@@ -26,7 +26,7 @@ export default function AboutPage() {
               Our Story.
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground font-light leading-relaxed max-w-2xl mx-auto">
-              Nisha Fashions Wear, an owner-managed enterprise, has been producing textiles for Men’s, Women’s, Boy’s, Girl’s clothing for more than Twenty years for the Europe, Canada and USA market.
+              Nisha Fashions Wear is a dedicated apparel production management and sourcing partner, backed by over 20 years of garment business experience serving the Europe, Canada, and USA markets.
             </p>
           </motion.div>
         </div>
@@ -45,7 +45,7 @@ export default function AboutPage() {
               viewport={{ once: true, margin: "-100px" }}
               transition={{ duration: 0.6 }}
             >
-              <h2 className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground mb-6">
+              <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground mb-6">
                 Corporate Philosophy
               </h2>
               <p className="text-2xl font-serif font-light leading-snug mb-8">
@@ -54,13 +54,13 @@ export default function AboutPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 {principles.map((principle, idx) => (
                   <div key={idx} className="flex flex-col space-y-2 p-6 bg-muted/30 rounded-lg border border-border/50">
-                    <span className="text-[10px] font-bold text-muted-foreground">0{idx + 1}</span>
+                    <span className="text-xs font-bold text-muted-foreground">0{idx + 1}</span>
                     <p className="text-sm font-medium leading-relaxed">{principle}</p>
                   </div>
                 ))}
               </div>
-              <p className="mt-8 text-muted-foreground font-light leading-relaxed">
-                We are specialized on Knit items as well as all sort of Traditional-Fashionable Garments of T-shirt, Tank-Top, Polo Shirt, Rugby Shirt with latest printing/Embroidery. Besides we are always exporting all kinds of Woven items Jacket, Trouser, Denim Pant, Swim shorts, Bermuda shorts etc, and also Sweater Items.
+              <p className="mt-8 text-base font-normal leading-7 text-foreground/80 max-w-2xl">
+                We specialize in managing the production of Knitwear, Woven, Denim, and Sweater items. Through our trusted partner factory network, we ensure the highest quality manufacturing for all categories, from essential t-shirts and polo shirts to complex jackets, trousers, and sweaters.
               </p>
             </motion.section>
 
@@ -73,29 +73,29 @@ export default function AboutPage() {
               className="space-y-12"
             >
               <div>
-                <h2 className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground mb-4">
+                <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground mb-4">
                   Our Mission
                 </h2>
-                <p className="text-xl font-light leading-relaxed">
-                  Our mission is to produce Top-quality Garments that models fair business practices and respects workers rights.
+                <p className="text-lg md:text-xl font-normal leading-7 text-foreground/80 max-w-2xl">
+                  Our mission is to deliver top-quality garments through a reliable production network that models fair business practices and strictly respects workers' rights.
                 </p>
               </div>
               
               <div>
-                <h2 className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground mb-4">
+                <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground mb-4">
                   Our Goal
                 </h2>
-                <p className="text-xl font-light leading-relaxed">
-                  Firmly established Nisha Fashions Wear as an exporter that is capable of handling any complete package of garments manufacturing. This production would include multi-style options, quality products and on-time delivery with competitive price.
+                <p className="text-lg md:text-xl font-normal leading-7 text-foreground/80 max-w-2xl">
+                  To firmly establish Nisha Fashions Wear as a premier export partner capable of handling complete garment manufacturing packages. We provide multi-style options, rigorous quality control, and on-time delivery at competitive prices.
                 </p>
               </div>
 
               <div>
-                <h2 className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground mb-4">
+                <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground mb-4">
                   Objective of the present plan
                 </h2>
-                <p className="text-xl font-light leading-relaxed">
-                  Implement the production capacity that 5,00,000 pieces of Garments per month in Europe, Canada and U.S.
+                <p className="text-lg md:text-xl font-normal leading-7 text-foreground/80 max-w-2xl">
+                  Deliver scalable production capacity and timely shipments for international markets including Europe, Canada, and the U.S.
                 </p>
               </div>
             </motion.section>
@@ -106,20 +106,20 @@ export default function AboutPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-100px" }}
               transition={{ duration: 0.6 }}
-              className="prose prose-zinc dark:prose-invert max-w-none prose-p:font-light prose-p:leading-relaxed"
+              className="prose prose-zinc dark:prose-invert max-w-2xl prose-p:font-normal prose-p:leading-7 prose-p:text-foreground/80"
             >
-              <h2 className="text-3xl font-serif font-light tracking-tight mb-6">Work place Environment</h2>
+              <h3 className="font-serif text-2xl font-light mb-4">Work place Environment</h3>
               <p>
-                We believe that a congenial work environment increases efficiency and motivates employees to deliver their best.
+                We ensure that our partner factories maintain a congenial work environment, increasing efficiency and motivating personnel to deliver their best.
               </p>
               <p>
-                The use of Electrical installations, overhead lamps, forced duct ventilation and generous spacing between equipment makes the production floor comfortable to work in and aesthetically appealing. Routes to be used in emergencies along with fire safety equipment like fire hydrants and smoke and fire detectors ensure the safety of the workers. Faucets with safe drinking water and hygienic toilets are provided in adequate numbers and positioned for easy access of all workers. There are separately designated toilets for female and male workers.
+                Our selected production facilities feature proper electrical installations, adequate ventilation, and generous spacing, ensuring comfortable and safe working conditions. Strict fire safety measures and hygienic amenities are always maintained across our production network.
               </p>
               <p>
-                Workers who have not attained the legal age of majority are not hired in this factory. Workers in these factories are graded according to law. The grade and the salaries are clearly stated in the appointment letters.
+                We enforce a strict zero-tolerance policy for underage labor. All personnel within our partner factories are compensated according to law with transparent employment contracts.
               </p>
               <p>
-                Doctors and professional paramedics are employed full time in order to attend to medical emergencies as well as general health complaints of workers.
+                Our partner facilities employ professional medical staff to attend to any health emergencies and ensure continuous worker well-being.
               </p>
             </motion.section>
 
@@ -154,8 +154,8 @@ export default function AboutPage() {
               className="p-8 bg-zinc-50 dark:bg-zinc-900 rounded-xl"
             >
               <h3 className="font-serif text-2xl font-light mb-4">Human Resources</h3>
-              <p className="text-sm font-light text-muted-foreground leading-relaxed">
-                Factory personnel are qualified in the creation of high-quality Garments using both Knit and Woven cloth, Beside we also export all kinds of Sweater. The cutting department employs personnel who have been trained with the precision necessary to size and cut material, some who have more than ten years experience in this field.
+              <p className="text-base font-normal leading-7 text-foreground/80">
+                Our trusted network of partner factories employs highly qualified personnel skilled in the creation of premium Knitwear, Woven, Denim, and Sweater garments. From specialized cutting departments to expert sewing teams, we coordinate with experienced professionals to ensure precise manufacturing and exceptional finishing.
               </p>
             </motion.div>
 
@@ -168,11 +168,11 @@ export default function AboutPage() {
               className="p-8 bg-zinc-50 dark:bg-zinc-900 rounded-xl"
             >
               <h3 className="font-serif text-2xl font-light mb-4">Quality Policy</h3>
-              <p className="text-sm font-light text-muted-foreground leading-relaxed mb-6">
-                All our attitudes and actions must be recognized as an expression of quality. Each delivery should create a recommendation for further business.
+              <p className="text-base font-normal leading-7 text-foreground/80 mb-6">
+                Every stage of our production management is driven by a commitment to uncompromised quality. We believe that each successful shipment should serve as a recommendation for future business.
               </p>
-              <p className="text-sm font-light text-muted-foreground leading-relaxed">
-                Each Business concentrates on activities where its skilled people can provide service-led solution to customer’s needs by being fast, flexible and responsive. We know exactly where we want to go, because our customers will show us the way. It is our job to bring them quality, through the resources. This will make them (and us) more competitive.
+              <p className="text-base font-normal leading-7 text-foreground/80">
+                Our dedicated sourcing and quality assurance teams provide fast, flexible, and responsive solutions tailored to our buyers' needs. By meticulously overseeing factory allocation, production, and final export, we ensure our clients receive exceptional products that make them more competitive in the global market.
               </p>
             </motion.div>
 
@@ -184,10 +184,10 @@ export default function AboutPage() {
               transition={{ duration: 0.6 }}
               className="pt-8 border-t border-border/40"
             >
-              <h3 className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground mb-4">
+              <h3 className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground mb-4">
                 Banking Partner
               </h3>
-              <div className="text-sm font-light text-muted-foreground leading-relaxed space-y-1">
+              <div className="text-base text-muted-foreground leading-relaxed space-y-1">
                 <p className="font-medium text-foreground">Premier Bank Ltd.</p>
                 <p>Dhanmondi Branch</p>
                 <p>House # 84 (1st Floor), Road # 7/A</p>

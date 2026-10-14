@@ -17,7 +17,7 @@ export function Compliance() {
   ];
 
   return (
-    <section id="compliance" className="relative w-full py-10 sm:py-24 bg-zinc-900 text-white overflow-hidden">
+    <section id="compliance" className="relative w-full py-10 sm:py-14 lg:py-16 bg-zinc-900 text-white overflow-hidden">
       
       {/* DotField Background */}
       <div className="absolute inset-0 z-0 opacity-40">
@@ -38,7 +38,7 @@ export function Compliance() {
       </div>
 
       <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-16 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
           
           {/* Content Side */}
           <motion.div 
@@ -58,9 +58,9 @@ export function Compliance() {
               </h3>
             </div>
             
-            <p className="text-lg text-zinc-400 font-light leading-relaxed max-w-lg">
-              We exclusively partner with factories that meet strict international compliance standards. 
-              Ethical manufacturing and worker safety are non-negotiable baselines for every production run we manage.
+            <p className="text-base font-normal leading-7 text-zinc-300 max-w-2xl">
+              As a responsible Bangladesh garment manufacturer, we exclusively partner with factories that meet strict international compliance standards. 
+              Ethical manufacturing and worker safety are non-negotiable baselines for every production run we manage as your apparel sourcing partner Bangladesh.
             </p>
 
             <div className="pt-8 border-t border-zinc-800">
@@ -75,7 +75,7 @@ export function Compliance() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, margin: "-50px" }}
                     transition={{ duration: 0.4, delay: index * 0.1, ease: "easeOut" }}
-                    className="flex items-center text-sm font-light text-zinc-300"
+                    className="flex items-center text-base text-zinc-300"
                   >
                     <span className="w-1.5 h-1.5 bg-zinc-600 rounded-full mr-3" />
                     {cert}

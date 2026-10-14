@@ -5,8 +5,8 @@ import { motion } from 'framer-motion';
 
 export default function GlobeWireframeDemo() {
   return (
-    <div className='relative w-full h-[520px] sm:h-[850px] overflow-hidden bg-background border-t border-border/40'>
-      <div className='relative z-10 flex flex-col items-center pt-10 sm:pt-32 text-center px-4'>
+    <div className='relative w-full h-[460px] sm:h-[680px] overflow-hidden bg-background border-t border-border/40'>
+      <div className='relative z-10 flex flex-col items-center pt-4 sm:pt-10 text-center px-4'>
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}

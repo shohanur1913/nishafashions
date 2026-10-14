@@ -53,7 +53,7 @@ export function GlobalPresence() {
   ];
 
   return (
-    <section className="w-full py-8 sm:py-24 bg-background border-t border-border/40 overflow-hidden">
+    <section className="w-full py-4 sm:py-8 bg-background border-t border-border/40 overflow-hidden">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-screen-2xl">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center">
           

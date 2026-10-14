@@ -111,15 +111,15 @@ export default function ProductsAndServicesPage() {
   ];
 
   const services = [
-    { title: "Factory sourcing & allocation", desc: "Matching your product, volume, price point and compliance requirements to the right unit, and re-allocating if a factory’s performance slips." },
-    { title: "Design & product development", desc: "Tech pack build from sketches or samples, pattern making, graded size sets, fit correction and counter-sample development." },
-    { title: "Fabric & trim sourcing", desc: "Mill sourcing local and imported, lab dips, hand looms, strike-offs, trim cards, and full material bookings against your approved standards." },
-    { title: "Costing & negotiation", desc: "Open-book cost sheets showing fabric, trims, CM, wash, testing and freight, so you can see exactly where a price comes from." },
-    { title: "Merchandising & TNA", desc: "A dated time-and-action calendar per order, regular written updates, and early escalation the moment a milestone is at risk." },
-    { title: "Quality assurance", desc: "Fabric inspection on receipt, inline quality checks through the sewing run, and a final random inspection against recognised sampling standards before shipment." },
-    { title: "Compliance verification", desc: "Audit certificate checks before allocation, corrective action follow-up, and facilitation of your own or third-party audits." },
-    { title: "Packing & labelling", desc: "Solid, ratio and assortment packing, barcode and price ticketing, GS1 carton marking, hangers and retail-ready presentation." },
-    { title: "Shipping & documentation", desc: "Freight booking or nominated-forwarder coordination, container stuffing supervision, and the complete export document set." }
+    { title: "Factory Sourcing", desc: "We identify and allocate the best-fit manufacturing facilities based on your specific product requirements, volume, target price, and compliance standards." },
+    { title: "Product Development", desc: "From tech pack creation and pattern making to sample development and fit correction, we manage the entire prototyping process." },
+    { title: "Fabric & Trim Sourcing", desc: "We source high-quality local and imported materials, managing lab dips, hand looms, strike-offs, and trim approvals against your standards." },
+    { title: "Costing", desc: "We provide transparent, open-book cost breakdowns covering fabric, trims, CM, wash, testing, and freight, ensuring you receive competitive pricing." },
+    { title: "Merchandising", desc: "Our dedicated merchandising team oversees time-and-action (TNA) calendars, providing proactive updates to ensure every milestone is met." },
+    { title: "Quality Assurance", desc: "We deploy on-the-ground technical teams for rigorous inline checks and final AQL inspections to guarantee uncompromised quality." },
+    { title: "Compliance", desc: "We actively monitor factory certifications and ethical standards, ensuring all partner units meet the strict requirements of your destination markets." },
+    { title: "Packing", desc: "We oversee all packing and presentation requirements, including ratio assortments, barcode ticketing, and GS1 carton marking for retail-ready delivery." },
+    { title: "Shipping", desc: "We manage end-to-end export logistics, freight booking, container stuffing supervision, and full documentation to ensure seamless delivery." }
   ];
 
   return (
@@ -183,7 +183,7 @@ export default function ProductsAndServicesPage() {
                 <h3 className="font-serif text-2xl font-light tracking-tight text-foreground mb-2">
                   {category.title}
                 </h3>
-                <span className="text-[11px] font-semibold uppercase tracking-[0.15em] text-foreground border-b border-foreground/30 pb-0.5 group-hover:border-foreground transition-colors">
+                <span className="text-xs font-semibold uppercase tracking-[0.15em] text-foreground border-b border-foreground/30 pb-0.5 group-hover:border-foreground transition-colors">
                   View Details
                 </span>
               </div>
@@ -215,7 +215,7 @@ export default function ProductsAndServicesPage() {
                     <h3 className="font-serif text-4xl sm:text-5xl font-light tracking-tight mb-6">
                       {category.title}
                     </h3>
-                    <p className="text-lg text-muted-foreground font-light leading-relaxed">
+                    <p className="text-base font-normal leading-7 text-foreground/80 max-w-2xl">
                       {category.intro}
                     </p>
                   </div>
@@ -224,7 +224,7 @@ export default function ProductsAndServicesPage() {
                     {Object.entries(category.details).map(([key, value]) => (
                       <div key={key}>
                         <h4 className="text-sm font-semibold tracking-wide text-foreground mb-2">{key}</h4>
-                        <p className="text-base text-muted-foreground font-light leading-relaxed">{value}</p>
+                        <p className="text-base font-normal leading-7 text-foreground/80">{value}</p>
                       </div>
                     ))}
                   </div>
@@ -240,7 +240,7 @@ export default function ProductsAndServicesPage() {
                       ))}
                     </ul>
                     <div className="pt-4">
-                      <Link href="/contact" className="inline-flex items-center text-sm font-semibold uppercase tracking-widest hover:text-primary transition-colors border-b border-foreground/30 hover:border-primary pb-0.5">
+                      <Link href="/contact" className="inline-flex items-center text-sm font-semibold uppercase tracking-widest hover:text-accent transition-colors border-b border-foreground/30 hover:border-accent pb-0.5">
                         Quote a {category.title.toLowerCase()} programme <ArrowRight className="ml-2 w-4 h-4" />
                       </Link>
                     </div>
@@ -299,7 +299,7 @@ export default function ProductsAndServicesPage() {
                   <CheckCircle2 className="w-5 h-5 text-muted-foreground" />
                 </div>
                 <h3 className="text-lg font-semibold tracking-tight">{service.title}</h3>
-                <p className="text-sm font-light text-muted-foreground leading-relaxed">
+                <p className="text-base font-normal leading-7 text-foreground/80">
                   {service.desc}
                 </p>
               </motion.div>

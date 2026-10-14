@@ -55,7 +55,7 @@ export default function ProductsPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
-            <h2 className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground mb-4">
+            <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground mb-4">
               Collections
             </h2>
             <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl font-light tracking-tight mb-6">
@@ -100,7 +100,7 @@ export default function ProductsPage() {
                 </p>
                 <Link 
                   href={product.href}
-                  className="text-[11px] font-semibold uppercase tracking-[0.15em] text-foreground border-b border-foreground/30 pb-0.5 hover:border-foreground transition-colors"
+                  className="text-xs font-semibold uppercase tracking-[0.15em] text-foreground border-b border-foreground/30 pb-0.5 hover:border-foreground transition-colors"
                 >
                   Inquire Now
                 </Link>

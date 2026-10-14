@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 
 export function About() {
   return (
-    <section id="about" className="w-full py-10 sm:py-32 bg-background border-t border-border">
+    <section id="about" className="w-full py-4 sm:py-8 bg-background border-t border-border">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div 
           initial={{ opacity: 0, y: 30 }}
@@ -27,21 +27,19 @@ export function About() {
           
           <div className="space-y-6 text-lg sm:text-xl text-muted-foreground font-light leading-relaxed">
             <p>
-              At {site.name}, we are architects of the global apparel supply chain. 
-              We do not own a single factory; instead, we own the standard.
+              At {site.name}, we operate as a Manufacturer, Production Management, Sourcing, and Export Partner. 
+              Backed by {site.experience}, we receive orders under our company name and manage your complete production lifecycle.
             </p>
             <p>
-              By decoupling factory ownership from production management, we eliminate conflict of interest. 
-              We match your specific product requirements with the exact facility best equipped to handle it—
-              vetting for capability, compliance, and capacity. 
+              We execute orders through a trusted network of partner factories, carefully matching your specific product requirements with the facility best equipped to handle them—vetting for capability, compliance, and capacity.
             </p>
             <p className="text-foreground font-medium">
-              The result is a supply chain built for resilience, precision, and uncompromised quality.
+              By closely supervising sourcing, merchandising, quality control, and final export coordination, we ensure a supply chain built for resilience, precision, and uncompromised quality.
             </p>
           </div>
 
           <div className="pt-8">
-            <Button variant="outline" size="lg" className="rounded-none border-foreground text-foreground hover:bg-foreground hover:text-background uppercase tracking-widest font-semibold text-xs h-14 px-8" asChild>
+            <Button variant="outline" size="lg" className="rounded-full border-foreground text-foreground hover:bg-foreground hover:text-background uppercase tracking-widest font-semibold text-xs h-14 px-8" asChild>
               <Link href="/about">Read Our Full Story</Link>
             </Button>
           </div>

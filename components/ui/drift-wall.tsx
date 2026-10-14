@@ -30,6 +30,7 @@ export interface DriftWallProps {
   dim?: number;
   grayscale?: boolean;
   overlayColor?: string;
+  fitWidth?: boolean;
   className?: string;
   style?: CSSProperties;
 }
@@ -80,6 +81,7 @@ const DriftWall = ({
   dim = 0.55,
   grayscale = false,
   overlayColor = '#060010',
+  fitWidth = false,
   className = '',
   style
 }: DriftWallProps) => {
@@ -97,9 +99,20 @@ const DriftWall = ({
   const lastTsRef = useRef<number | null>(null);
 
   const [containerHeight, setContainerHeight] = useState(600);
+  const [containerWidth, setContainerWidth] = useState(0);
   const [activeId, setActiveId] = useState<string | null>(null);
   const activeIdRef = useRef<string | null>(null);
   const [reduced, setReduced] = useState(false);
+
+  const isFlat = tilt === 0 && turn === 0 && roll === 0 && depth === 0;
+  const planeScale = isFlat ? 1 : 1.18;
+
+  const effectiveTileWidth = useMemo(() => {
+    if (fitWidth && containerWidth > 0) {
+      return Math.max(80, Math.floor(containerWidth / planeScale / columns - gap));
+    }
+    return tileWidth;
+  }, [fitWidth, containerWidth, planeScale, columns, gap, tileWidth]);
 
   useEffect(() => {
     setReduced(prefersReducedMotion());
@@ -119,7 +132,7 @@ const DriftWall = ({
     const unit = tileHeight + gap;
     return columnItems.map(col => {
       const copyHeight = Math.max(unit, col.length * unit);
-      const copies = Math.max(2, Math.ceil((containerHeight * 1.6) / copyHeight) + 1);
+      const copies = Math.max(4, Math.ceil((containerHeight * 2.5) / copyHeight) + 2);
       return { copyHeight, copies };
     });
   }, [columnItems, tileHeight, gap, containerHeight]);
@@ -128,6 +141,7 @@ const DriftWall = ({
     if (!containerRef.current) return;
     const ro = new ResizeObserver(([entry]) => {
       setContainerHeight(entry.contentRect.height || 600);
+      setContainerWidth(entry.contentRect.width || 0);
     });
     ro.observe(containerRef.current);
     return () => ro.disconnect();
@@ -151,11 +165,11 @@ const DriftWall = ({
       const plane = planeRef.current;
       if (!plane) return;
       plane.style.transform =
-        `translate(-50%, -50%) scale(1.18) ` +
+        `translate(-50%, -50%) scale(${planeScale}) ` +
         `rotateX(${tilt + py}deg) rotateY(${turn + px}deg) rotateZ(${roll}deg) ` +
         `translateZ(${-depth}px)`;
     },
-    [tilt, turn, roll, depth]
+    [tilt, turn, roll, depth, planeScale]
   );
 
   const isVisibleRef = useRef(true);
@@ -268,14 +282,14 @@ const DriftWall = ({
     release();
   }, [release]);
 
-  const maskStyle =
-    'radial-gradient(ellipse 78% 82% at 50% 46%, #000 var(--dw-edge), transparent 100%), ' +
-    'linear-gradient(to top, #000 var(--dw-edge), transparent 100%)';
+  const maskStyle = fade > 0
+    ? `linear-gradient(to bottom, transparent 0%, #000 ${fade * 100}%, #000 ${(1 - fade) * 100}%, transparent 100%)`
+    : undefined;
 
   const cssVars = useMemo<CSSProperties>(
     () =>
       ({
-        '--dw-tile-w': `${tileWidth}px`,
+        '--dw-tile-w': `${effectiveTileWidth}px`,
         '--dw-tile-h': `${tileHeight}px`,
         '--dw-gap': `${gap}px`,
         '--dw-radius': `${radius}px`,
@@ -283,16 +297,17 @@ const DriftWall = ({
         '--dw-dim': dim,
         '--dw-gray': grayscale ? 1 : 0,
         '--dw-overlay': overlayColor,
-        '--dw-edge': `${Math.max(0, (1 - fade) * 100)}%`,
         perspective: `${perspective}px`,
         perspectiveOrigin: '50% 50%',
-        WebkitMaskImage: maskStyle,
-        maskImage: maskStyle,
-        WebkitMaskComposite: 'source-in',
-        maskComposite: 'intersect',
+        ...(maskStyle
+          ? {
+              WebkitMaskImage: maskStyle,
+              maskImage: maskStyle,
+            }
+          : {}),
         ...style
       }) as CSSProperties,
-    [tileWidth, tileHeight, gap, radius, lift, dim, grayscale, overlayColor, fade, perspective, maskStyle, style]
+    [effectiveTileWidth, tileHeight, gap, radius, lift, dim, grayscale, overlayColor, perspective, maskStyle, style]
   );
 
   const tileClass = cx(
@@ -310,9 +325,8 @@ const DriftWall = ({
   );
   const imgClass = cx(
     'block h-full w-full select-none object-cover',
-    '[filter:grayscale(var(--dw-gray))_saturate(0.92)]',
     'transition-[filter] duration-[420ms] ease-[cubic-bezier(0.22,1,0.36,1)]',
-    'group-[.is-active]/tile:[filter:grayscale(0)_saturate(1.05)] group-focus-visible/tile:[filter:grayscale(0)_saturate(1.05)]'
+    'group-[.is-active]/tile:[filter:grayscale(0)] group-focus-visible/tile:[filter:grayscale(0)]'
   );
   const overlayClass = cx(
     'pointer-events-none absolute inset-0 bg-[var(--dw-overlay)] opacity-[0.42]',
@@ -326,7 +340,7 @@ const DriftWall = ({
         <img
           src={item.image}
           alt={item.title ?? ''}
-          loading="lazy"
+          loading="eager"
           decoding="async"
           draggable={false}
           className={imgClass}

@@ -30,7 +30,7 @@ export function Process() {
   ];
 
   return (
-    <section id="process" className="w-full py-10 sm:py-24 bg-background">
+    <section id="process" className="w-full py-4 sm:py-8 bg-background">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-16 lg:gap-24 items-center">
           
@@ -82,7 +82,7 @@ export function Process() {
                   className="flex items-start"
                 >
                   <div className="flex-shrink-0 mt-1">
-                    <CheckCircle2 className="w-5 h-5 text-primary" />
+                    <CheckCircle2 className="w-5 h-5 text-accent" />
                   </div>
                   <div className="ml-4">
                     <h4 className="text-base font-semibold text-foreground tracking-wide">

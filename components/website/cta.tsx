@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 
 export function CTA() {
   return (
-    <section className="w-full py-10 sm:py-32 bg-background border-t border-border/40">
+    <section className="w-full py-4 sm:py-8 bg-background border-t border-border/40">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center max-w-4xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

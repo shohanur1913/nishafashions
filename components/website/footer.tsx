@@ -6,7 +6,7 @@ import ParticleText from "@/components/ui/particle-text";
 
 export function Footer() {
   return (
-    <footer className="relative w-full bg-zinc-900 text-zinc-300 pt-8 pb-5 sm:pt-16 sm:pb-8 overflow-hidden border-t border-zinc-800">
+    <footer className="relative w-full bg-zinc-900 text-zinc-300 pt-6 pb-4 sm:pt-10 sm:pb-6 overflow-hidden border-t border-zinc-800">
       
       {/* DotField Background (matches Compliance section) */}
       <div className="absolute inset-0 z-0 opacity-40">
@@ -29,7 +29,7 @@ export function Footer() {
       <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8 max-w-screen-2xl">
         
         {/* Top Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-12 lg:gap-8 mb-6 sm:mb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-12 lg:gap-8 mb-5 sm:mb-10">
           
           {/* Brand & Newsletter */}
           <div className="lg:col-span-5 space-y-5 sm:space-y-10">
@@ -39,13 +39,13 @@ export function Footer() {
                 alt="Nisha Fashions Wear" 
                 className="h-10 sm:h-12 w-auto object-contain mb-3 sm:mb-6 bg-white/10 p-1.5 sm:p-2 rounded"
               />
-              <p className="text-zinc-400 font-light text-sm sm:text-lg max-w-md leading-relaxed">
-                {site.tagline}. Delivering premium apparel solutions globally for over 20 years.
+              <p className="text-zinc-400 text-base sm:text-lg max-w-md leading-relaxed">
+                {site.tagline}. A trusted Bangladesh apparel supplier offering comprehensive garment sourcing Bangladesh solutions globally for over 20 years.
               </p>
             </div>
             
             <div className="space-y-3 sm:space-y-4">
-              <h4 className="text-[11px] sm:text-xs font-semibold uppercase tracking-widest text-zinc-100">Subscribe to updates</h4>
+              <h4 className="text-xs font-semibold uppercase tracking-widest text-zinc-100">Subscribe to updates</h4>
               <div className="flex items-center border-b border-zinc-700 hover:border-zinc-500 transition-colors max-w-md pb-1.5 sm:pb-2">
                 <input 
                   type="email" 
@@ -64,13 +64,13 @@ export function Footer() {
             
             {/* Navigation */}
             <div className="space-y-3 sm:space-y-6">
-              <h4 className="text-[11px] sm:text-xs font-semibold uppercase tracking-widest text-zinc-100">
+              <h4 className="text-xs font-semibold uppercase tracking-widest text-zinc-100">
                 Company
               </h4>
               <ul className="space-y-2 sm:space-y-4">
                 {mainNav.map((item) => (
                   <li key={item.href}>
-                    <Link href={item.href} className="text-xs sm:text-sm font-light hover:text-white transition-colors">
+                    <Link href={item.href} className="text-xs sm:text-base hover:text-white transition-colors">
                       {item.label}
                     </Link>
                   </li>
@@ -80,10 +80,10 @@ export function Footer() {
 
             {/* Categories */}
             <div className="space-y-3 sm:space-y-6">
-              <h4 className="text-[11px] sm:text-xs font-semibold uppercase tracking-widest text-zinc-100">
+              <h4 className="text-xs font-semibold uppercase tracking-widest text-zinc-100">
                 Products
               </h4>
-              <ul className="space-y-2 sm:space-y-4 text-xs sm:text-sm font-light">
+              <ul className="space-y-2 sm:space-y-4 text-xs sm:text-base">
                 <li><Link href="/services#knitwear" className="hover:text-white transition-colors">Knitwear</Link></li>
                 <li><Link href="/services#woven" className="hover:text-white transition-colors">Woven</Link></li>
                 <li><Link href="/services#denim" className="hover:text-white transition-colors">Denim & Bottoms</Link></li>
@@ -95,10 +95,10 @@ export function Footer() {
 
             {/* Contact */}
             <div className="space-y-3 sm:space-y-6 col-span-2 md:col-span-1">
-              <h4 className="text-[11px] sm:text-xs font-semibold uppercase tracking-widest text-zinc-100">
+              <h4 className="text-xs font-semibold uppercase tracking-widest text-zinc-100">
                 Contact Us
               </h4>
-              <ul className="space-y-2 sm:space-y-4 text-xs sm:text-sm font-light">
+              <ul className="space-y-2 sm:space-y-4 text-xs sm:text-base">
                 <li className="flex items-start gap-2.5 sm:gap-3">
                   <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-zinc-500 mt-0.5 sm:mt-1 shrink-0" />
                   <span>{site.address.street}<br/>{site.address.locality}, {site.address.postalCode}</span>
@@ -122,7 +122,7 @@ export function Footer() {
         </div>
 
         {/* Particle Text — phone: denser + brighter so it stays legible at small sizes */}
-        <div className="flex sm:hidden w-full items-center justify-center border-t border-zinc-800 py-3 h-[130px]">
+        <div className="flex sm:hidden w-full items-center justify-center border-t border-zinc-800 py-4 h-[80px]">
           <ParticleText
             text="NISHA FASHIONS"
             particleSize={2.4}
@@ -136,7 +136,7 @@ export function Footer() {
             repelRadius={60}
             idleDrift={0.4}
             trigger="mount"
-            fontSize="clamp(2rem, 12vw, 3.5rem)"
+            fontSize="clamp(1.75rem, 10vw, 3rem)"
             fontWeight={800}
             fontFamily="inherit"
             glow={false}
@@ -144,8 +144,8 @@ export function Footer() {
           />
         </div>
 
-        {/* Particle Text — desktop / tablet (original) */}
-        <div className="hidden sm:flex w-full items-center justify-center border-t border-zinc-800 pt-10 pb-6 h-[400px]">
+        {/* Particle Text — desktop / tablet */}
+        <div className="hidden sm:flex w-full items-center justify-center border-t border-zinc-800 py-6 lg:py-8 h-[130px] lg:h-[180px]">
           <ParticleText
             text="NISHA FASHIONS"
             particleSize={2.2}
@@ -159,15 +159,16 @@ export function Footer() {
             repelRadius={120}
             idleDrift={0.8}
             trigger="mount"
-            fontSize="clamp(3.5rem, 13vw, 9rem)"
+            fontSize="clamp(2.5rem, 8.5vw, 6.5rem)"
             fontWeight={800}
             fontFamily="inherit"
             glow={true}
+            style={{ minHeight: 0 }}
           />
         </div>
 
         {/* Bottom Bar */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-6 text-center text-[11px] sm:text-xs font-light text-zinc-500 border-t border-zinc-800 pt-5 sm:pt-8">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-6 text-center text-xs text-zinc-500 border-t border-zinc-800 pt-4 sm:pt-6">
           <p>
             &copy; {new Date().getFullYear()} Nisha Fashions Wear. All rights reserved.
           </p>
