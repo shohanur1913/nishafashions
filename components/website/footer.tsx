@@ -84,12 +84,11 @@ export function Footer() {
                 Products
               </h4>
               <ul className="space-y-2 sm:space-y-4 text-xs sm:text-base">
-                <li><Link href="/services#knitwear" className="hover:text-white transition-colors">Knitwear</Link></li>
-                <li><Link href="/services#woven" className="hover:text-white transition-colors">Woven</Link></li>
-                <li><Link href="/services#denim" className="hover:text-white transition-colors">Denim & Bottoms</Link></li>
-                <li><Link href="/services#sweaters" className="hover:text-white transition-colors">Sweaters</Link></li>
-                <li><Link href="/services" className="hover:text-white transition-colors">Uniforms & Workwear</Link></li>
-                <li><Link href="/services" className="hover:text-white transition-colors">Kidswear</Link></li>
+                <li><Link href="/categories/knit" className="hover:text-white transition-colors">Knitwear</Link></li>
+                <li><Link href="/categories/woven" className="hover:text-white transition-colors">Woven</Link></li>
+                <li><Link href="/categories/denim" className="hover:text-white transition-colors">Denim & Bottoms</Link></li>
+                <li><Link href="/categories/sweater" className="hover:text-white transition-colors">Sweaters</Link></li>
+                <li><Link href="/categories/various-items" className="hover:text-white transition-colors">Various Items & Workwear</Link></li>
               </ul>
             </div>
 

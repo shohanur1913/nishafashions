@@ -171,29 +171,64 @@ export function HeaderSimple({
                 <ChevronDown className="w-3.5 h-3.5 opacity-70 group-hover:rotate-180 transition-transform" />
               </div>
               
-              <div className="absolute top-[65px] left-1/2 -translate-x-1/2 hidden group-hover:block w-[360px] bg-background border border-border shadow-2xl rounded-xl p-5 z-50">
-                <div className="text-xs font-bold text-muted-foreground mb-4 tracking-widest uppercase">Apparel Categories</div>
-                <div className="space-y-3.5">
-                  <Link href="/services#knitwear" className="flex justify-between items-center group/item p-1.5 rounded-lg hover:bg-muted/50 transition-colors">
-                    <span className="font-semibold text-foreground group-hover/item:text-accent transition-colors text-sm">Knitwear</span>
-                    <span className="text-muted-foreground text-xs font-normal">T-Shirts, Hoodies, Polos</span>
+              <div className="absolute top-[65px] left-1/2 -translate-x-1/2 hidden group-hover:block w-max min-w-[240px] bg-background border border-border/80 shadow-2xl rounded-2xl p-3 z-50">
+                <div className="text-[11px] font-bold text-muted-foreground px-2.5 py-1 tracking-widest uppercase whitespace-nowrap">
+                  Apparel Categories
+                </div>
+                <div className="space-y-1 mt-1">
+                  <Link
+                    href="/categories/knit"
+                    className="flex items-center justify-between gap-4 group/item px-3 py-2 rounded-xl hover:bg-muted/70 transition-colors whitespace-nowrap"
+                  >
+                    <span className="font-medium text-foreground group-hover/item:text-primary transition-colors text-sm">
+                      Knitwear
+                    </span>
+                    <ArrowRight className="w-3.5 h-3.5 text-muted-foreground opacity-0 group-hover/item:opacity-100 group-hover/item:translate-x-0.5 transition-all" />
                   </Link>
-                  <Link href="/services#woven" className="flex justify-between items-center group/item p-1.5 rounded-lg hover:bg-muted/50 transition-colors">
-                    <span className="font-semibold text-foreground group-hover/item:text-accent transition-colors text-sm">Woven</span>
-                    <span className="text-muted-foreground text-xs font-normal">Shirts, Cargo, Jackets</span>
+                  <Link
+                    href="/categories/woven"
+                    className="flex items-center justify-between gap-4 group/item px-3 py-2 rounded-xl hover:bg-muted/70 transition-colors whitespace-nowrap"
+                  >
+                    <span className="font-medium text-foreground group-hover/item:text-primary transition-colors text-sm">
+                      Woven
+                    </span>
+                    <ArrowRight className="w-3.5 h-3.5 text-muted-foreground opacity-0 group-hover/item:opacity-100 group-hover/item:translate-x-0.5 transition-all" />
                   </Link>
-                  <Link href="/services#denim" className="flex justify-between items-center group/item p-1.5 rounded-lg hover:bg-muted/50 transition-colors">
-                    <span className="font-semibold text-foreground group-hover/item:text-accent transition-colors text-sm">Denim</span>
-                    <span className="text-muted-foreground text-xs font-normal">Jeans, Truckers, Shorts</span>
+                  <Link
+                    href="/categories/denim"
+                    className="flex items-center justify-between gap-4 group/item px-3 py-2 rounded-xl hover:bg-muted/70 transition-colors whitespace-nowrap"
+                  >
+                    <span className="font-medium text-foreground group-hover/item:text-primary transition-colors text-sm">
+                      Denim & Bottoms
+                    </span>
+                    <ArrowRight className="w-3.5 h-3.5 text-muted-foreground opacity-0 group-hover/item:opacity-100 group-hover/item:translate-x-0.5 transition-all" />
                   </Link>
-                  <Link href="/services#sweaters" className="flex justify-between items-center group/item p-1.5 rounded-lg hover:bg-muted/50 transition-colors">
-                    <span className="font-semibold text-foreground group-hover/item:text-accent transition-colors text-sm">Sweaters</span>
-                    <span className="text-muted-foreground text-xs font-normal text-right max-w-[130px] leading-tight">Men, Women, Kids (3-12GG)</span>
+                  <Link
+                    href="/categories/sweater"
+                    className="flex items-center justify-between gap-4 group/item px-3 py-2 rounded-xl hover:bg-muted/70 transition-colors whitespace-nowrap"
+                  >
+                    <span className="font-medium text-foreground group-hover/item:text-primary transition-colors text-sm">
+                      Sweaters
+                    </span>
+                    <ArrowRight className="w-3.5 h-3.5 text-muted-foreground opacity-0 group-hover/item:opacity-100 group-hover/item:translate-x-0.5 transition-all" />
+                  </Link>
+                  <Link
+                    href="/categories/various-items"
+                    className="flex items-center justify-between gap-4 group/item px-3 py-2 rounded-xl hover:bg-muted/70 transition-colors whitespace-nowrap"
+                  >
+                    <span className="font-medium text-foreground group-hover/item:text-primary transition-colors text-sm">
+                      Various Items & Workwear
+                    </span>
+                    <ArrowRight className="w-3.5 h-3.5 text-muted-foreground opacity-0 group-hover/item:opacity-100 group-hover/item:translate-x-0.5 transition-all" />
                   </Link>
                 </div>
-                <div className="mt-4 pt-3 border-t border-border">
-                  <Link href="/services" className="flex items-center text-xs text-accent hover:text-accent/80 font-bold transition-colors">
-                    View All Products & Services <ArrowRight className="w-3.5 h-3.5 ml-1" />
+                <div className="mt-2 pt-2 border-t border-border/60 px-1">
+                  <Link
+                    href="/services"
+                    className="flex items-center text-xs text-foreground font-semibold hover:text-primary transition-colors py-1 px-2 rounded-lg hover:bg-muted/50 whitespace-nowrap"
+                  >
+                    <span>View All Products & Services</span>
+                    <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
                   </Link>
                 </div>
               </div>
@@ -279,23 +314,22 @@ export function HeaderSimple({
                         animate={{ height: "auto", opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
                         transition={{ duration: 0.2 }}
-                        className="overflow-hidden flex flex-col gap-3 pt-3 pl-3 text-sm"
+                        className="overflow-hidden flex flex-col gap-1.5 pt-2 pl-3 text-sm"
                       >
-                        <Link href="/services#knitwear" onClick={close} className="flex justify-between items-center py-1 text-foreground hover:text-accent">
-                          <span className="font-semibold">Knitwear</span>
-                          <span className="text-muted-foreground text-xs font-normal">T-Shirts, Hoodies, Polos</span>
+                        <Link href="/categories/knit" onClick={close} className="py-1.5 text-foreground hover:text-accent font-medium">
+                          Knitwear
                         </Link>
-                        <Link href="/services#woven" onClick={close} className="flex justify-between items-center py-1 text-foreground hover:text-accent">
-                          <span className="font-semibold">Woven</span>
-                          <span className="text-muted-foreground text-xs font-normal">Shirts, Cargo, Jackets</span>
+                        <Link href="/categories/woven" onClick={close} className="py-1.5 text-foreground hover:text-accent font-medium">
+                          Woven
                         </Link>
-                        <Link href="/services#denim" onClick={close} className="flex justify-between items-center py-1 text-foreground hover:text-accent">
-                          <span className="font-semibold">Denim</span>
-                          <span className="text-muted-foreground text-xs font-normal">Jeans, Truckers, Shorts</span>
+                        <Link href="/categories/denim" onClick={close} className="py-1.5 text-foreground hover:text-accent font-medium">
+                          Denim & Bottoms
                         </Link>
-                        <Link href="/services#sweaters" onClick={close} className="flex justify-between items-center py-1 text-foreground hover:text-accent">
-                          <span className="font-semibold">Sweaters</span>
-                          <span className="text-muted-foreground text-xs font-normal">Men, Women, Kids</span>
+                        <Link href="/categories/sweater" onClick={close} className="py-1.5 text-foreground hover:text-accent font-medium">
+                          Sweaters
+                        </Link>
+                        <Link href="/categories/various-items" onClick={close} className="py-1.5 text-foreground hover:text-accent font-medium">
+                          Various Items & Workwear
                         </Link>
                         <Link href="/services" onClick={close} className="pt-2 text-xs font-bold text-accent flex items-center">
                           View All Products & Services <ArrowRight className="w-3.5 h-3.5 ml-1" />
