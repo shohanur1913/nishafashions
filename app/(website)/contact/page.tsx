@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { MapPin, Phone, Mail } from "lucide-react";
+import { ContactMap } from "@/components/website/contact-map";
 
 export default function ContactPage() {
   return (
@@ -182,25 +183,13 @@ export default function ContactPage() {
 
       {/* Map Section */}
       <motion.section 
-        initial={{ opacity: 0, y: 30 }}
+        initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-100px" }}
-        transition={{ duration: 0.8 }}
-        className="mt-32"
+        viewport={{ once: true, margin: "-50px" }}
+        transition={{ duration: 0.6 }}
+        className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-screen-xl mt-16 sm:mt-24"
       >
-        <div className="w-full h-[500px] bg-muted relative">
-          <iframe 
-            src="https://maps.google.com/maps?q=92,+MONESWAR+ROAD,+ZIGATOLA,+DHAKA-1209,+BANGLADESH&t=&z=15&ie=UTF8&iwloc=&output=embed"
-            width="100%" 
-            height="100%" 
-            style={{ border: 0 }} 
-            allowFullScreen 
-            loading="lazy" 
-            referrerPolicy="no-referrer-when-downgrade"
-            className="absolute inset-0 grayscale opacity-90 dark:invert dark:opacity-80"
-            title="Nisha Fashions Wear Location"
-          ></iframe>
-        </div>
+        <ContactMap />
       </motion.section>
     </div>
   );

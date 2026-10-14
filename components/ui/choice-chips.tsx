@@ -133,11 +133,11 @@ export function ChoiceChip({ value, icon, count, disabled, className, children, 
       data-chip=""
       data-size={size}
       className={cn(
-        "group/chip relative inline-flex min-w-0 max-w-full shrink-0 select-none items-center rounded-full border font-medium tracking-[-0.005em]",
-        "outline-none focus-visible:outline-solid focus-visible:outline-1 focus-visible:outline-offset-2 focus-visible:outline-fg-3",
-        "transition-[background-color,border-color,color,scale,padding] duration-200 ease-out-expo active:scale-[0.96] active:duration-75",
-        "border-line-2 bg-raised text-fg-2 hover:border-fg-4 hover:text-fg",
-        "data-pressed:border-fg data-pressed:bg-fg data-pressed:text-frame data-pressed:hover:border-fg/90 data-pressed:hover:bg-fg/90",
+        "group/chip relative inline-flex min-w-0 max-w-full shrink-0 select-none items-center rounded-full border font-medium tracking-[-0.005em] cursor-pointer",
+        "outline-none focus-visible:outline-solid focus-visible:outline-1 focus-visible:outline-offset-2 focus-visible:outline-ring",
+        "transition-[background-color,border-color,color,scale,padding] duration-200 ease-out active:scale-[0.96] active:duration-75",
+        "border-border/80 bg-muted/50 text-foreground/80 hover:border-foreground/30 hover:bg-muted hover:text-foreground",
+        "data-pressed:border-foreground data-pressed:bg-foreground data-pressed:text-background data-pressed:hover:border-foreground/90 data-pressed:hover:bg-foreground/90 shadow-2xs",
         "data-disabled:pointer-events-none data-disabled:opacity-50",
         // Reach 44px on touch without changing the drawn size.
         "after:absolute after:-inset-y-1.5 after:inset-x-0 after:content-['']",
@@ -169,13 +169,13 @@ export function ChoiceChip({ value, icon, count, disabled, className, children, 
         </span>
       </span>
       {icon && (
-        <span aria-hidden className={cn("flex shrink-0 items-center text-fg-3 transition-colors group-hover/chip:text-fg-2 group-data-pressed/chip:text-frame/70 [&>svg]:size-[14px]", sm ? "mr-1 [&>svg]:size-3" : "mr-1.5")}>
+        <span aria-hidden className={cn("flex shrink-0 items-center text-muted-foreground transition-colors group-hover/chip:text-foreground group-data-pressed/chip:text-background/80 [&>svg]:size-[14px]", sm ? "mr-1 [&>svg]:size-3" : "mr-1.5")}>
           {icon}
         </span>
       )}
       <span className="min-w-0 truncate">{children}</span>
       {count !== undefined && (
-        <span className={cn("tabular shrink-0 font-normal text-fg-3 transition-colors group-data-pressed/chip:text-frame/60", sm ? "ml-1" : "ml-1.5")}>
+        <span className={cn("tabular shrink-0 font-normal text-muted-foreground transition-colors group-data-pressed/chip:text-background/70", sm ? "ml-1" : "ml-1.5")}>
           <NumberFlow value={count} />
         </span>
       )}
