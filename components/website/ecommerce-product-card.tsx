@@ -78,7 +78,7 @@ export function EcommerceProductCard({
           <button
             type="button"
             onClick={openQuoteModal}
-            className="inline-flex items-center justify-center gap-1 py-1.5 px-2 rounded-lg bg-foreground hover:bg-foreground/90 text-background text-[11px] font-semibold tracking-tight transition-all shadow-2xs cursor-pointer active:scale-[0.97]"
+            className="inline-flex items-center justify-center gap-1 py-1.5 px-2 rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground text-[11px] font-semibold tracking-tight transition-all shadow-2xs cursor-pointer active:scale-[0.97]"
           >
             <FileText className="w-3 h-3 shrink-0" />
             <span>Quote</span>

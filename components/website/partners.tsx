@@ -33,14 +33,14 @@ const partnerLogos = [
 
 export function Partners() {
   return (
-    <section className="w-full py-8 sm:py-10 bg-zinc-50 dark:bg-zinc-950 border-y border-border/40 overflow-hidden">
+    <section className="w-full py-8 sm:py-10 bg-muted/30 border-y border-border/40 overflow-hidden">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 mb-4 sm:mb-6">
         <p className="text-center text-sm font-semibold uppercase tracking-widest text-muted-foreground">
           Selected Buyer Experience
         </p>
       </div>
 
-      <div className="w-full relative h-[60px] sm:h-[80px] text-zinc-600 dark:text-zinc-400">
+      <div className="w-full relative h-[60px] sm:h-[80px] text-zinc-600">
         <LogoLoop
           logos={partnerLogos}
           speed={30}

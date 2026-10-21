@@ -5,9 +5,12 @@ export function Header() {
   return (
     <>
       <HeaderSimple 
-        logoImage="https://www.nishafashions.com/wp-content/uploads/2022/11/nfw_logo3.jpg"
+        logoImage="/images/logo.jpg"
+        logoText="Nisha Fashions Wear - Bangladesh Apparel Manufacturer & Supplier"
         logoSize={48}
         ctaText="Get a Quote"
+        ctaBackground="var(--brand, #E94D65)"
+        ctaTextColor="#ffffff"
         backgroundColor="transparent"
         showBorder={false}
       />

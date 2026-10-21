@@ -16,7 +16,7 @@ export function CTA() {
           className="space-y-8"
         >
           <h2 className="font-serif text-4xl sm:text-5xl md:text-6xl font-light tracking-tight text-foreground leading-tight">
-            Ready to scale your production with uncompromising quality?
+            Ready to scale your production with <span className="text-primary italic">uncompromising quality?</span>
           </h2>
           <p className="text-lg text-muted-foreground font-light max-w-2xl mx-auto">
             From design inception to global delivery, our team is ready to engineer your supply chain. Let's discuss your next program.
@@ -32,7 +32,7 @@ export function CTA() {
                 inputClassName="text-base"
               />
             </div>
-            <button className="h-14 px-8 rounded-full text-sm font-semibold uppercase tracking-widest text-background bg-foreground hover:bg-zinc-800 transition-colors w-full sm:w-auto shrink-0 flex items-center justify-center shadow-md">
+            <button className="h-14 px-8 rounded-full text-sm font-semibold uppercase tracking-widest text-primary-foreground bg-primary hover:bg-primary/90 transition-colors w-full sm:w-auto shrink-0 flex items-center justify-center shadow-md cursor-pointer">
               Start Conversation
               <ArrowRight className="ml-3 w-4 h-4" />
             </button>

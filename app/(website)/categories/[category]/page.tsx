@@ -1,7 +1,8 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { categoriesCatalog, getCategoryBySlug } from "@/lib/content/categories";
+import { categoriesCatalog } from "@/lib/content/categories";
+import { getCategory, getCategories } from "@/lib/content-service";
 import { ArrowLeft, Clock, PackageCheck, Factory, ShieldCheck, CheckCircle2 } from "lucide-react";
 import { EcommerceProductCard } from "@/components/website/ecommerce-product-card";
 
@@ -17,7 +18,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { category } = await params;
-  const categoryData = getCategoryBySlug(category);
+  const categoryData = await getCategory(category);
 
   if (!categoryData) {
     return {
@@ -26,14 +27,23 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 
   return {
-    title: `${categoryData.title} Manufacturing & Sourcing Bangladesh | Nisha Fashions Wear`,
+    title: `${categoryData.title} Manufacturing & Sourcing in Bangladesh`,
     description: `${categoryData.title} apparel manufacturing capabilities in Bangladesh. ${categoryData.description}`,
+    alternates: {
+      canonical: `/categories/${categoryData.slug}`,
+    },
+    openGraph: {
+      title: `${categoryData.title} Manufacturing & Sourcing Bangladesh | Nisha Fashions Wear`,
+      description: `${categoryData.title} apparel manufacturing capabilities in Bangladesh. ${categoryData.description}`,
+      url: `https://www.nishafashions.com/categories/${categoryData.slug}`,
+    },
   };
 }
 
 export default async function CategoryDetailPage({ params }: PageProps) {
   const { category } = await params;
-  const categoryData = getCategoryBySlug(category);
+  const categoryData = await getCategory(category);
+  const allCategories = await getCategories();
 
   if (!categoryData) {
     notFound();
@@ -42,7 +52,7 @@ export default async function CategoryDetailPage({ params }: PageProps) {
   return (
     <div className="min-h-screen bg-background text-foreground pb-12 sm:pb-16">
       {/* Compact Top Navigation Bar */}
-      <section className="w-full border-b border-border/40 bg-zinc-50 dark:bg-zinc-950 pt-20 sm:pt-22 pb-2.5">
+      <section className="w-full border-b border-border/40 bg-muted/30 pt-20 sm:pt-22 pb-2.5">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-screen-2xl">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
             {/* Breadcrumb / Back Link */}
@@ -59,8 +69,8 @@ export default async function CategoryDetailPage({ params }: PageProps) {
             </div>
 
             {/* Compact Category Switcher Tabs */}
-            <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
-              {categoriesCatalog.map((cat) => {
+            <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 max-w-full">
+              {allCategories.map((cat) => {
                 const isActive = cat.slug === categoryData.slug;
                 return (
                   <Link
@@ -68,7 +78,7 @@ export default async function CategoryDetailPage({ params }: PageProps) {
                     href={`/categories/${cat.slug}`}
                     className={`px-3 py-1 text-xs font-medium rounded-full transition-all whitespace-nowrap border cursor-pointer ${
                       isActive
-                        ? "bg-foreground text-background border-foreground shadow-2xs font-semibold"
+                        ? "bg-primary text-primary-foreground border-primary shadow-2xs font-semibold"
                         : "bg-muted/50 text-muted-foreground border-border/60 hover:border-foreground/30 hover:bg-muted hover:text-foreground"
                     }`}
                   >
@@ -144,33 +154,33 @@ export default async function CategoryDetailPage({ params }: PageProps) {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
             {/* Fabrics */}
             <div className="space-y-1.5">
-              <span className="font-bold uppercase tracking-wider text-zinc-950 dark:text-white text-[11px] flex items-center gap-1.5">
+              <span className="font-bold uppercase tracking-wider text-foreground text-[11px] flex items-center gap-1.5">
                 <CheckCircle2 className="w-3.5 h-3.5 text-accent" />
                 <span>Fabrications</span>
               </span>
-              <p className="text-zinc-900 dark:text-zinc-100 font-medium text-xs leading-relaxed">
+              <p className="text-foreground/80 font-medium text-xs leading-relaxed">
                 {categoryData.fabrics.join(" • ")}
               </p>
             </div>
 
             {/* Constructions */}
             <div className="space-y-1.5">
-              <span className="font-bold uppercase tracking-wider text-zinc-950 dark:text-white text-[11px] flex items-center gap-1.5">
+              <span className="font-bold uppercase tracking-wider text-foreground text-[11px] flex items-center gap-1.5">
                 <CheckCircle2 className="w-3.5 h-3.5 text-accent" />
                 <span>Constructions & Weaves</span>
               </span>
-              <p className="text-zinc-900 dark:text-zinc-100 font-medium text-xs leading-relaxed">
+              <p className="text-foreground/80 font-medium text-xs leading-relaxed">
                 {categoryData.constructions.join(" • ")}
               </p>
             </div>
 
             {/* Certifications */}
             <div className="space-y-1.5">
-              <span className="font-bold uppercase tracking-wider text-zinc-950 dark:text-white text-[11px] flex items-center gap-1.5">
+              <span className="font-bold uppercase tracking-wider text-foreground text-[11px] flex items-center gap-1.5">
                 <ShieldCheck className="w-3.5 h-3.5 text-accent" />
                 <span>Audits & Certifications</span>
               </span>
-              <p className="text-zinc-900 dark:text-zinc-100 font-medium text-xs leading-relaxed">
+              <p className="text-foreground/80 font-medium text-xs leading-relaxed">
                 {categoryData.certifications.join(" • ")}
               </p>
             </div>

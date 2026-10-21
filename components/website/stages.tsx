@@ -91,7 +91,8 @@ export function Stages() {
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.6, ease: "easeOut" }}
           >
-            <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground mb-2 sm:mb-4">
+            <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-primary flex items-center justify-center gap-1.5 mb-2 sm:mb-4">
+              <span className="w-1.5 h-1.5 rounded-full bg-primary" />
               How We Work
             </h2>
           </motion.div>
@@ -100,9 +101,9 @@ export function Stages() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
-            className="font-serif text-2xl sm:text-4xl md:text-5xl font-light tracking-tight"
+            className="font-serif text-2xl sm:text-4xl md:text-5xl font-light tracking-tight text-foreground"
           >
-            Twelve stages, start to finish.
+            Twelve stages, <span className="text-primary italic">start to finish</span><span className="text-primary">.</span>
           </motion.h3>
         </div>
 
@@ -119,7 +120,7 @@ export function Stages() {
               <div className="relative aspect-[4/3] w-full overflow-hidden rounded-lg sm:rounded-xl bg-muted mb-3 sm:mb-4 border border-border/40 shadow-xs sm:shadow-sm">
                 <NextImage
                   src={stage.image.src}
-                  alt={stage.title}
+                  alt={`Apparel production stage ${stage.num}: ${stage.title} - ${stage.description}`}
                   fill
                   className="object-cover object-center transition-all duration-700 group-hover:scale-105 opacity-90 group-hover:opacity-100 grayscale group-hover:grayscale-0"
                   sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"

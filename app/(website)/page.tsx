@@ -2,8 +2,18 @@ import { Metadata } from "next";
 import dynamic from "next/dynamic";
 
 export const metadata: Metadata = {
-  title: "Bangladesh Apparel Manufacturer & Supplier | Nisha Fashions Wear",
-  description: "Nisha Fashions Wear is a Bangladesh apparel manufacturer, supplier and sourcing partner for Knit, Woven, Denim and Sweater garments, serving international buyers.",
+  title: {
+    absolute: "Bangladesh Apparel Manufacturer, Supplier & Sourcing Partner | Nisha Fashions Wear",
+  },
+  description: "Nisha Fashions Wear is a premier Bangladesh apparel manufacturer, supplier and garment sourcing partner with 20+ years of export experience in Knit, Woven, Denim, and Sweaters.",
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title: "Bangladesh Apparel Manufacturer, Supplier & Sourcing Partner | Nisha Fashions Wear",
+    description: "Premier Bangladesh apparel manufacturer and garment sourcing partner serving international retail brands.",
+    url: "https://www.nishafashions.com",
+  },
 };
 import { Hero } from "@/components/website/hero";
 import { TrustStrip } from "@/components/website/trust-strip";
@@ -17,14 +27,20 @@ const ProductsWall = dynamic(() => import("@/components/website/products-wall").
 const Compliance = dynamic(() => import("@/components/website/compliance").then(m => m.Compliance));
 const GlobeWireframeDemo = dynamic(() => import("@/components/website/globe-wireframe-demo"));
 
-export default function Homepage() {
+import { getCategories, getPageContent } from "@/lib/content-service";
+
+export default async function Homepage() {
+  const categories = await getCategories();
+  const homeData = await getPageContent("home");
+  const heroContent = homeData?.content?.hero;
+
   return (
     <>
-      <Hero />
+      <Hero initialHero={heroContent} />
       <TrustStrip />
       <Partners />
       <Stages />
-      <Categories />
+      <Categories initialCatalog={categories} />
       <ProductsWall />
       <About />
       <Compliance />

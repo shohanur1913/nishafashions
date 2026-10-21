@@ -17,11 +17,12 @@ export function About() {
           className="max-w-4xl mx-auto text-center space-y-8 sm:space-y-12"
         >
           <div className="space-y-4">
-            <h2 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+            <h2 className="text-xs font-semibold uppercase tracking-widest text-primary flex items-center justify-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-primary" />
               Our Philosophy
             </h2>
             <h3 className="font-serif text-4xl sm:text-5xl md:text-6xl font-light text-foreground leading-tight tracking-tight">
-              Beyond Manufacturing.
+              Beyond <span className="text-primary italic">Manufacturing</span><span className="text-primary">.</span>
             </h3>
           </div>
           
@@ -39,7 +40,7 @@ export function About() {
           </div>
 
           <div className="pt-8">
-            <Button variant="outline" size="lg" className="rounded-full border-foreground text-foreground hover:bg-foreground hover:text-background uppercase tracking-widest font-semibold text-xs h-14 px-8" asChild>
+            <Button variant="outline" size="lg" className="rounded-full border-primary text-primary hover:bg-primary hover:text-primary-foreground uppercase tracking-widest font-semibold text-xs h-14 px-8 transition-colors" asChild>
               <Link href="/about">Read Our Full Story</Link>
             </Button>
           </div>

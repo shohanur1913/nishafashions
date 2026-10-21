@@ -29,11 +29,12 @@ export function ProductsWall() {
           transition={{ duration: 0.6, ease: "easeOut" }}
           className="space-y-3 sm:space-y-4"
         >
-          <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+          <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-primary flex items-center justify-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-primary" />
             Our Gallery
           </h2>
           <h3 className="font-serif text-2xl sm:text-4xl md:text-5xl font-light text-foreground leading-tight max-w-2xl mx-auto tracking-tight">
-            Featured Products
+            Featured <span className="text-primary italic">Products</span><span className="text-primary">.</span>
           </h3>
         </motion.div>
       </div>

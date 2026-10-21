@@ -17,10 +17,16 @@ export function Compliance() {
   ];
 
   return (
-    <section id="compliance" className="relative w-full py-10 sm:py-14 lg:py-16 bg-zinc-900 text-white overflow-hidden">
+    <section 
+      id="compliance" 
+      className="relative w-full py-12 sm:py-16 lg:py-20 text-white overflow-hidden bg-primary"
+      style={{ backgroundColor: "var(--brand, #E94D65)" }}
+    >
+      {/* Subtle depth gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/15 via-transparent to-black/25 pointer-events-none" />
       
       {/* DotField Background */}
-      <div className="absolute inset-0 z-0 opacity-40">
+      <div className="absolute inset-0 z-0 opacity-30 pointer-events-none">
         <DotField
           dotRadius={1.5}
           dotSpacing={16}
@@ -31,9 +37,9 @@ export function Compliance() {
           cursorRadius={400}
           cursorForce={0.1}
           bulgeOnly={true}
-          gradientFrom="#e4e4e7"
-          gradientTo="#a1a1aa"
-          glowColor="#18181b"
+          gradientFrom="#ffffff"
+          gradientTo="#ffffff"
+          glowColor="rgba(255, 255, 255, 0.45)"
         />
       </div>
 
@@ -49,22 +55,25 @@ export function Compliance() {
             className="space-y-8 order-2 lg:order-1"
           >
             <div className="space-y-4">
-              <h2 className="text-xs font-semibold uppercase tracking-widest text-zinc-400">
-                Ethics & Compliance
-              </h2>
-              <h3 className="font-serif text-3xl sm:text-4xl md:text-5xl font-light leading-tight">
+              <div>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-widest bg-white/20 text-white border border-white/30 backdrop-blur-xs">
+                  <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                  Ethics & Compliance
+                </span>
+              </div>
+              <h3 className="font-serif text-3xl sm:text-4xl md:text-5xl font-light leading-tight text-white">
                 Uncompromising <br className="hidden sm:block" />
                 Standards.
               </h3>
             </div>
             
-            <p className="text-base font-normal leading-7 text-zinc-300 max-w-2xl">
+            <p className="text-base font-normal leading-7 text-white/95 max-w-2xl">
               As a responsible Bangladesh garment manufacturer, we exclusively partner with factories that meet strict international compliance standards. 
               Ethical manufacturing and worker safety are non-negotiable baselines for every production run we manage as your apparel sourcing partner Bangladesh.
             </p>
 
-            <div className="pt-8 border-t border-zinc-800">
-              <h4 className="text-sm font-semibold uppercase tracking-widest text-zinc-500 mb-6">
+            <div className="pt-8 border-t border-white/25">
+              <h4 className="text-sm font-semibold uppercase tracking-widest text-white/90 mb-6">
                 Partner Facility Certifications
               </h4>
               <ul className="grid grid-cols-2 gap-4">
@@ -75,9 +84,9 @@ export function Compliance() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, margin: "-50px" }}
                     transition={{ duration: 0.4, delay: index * 0.1, ease: "easeOut" }}
-                    className="flex items-center text-base text-zinc-300"
+                    className="flex items-center text-base text-white font-medium"
                   >
-                    <span className="w-1.5 h-1.5 bg-zinc-600 rounded-full mr-3" />
+                    <span className="w-1.5 h-1.5 bg-white rounded-full mr-3 shrink-0" />
                     {cert}
                   </motion.li>
                 ))}
@@ -91,7 +100,7 @@ export function Compliance() {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="relative aspect-video lg:aspect-square w-full overflow-hidden order-1 lg:order-2 bg-zinc-900 rounded-xl"
+            className="relative aspect-video lg:aspect-square w-full overflow-hidden order-1 lg:order-2 bg-black/25 rounded-2xl border border-white/20 shadow-2xl backdrop-blur-sm"
           >
             <HalftoneReveal
               src={typeof images.export.src === 'string' ? images.export.src : images.export.src.src}

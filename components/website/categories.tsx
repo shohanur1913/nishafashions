@@ -6,10 +6,11 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { ChoiceChips, ChoiceChip } from "@/components/ui/choice-chips";
 import { ArrowRight } from "lucide-react";
-import { categoriesCatalog } from "@/lib/content/categories";
+import { categoriesCatalog, CategoryData } from "@/lib/content/categories";
 
-export function Categories() {
+export function Categories({ initialCatalog = categoriesCatalog }: { initialCatalog?: CategoryData[] }) {
   const [activeFilter, setActiveFilter] = useState<string[]>(["all"]);
+  const catalog = initialCatalog && initialCatalog.length > 0 ? initialCatalog : categoriesCatalog;
 
   return (
     <section id="categories" className="w-full py-10 sm:py-14 lg:py-16 bg-background border-t border-border/40">
@@ -21,11 +22,12 @@ export function Categories() {
           transition={{ duration: 0.6, ease: "easeOut" }}
           className="flex flex-col items-center justify-center text-center mb-8 sm:mb-10 space-y-3 sm:space-y-4"
         >
-          <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+          <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-primary flex items-center justify-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-primary" />
             Product Capabilities
           </h2>
           <h3 className="font-serif text-2xl sm:text-4xl md:text-5xl font-light text-foreground leading-tight max-w-2xl tracking-tight">
-            Specialized engineering for every category.
+            Specialized engineering for every <span className="text-primary italic">category</span><span className="text-primary">.</span>
           </h3>
         </motion.div>
 
@@ -46,8 +48,8 @@ export function Categories() {
             clearable={false}
             className="justify-center"
           >
-            <ChoiceChip value="all" count={categoriesCatalog.length}>All</ChoiceChip>
-            {categoriesCatalog.map(c => (
+            <ChoiceChip value="all" count={catalog.length}>All</ChoiceChip>
+            {catalog.map(c => (
               <ChoiceChip key={c.slug} value={c.slug} count={1}>{c.title}</ChoiceChip>
             ))}
           </ChoiceChips>
@@ -55,7 +57,7 @@ export function Categories() {
 
         {/* 5 columns per line on desktop, square images, linking to /categories/[slug] */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-x-3 gap-y-6 sm:gap-4 lg:gap-6">
-          {categoriesCatalog
+          {catalog
             .filter((category) => activeFilter.includes("all") || activeFilter.includes(category.slug))
             .map((category, index) => (
             <motion.div

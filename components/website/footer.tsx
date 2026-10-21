@@ -35,9 +35,9 @@ export function Footer() {
           <div className="lg:col-span-5 space-y-5 sm:space-y-10">
             <div>
               <img 
-                src="https://www.nishafashions.com/wp-content/uploads/2022/11/nfw_logo3.jpg" 
-                alt="Nisha Fashions Wear" 
-                className="h-10 sm:h-12 w-auto object-contain mb-3 sm:mb-6 bg-white/10 p-1.5 sm:p-2 rounded"
+                src="/images/logo.jpg" 
+                alt="Nisha Fashions Wear - Bangladesh Apparel Manufacturer and Sourcing Partner" 
+                className="h-10 sm:h-12 w-auto object-contain mb-3 sm:mb-6 bg-white p-1.5 sm:p-2 rounded"
               />
               <p className="text-zinc-400 text-base sm:text-lg max-w-md leading-relaxed">
                 {site.tagline}. A trusted Bangladesh apparel supplier offering comprehensive garment sourcing Bangladesh solutions globally for over 20 years.
@@ -171,10 +171,31 @@ export function Footer() {
           <p>
             &copy; {new Date().getFullYear()} Nisha Fashions Wear. All rights reserved.
           </p>
+          <p className="text-zinc-400 flex items-center justify-center flex-wrap gap-1">
+            <span>Developed by</span>
+            <a
+              href="https://niloy.io"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-zinc-300 hover:text-primary transition-colors font-medium"
+            >
+              Niloy
+            </a>
+            <span className="mx-1.5 text-zinc-600">•</span>
+            <span>Powered by</span>
+            <a
+              href="https://bangladeshhost.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-zinc-300 hover:text-primary transition-colors font-medium"
+            >
+              Bangladesh Host
+            </a>
+          </p>
           <div className="flex items-center gap-4 sm:gap-6">
-            <Link href="#" className="hover:text-zinc-300 transition-colors">Privacy Policy</Link>
-            <Link href="#" className="hover:text-zinc-300 transition-colors">Terms of Service</Link>
-            <Link href="#" className="hover:text-zinc-300 transition-colors">LinkedIn</Link>
+            <Link href="/privacy-policy" className="hover:text-zinc-300 transition-colors">Privacy Policy</Link>
+            <Link href="/terms-of-service" className="hover:text-zinc-300 transition-colors">Terms of Service</Link>
+            <a href="https://www.linkedin.com/company/nisha-fashions-wear" target="_blank" rel="noopener noreferrer" className="hover:text-zinc-300 transition-colors">LinkedIn</a>
           </div>
         </div>
       </div>

@@ -5,16 +5,16 @@ import { motion } from 'framer-motion';
 
 export default function GlobeWireframeDemo() {
   return (
-    <div className='relative w-full h-[460px] sm:h-[680px] overflow-hidden bg-background border-t border-border/40'>
-      <div className='relative z-10 flex flex-col items-center pt-4 sm:pt-10 text-center px-4'>
+    <div className='relative w-full h-[480px] sm:h-[680px] overflow-hidden bg-background border-t border-border/40'>
+      <div className='relative z-10 flex flex-col items-center pt-6 sm:pt-10 text-center px-4'>
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className='font-serif font-light tracking-tight leading-tight text-foreground text-4xl sm:text-6xl md:text-7xl max-w-3xl'
+          className='font-serif font-light tracking-tight leading-tight text-foreground text-3xl sm:text-5xl md:text-6xl lg:text-7xl max-w-3xl'
         >
-          <span className='block mb-2'>Connecting the World</span>
+          <span className='block mb-1 sm:mb-2'>Connecting the World</span>
           <span className='block text-muted-foreground'>Through Innovation</span>
         </motion.h2>
         <motion.p 
@@ -22,14 +22,14 @@ export default function GlobeWireframeDemo() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-          className="mt-4 sm:mt-8 text-base sm:text-xl text-muted-foreground font-light max-w-2xl mx-auto leading-relaxed"
+          className="mt-3 sm:mt-8 text-sm sm:text-xl text-muted-foreground font-light max-w-2xl mx-auto leading-relaxed"
         >
           We offer comprehensive worldwide delivery and end-to-end logistics solutions. From our manufacturing facilities directly to your global distribution centers, we ensure your apparel arrives on time, fully compliant, and in pristine condition.
         </motion.p>
       </div>
 
       <div 
-        className='absolute bottom-[-55%] sm:bottom-[-40%] md:bottom-[-45%] lg:bottom-[-50%] left-1/2 w-[150%] sm:w-[110%] md:w-[90%] lg:w-[70%] -translate-x-1/2 aspect-square'
+        className='absolute bottom-[-45%] sm:bottom-[-40%] md:bottom-[-45%] lg:bottom-[-50%] left-1/2 w-[140%] sm:w-[110%] md:w-[90%] lg:w-[70%] -translate-x-1/2 aspect-square'
         style={{ WebkitMaskImage: 'linear-gradient(to bottom, transparent 10%, black 40%)', maskImage: 'linear-gradient(to bottom, transparent 10%, black 40%)' }}
       >
         <GlobeWireframe className='w-full aspect-square opacity-80' variant='solid' scale={0.9} />

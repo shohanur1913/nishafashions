@@ -14,6 +14,8 @@ const whatsappMessage =
 export const site = {
   name: "Nisha Fashions Wear",
   shortName: "NFW",
+  brandColor: "#E94D65",
+  themeColor: "#E94D65",
   tagline: "Bangladesh Apparel Supplier & Sourcing Partner",
   categoriesLine: ["Knit", "Woven", "Denim", "Sweater"],
   footerRange: ["Knitwear", "Woven", "Denim", "Sweater", "Sportswear", "Outerwear"],
@@ -31,6 +33,16 @@ export const site = {
     locality: "Dhaka",
     postalCode: "1209",
     countryCode: "BD",
+  },
+  banking: {
+    bankName: "Premier Bank Ltd.",
+    branch: "Dhanmondi Branch",
+    address: "House # 84 (1st Floor), Road # 7/A, Dhanmondi",
+    swift: "PRMRBDDH",
+    tel: "9143081, 8124746, 9145186",
+    fax: "+880-2-9112395",
+    email: "prebank@bangla.net",
+    logoUrl: "/images/premier-bank-logo.png",
   },
 } as const;
 

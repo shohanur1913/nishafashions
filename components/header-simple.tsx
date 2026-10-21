@@ -57,8 +57,8 @@ export function HeaderSimple({
   ctaShow = true,
   ctaText = "Get a Quote",
   ctaUrl = "#",
-  ctaBackground = "var(--foreground)",
-  ctaTextColor = "var(--background)",
+  ctaBackground = "var(--brand, #E94D65)",
+  ctaTextColor = "#ffffff",
   ctaRadius = 99,
   ctaFontSize = 14,
   ctaFontWeight = 600,
@@ -148,13 +148,13 @@ export function HeaderSimple({
         className="relative z-[2] box-border flex items-center justify-between overflow-visible mx-auto max-w-screen-2xl"
         style={{
           height: headerHeight,
-          padding: `0 ${horizontalPadding}px`,
+          padding: isMobile ? "0 16px" : `0 ${horizontalPadding}px`,
           borderBottom: showBorder ? `1px solid var(--border)` : "none",
         }}
       >
         <Link href={logoUrl || "/"} onClick={close} className="flex shrink-0 items-center gap-2.5 no-underline">
-          {logoImage ? <img src={logoImage} alt={logoText || ""} className="block w-auto" style={{ height: logoSize }} /> : (
-            <span className="leading-none font-bold select-none" style={{ fontSize: 18, color: textColor, letterSpacing: -0.3 }}>
+          {logoImage ? <img src={logoImage} alt={logoText || ""} className="block w-auto" style={{ height: isMobile ? 38 : logoSize }} /> : (
+            <span className="leading-none font-bold select-none" style={{ fontSize: isMobile ? 16 : 18, color: textColor, letterSpacing: -0.3 }}>
               {logoText}
             </span>
           )}
@@ -240,12 +240,12 @@ export function HeaderSimple({
           </nav>
         )}
 
-        <div className="flex shrink-0 items-center gap-6">
+        <div className="flex shrink-0 items-center gap-3 sm:gap-5">
           {showInlineCTA && (
-            <div className="flex items-center gap-6">
-              <a href="https://wa.me/8801715645766" target="_blank" rel="noreferrer" className="flex items-center gap-2 text-green-600 dark:text-green-500 hover:text-green-700 dark:hover:text-green-400 transition-colors">
-                <MessageSquare className="w-4 h-4" />
-                <span className="text-xs font-bold tracking-wide">+88 01715 645766</span>
+            <div className="flex items-center gap-3 sm:gap-5">
+              <a href="https://wa.me/8801715645766" target="_blank" rel="noreferrer" className="flex items-center gap-2 text-emerald-600 hover:text-emerald-700 transition-colors">
+                <MessageSquare className="w-4 h-4 shrink-0" />
+                <span className="text-xs font-bold tracking-wide hidden xl:inline">+88 01715 645766</span>
               </a>
               {ctaShow && ctaText && ctaButton}
             </div>
@@ -258,7 +258,7 @@ export function HeaderSimple({
               transition={{ duration: 0.12 }}
               aria-label={isOpen ? "Close menu" : "Open menu"}
               aria-expanded={isOpen}
-              className="relative flex h-[42px] w-[42px] shrink-0 cursor-pointer items-center justify-center rounded-full border-none outline-none dark:bg-zinc-800 bg-zinc-100"
+              className="relative flex h-[42px] w-[42px] shrink-0 cursor-pointer items-center justify-center rounded-full border border-border/60 outline-none bg-muted/60 hover:bg-muted"
             >
               <motion.span
                 animate={{ rotate: isOpen ? 45 : 0, y: isOpen ? 0 : -3.5 }}
@@ -344,7 +344,7 @@ export function HeaderSimple({
                 <Link href="/contact" onClick={close} className="py-3 text-base font-semibold text-foreground hover:text-accent border-b border-border mb-4">Contact</Link>
 
                 <div className="flex flex-col gap-4 mt-2">
-                  <a href="https://wa.me/8801715645766" className="flex items-center justify-center gap-2 text-green-600 dark:text-green-500 py-2">
+                  <a href="https://wa.me/8801715645766" className="flex items-center justify-center gap-2 text-emerald-600 py-2">
                     <MessageSquare className="w-5 h-5" />
                     <span className="font-bold">+88 01715 645766</span>
                   </a>
