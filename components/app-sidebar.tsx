@@ -79,7 +79,7 @@ const data = {
     },
     {
       title: "Get Help",
-      url: "https://niloy.io/message",
+      url: "/admin/support",
       icon: IconHelp,
     },
     {
@@ -122,16 +122,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavUser user={data.user} />
         <div className="pt-1.5 border-t border-sidebar-border/60 text-[11px] text-muted-foreground text-center leading-normal pb-0.5 px-2">
           <p className="flex items-center justify-center flex-wrap gap-1">
-            <span>Developed by</span>
-            <a 
-              href="https://niloy.io" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="font-medium text-foreground hover:text-primary transition-colors"
-            >
-              Niloy
-            </a>
-            <span className="opacity-40">•</span>
             <span>Powered by</span>
             <a 
               href="https://bangladeshhost.com" 
@@ -139,7 +129,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               rel="noopener noreferrer" 
               className="font-medium text-foreground hover:text-primary transition-colors"
             >
-              Bangladesh Host
+              bangladeshhost.com
             </a>
           </p>
         </div>

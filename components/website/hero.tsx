@@ -75,7 +75,7 @@ export function Hero({ initialHero }: { initialHero?: HeroData }) {
           part.toLowerCase() === "nisha fashions wear" ? (
             <span
               key={i}
-              className="font-bold text-primary text-lg sm:text-2xl tracking-tight inline"
+              className="font-bold text-white text-lg sm:text-2xl tracking-tight inline drop-shadow-xs"
             >
               {part}
             </span>
@@ -126,8 +126,8 @@ export function Hero({ initialHero }: { initialHero?: HeroData }) {
           transition={{ duration: 0.7, delay: 0.1, ease: "easeOut" }}
           className="mb-3 sm:mb-4"
         >
-          <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] font-semibold uppercase tracking-[0.2em] bg-primary/15 text-primary border border-primary/30 shadow-xs backdrop-blur-md">
-            <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+          <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] font-semibold uppercase tracking-[0.2em] bg-white/10 text-white border border-white/20 shadow-xs backdrop-blur-md">
+            <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
             Apparel Manufacturing &amp; Export Partner
           </span>
         </motion.div>

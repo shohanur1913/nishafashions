@@ -245,21 +245,14 @@ export default function AdminLoginPage() {
                 Password Recovery
               </h3>
               <p className="text-xs text-zinc-500 leading-relaxed">
-                For security reasons, password resets are verified manually. Please contact developer Niloy at{" "}
+                For security reasons, password resets are verified manually. Please contact technical support or visit{" "}
                 <a 
-                  href="mailto:hello@niloy.io?subject=Nisha%20Fashions%20CMS%20Password%20Reset"
-                  className="text-primary font-medium"
-                >
-                  hello@niloy.io
-                </a>
-                {" "}or visit{" "}
-                <a 
-                  href="https://niloy.io" 
+                  href="https://bangladeshhost.com" 
                   target="_blank" 
                   rel="noopener noreferrer" 
                   className="text-primary font-medium"
                 >
-                  niloy.io
+                  bangladeshhost.com
                 </a>.
               </p>
             </div>
@@ -277,16 +270,6 @@ export default function AdminLoginPage() {
       {/* Bottom Legal Footer */}
       <div className="relative z-10 w-full max-w-md mx-auto text-center text-xs text-zinc-500 mt-4 sm:mt-6">
         <p className="flex items-center justify-center flex-wrap gap-1">
-          <span>Developed by</span>
-          <a 
-            href="https://niloy.io" 
-            target="_blank" 
-            rel="noopener noreferrer" 
-            className="font-medium text-zinc-700 hover:text-primary transition-colors"
-          >
-            Niloy
-          </a>
-          <span className="text-zinc-300">•</span>
           <span>Powered by</span>
           <a 
             href="https://bangladeshhost.com" 
@@ -294,7 +277,7 @@ export default function AdminLoginPage() {
             rel="noopener noreferrer" 
             className="font-medium text-zinc-700 hover:text-primary transition-colors"
           >
-            Bangladesh Host
+            bangladeshhost.com
           </a>
         </p>
       </div>

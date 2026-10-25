@@ -172,16 +172,6 @@ export function Footer({ logoImage }: { logoImage?: string }) {
             &copy; {new Date().getFullYear()} Nisha Fashions Wear. All rights reserved.
           </p>
           <p className="text-zinc-400 flex items-center justify-center flex-wrap gap-1">
-            <span>Developed by</span>
-            <a
-              href="https://niloy.io"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-zinc-300 hover:text-primary transition-colors font-medium"
-            >
-              Niloy
-            </a>
-            <span className="mx-1.5 text-zinc-600">•</span>
             <span>Powered by</span>
             <a
               href="https://bangladeshhost.com"
@@ -189,7 +179,7 @@ export function Footer({ logoImage }: { logoImage?: string }) {
               rel="noopener noreferrer"
               className="text-zinc-300 hover:text-primary transition-colors font-medium"
             >
-              Bangladesh Host
+              bangladeshhost.com
             </a>
           </p>
           <div className="flex items-center gap-4 sm:gap-6">

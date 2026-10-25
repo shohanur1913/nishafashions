@@ -37,25 +37,25 @@ export default async function AdminSupportPage() {
                   <span className="text-xs font-semibold text-foreground">Email Support</span>
                 </div>
                 <a 
-                  href="mailto:hello@niloy.io" 
+                  href="mailto:support@bangladeshhost.com" 
                   className="text-xs font-mono text-primary hover:underline block"
                 >
-                  hello@niloy.io
+                  support@bangladeshhost.com
                 </a>
               </div>
 
               <div className="p-4 rounded-xl bg-muted/30 border border-border space-y-2">
                 <div className="flex items-center gap-2">
                   <Globe className="w-4 h-4 text-primary" />
-                  <span className="text-xs font-semibold text-foreground">Website</span>
+                  <span className="text-xs font-semibold text-foreground">Infrastructure Support</span>
                 </div>
                 <a 
-                  href="https://niloy.io" 
+                  href="https://bangladeshhost.com" 
                   target="_blank" 
                   rel="noopener noreferrer" 
                   className="text-xs font-mono text-primary hover:underline block"
                 >
-                  niloy.io
+                  bangladeshhost.com
                 </a>
               </div>
             </div>
