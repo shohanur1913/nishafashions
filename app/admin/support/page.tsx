@@ -50,12 +50,12 @@ export default async function AdminSupportPage() {
                   <span className="text-xs font-semibold text-foreground">Infrastructure Support</span>
                 </div>
                 <a 
-                  href="https://bangladeshhost.com" 
+                  href="https://bangladeshhost.com/" 
                   target="_blank" 
                   rel="noopener noreferrer" 
                   className="text-xs font-mono text-primary hover:underline block"
                 >
-                  bangladeshhost.com
+                  Bangladesh Host
                 </a>
               </div>
             </div>

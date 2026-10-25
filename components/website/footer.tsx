@@ -174,12 +174,12 @@ export function Footer({ logoImage }: { logoImage?: string }) {
           <p className="text-zinc-400 flex items-center justify-center flex-wrap gap-1">
             <span>Powered by</span>
             <a
-              href="https://bangladeshhost.com"
+              href="https://bangladeshhost.com/"
               target="_blank"
               rel="noopener noreferrer"
               className="text-zinc-300 hover:text-primary transition-colors font-medium"
             >
-              bangladeshhost.com
+              Bangladesh Host
             </a>
           </p>
           <div className="flex items-center gap-4 sm:gap-6">

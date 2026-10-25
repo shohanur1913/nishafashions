@@ -124,12 +124,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <p className="flex items-center justify-center flex-wrap gap-1">
             <span>Powered by</span>
             <a 
-              href="https://bangladeshhost.com" 
+              href="https://bangladeshhost.com/" 
               target="_blank" 
               rel="noopener noreferrer" 
               className="font-medium text-foreground hover:text-primary transition-colors"
             >
-              bangladeshhost.com
+              Bangladesh Host
             </a>
           </p>
         </div>

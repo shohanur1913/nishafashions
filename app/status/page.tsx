@@ -7,7 +7,7 @@ export const revalidate = 0;
 
 export const metadata: Metadata = {
   title: "System Status | Nisha Fashions Wear",
-  description: "Live system health and service availability for Nisha Fashions Wear. Infrastructure powered by bangladeshhost.com",
+  description: "Live system health and service availability for Nisha Fashions Wear. Infrastructure powered by Bangladesh Host",
   robots: {
     index: false,
     follow: false,

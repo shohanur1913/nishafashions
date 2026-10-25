@@ -247,12 +247,12 @@ export default function AdminLoginPage() {
               <p className="text-xs text-zinc-500 leading-relaxed">
                 For security reasons, password resets are verified manually. Please contact technical support or visit{" "}
                 <a 
-                  href="https://bangladeshhost.com" 
+                  href="https://bangladeshhost.com/" 
                   target="_blank" 
                   rel="noopener noreferrer" 
                   className="text-primary font-medium"
                 >
-                  bangladeshhost.com
+                  Bangladesh Host
                 </a>.
               </p>
             </div>
@@ -272,12 +272,12 @@ export default function AdminLoginPage() {
         <p className="flex items-center justify-center flex-wrap gap-1">
           <span>Powered by</span>
           <a 
-            href="https://bangladeshhost.com" 
+            href="https://bangladeshhost.com/" 
             target="_blank" 
             rel="noopener noreferrer" 
             className="font-medium text-zinc-700 hover:text-primary transition-colors"
           >
-            bangladeshhost.com
+            Bangladesh Host
           </a>
         </p>
       </div>

@@ -249,12 +249,12 @@ export function StatusClient({ initialData }: { initialData: StatusData }) {
           <p className="flex items-center justify-center gap-1 text-zinc-400">
             <span>Powered by</span>
             <a 
-              href="https://bangladeshhost.com" 
+              href="https://bangladeshhost.com/" 
               target="_blank" 
               rel="noopener noreferrer" 
               className="text-zinc-200 hover:text-primary transition-colors font-medium underline-offset-4 hover:underline"
             >
-              bangladeshhost.com
+              Bangladesh Host
             </a>
           </p>
         </div>
