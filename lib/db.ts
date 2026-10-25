@@ -2,17 +2,30 @@ import mysql from "mysql2/promise";
 import bcrypt from "bcryptjs";
 import { initialCategories } from "@/lib/seed-data";
 
+// SSL configuration helper for cloud databases (TiDB Cloud Serverless strictly requires TLS)
+const useSsl =
+  process.env.DB_SSL === "true" ||
+  Boolean(process.env.DB_HOST && process.env.DB_HOST.includes("tidbcloud.com"));
+
+const sslConfig = useSsl
+  ? {
+      minVersion: "TLSv1.2",
+      rejectUnauthorized: true,
+    }
+  : undefined;
+
 // Create MySQL connection pool
 const pool = mysql.createPool({
   host: process.env.DB_HOST || "127.0.0.1",
   port: Number(process.env.DB_PORT) || 3306,
   user: process.env.DB_USER || "root",
   password: process.env.DB_PASSWORD || "",
-  database: process.env.DB_NAME || "nishafashions",
+  database: process.env.DB_NAME || "test",
+  ssl: sslConfig,
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
-  connectTimeout: 8000,
+  connectTimeout: 10000,
 });
 
 let isInitialized = false;
@@ -42,7 +55,8 @@ export async function checkDatabaseHealth(): Promise<{
       user: process.env.DB_USER || "root",
       password: process.env.DB_PASSWORD || "",
       database,
-      connectTimeout: 6000,
+      ssl: sslConfig,
+      connectTimeout: 8000,
     });
 
     await testConn.query("SELECT 1 as alive");
