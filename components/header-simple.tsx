@@ -6,6 +6,7 @@ import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import Link from "next/link";
 import { ChevronDown, ArrowRight, MessageSquare } from "lucide-react";
+import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
 import { openQuoteModal } from "@/components/website/quote-modal";
 
 function cn(...inputs: ClassValue[]) {
@@ -243,8 +244,8 @@ export function HeaderSimple({
         <div className="flex shrink-0 items-center gap-3 sm:gap-5">
           {showInlineCTA && (
             <div className="flex items-center gap-3 sm:gap-5">
-              <a href="https://wa.me/8801715645766" target="_blank" rel="noreferrer" className="flex items-center gap-2 text-emerald-600 hover:text-emerald-700 transition-colors">
-                <MessageSquare className="w-4 h-4 shrink-0" />
+              <a href="https://wa.me/8801715645766" target="_blank" rel="noreferrer" className="flex items-center gap-2 text-emerald-600 hover:text-emerald-700 transition-colors" title="Chat on WhatsApp (+88 01715 645766)">
+                <WhatsAppIcon className="w-5 h-5 sm:w-6 sm:h-6 shrink-0" fill="#25D366" />
                 <span className="text-xs font-bold tracking-wide hidden xl:inline">+88 01715 645766</span>
               </a>
               {ctaShow && ctaText && ctaButton}
@@ -344,9 +345,9 @@ export function HeaderSimple({
                 <Link href="/contact" onClick={close} className="py-3 text-base font-semibold text-foreground hover:text-accent border-b border-border mb-4">Contact</Link>
 
                 <div className="flex flex-col gap-4 mt-2">
-                  <a href="https://wa.me/8801715645766" className="flex items-center justify-center gap-2 text-emerald-600 py-2">
-                    <MessageSquare className="w-5 h-5" />
-                    <span className="font-bold">+88 01715 645766</span>
+                  <a href="https://wa.me/8801715645766" className="flex items-center justify-center gap-2.5 text-emerald-600 py-2">
+                    <WhatsAppIcon className="w-6 h-6 shrink-0" fill="#25D366" />
+                    <span className="font-bold text-base">+88 01715 645766</span>
                   </a>
                   {ctaButton}
                 </div>

@@ -1,9 +1,24 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { saveProductAction, deleteProductAction } from "@/actions/admin";
-import { Plus, Search, Edit3, Trash2, CheckCircle2, Star, Shirt, X, Save } from "lucide-react";
+import { saveProductAction, deleteProductAction, toggleProductHotDealAction } from "@/actions/admin";
+import {
+  Plus,
+  Search,
+  Edit3,
+  Trash2,
+  Star,
+  Shirt,
+  X,
+  Save,
+  Upload,
+  ImageIcon,
+  Loader2,
+  RefreshCw,
+  Flame,
+} from "lucide-react";
+import { RichTextEditor } from "@/components/admin/rich-text-editor";
 
 interface ProductsClientProps {
   initialProducts: any[];
@@ -16,7 +31,6 @@ export function ProductsClient({ initialProducts, categories }: ProductsClientPr
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [search, setSearch] = useState("");
 
-  // Modal / Drawer state for adding or editing
   const [modalOpen, setModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<any | null>(null);
 
@@ -29,9 +43,20 @@ export function ProductsClient({ initialProducts, categories }: ProductsClientPr
     specs: "",
     image_src: "",
     is_featured: false,
+    is_hot_deal: false,
+    offer_price: "",
+    original_price: "",
+    deal_badge: "",
   });
 
   const [saving, setSaving] = useState(false);
+  const [togglingId, setTogglingId] = useState<number | null>(null);
+
+  // Image upload state
+  const [imageUploading, setImageUploading] = useState(false);
+  const [imageUploadError, setImageUploadError] = useState<string | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const openAddModal = () => {
     setEditingProduct(null);
@@ -44,7 +69,13 @@ export function ProductsClient({ initialProducts, categories }: ProductsClientPr
       specs: "",
       image_src: "",
       is_featured: false,
+      is_hot_deal: false,
+      offer_price: "",
+      original_price: "",
+      deal_badge: "HOT DEAL",
     });
+    setImagePreview("");
+    setImageUploadError(null);
     setModalOpen(true);
   };
 
@@ -59,14 +90,69 @@ export function ProductsClient({ initialProducts, categories }: ProductsClientPr
       specs: p.specs || "",
       image_src: p.image_src || "",
       is_featured: Boolean(p.is_featured),
+      is_hot_deal: Boolean(p.is_hot_deal),
+      offer_price: p.offer_price || "",
+      original_price: p.original_price || "",
+      deal_badge: p.deal_badge || "",
     });
+    setImagePreview(p.image_src || "");
+    setImageUploadError(null);
     setModalOpen(true);
+  };
+
+  const handleToggleHotDeal = async (productId: number, newStatus: boolean) => {
+    setTogglingId(productId);
+    try {
+      await toggleProductHotDealAction(productId, newStatus);
+      setProducts((prev) =>
+        prev.map((p) => (p.id === productId ? { ...p, is_hot_deal: newStatus } : p))
+      );
+      router.refresh();
+    } catch (err: any) {
+      alert("Failed to update Hot Deal status: " + err.message);
+    } finally {
+      setTogglingId(null);
+    }
+  };
+
+  const handleImageUpload = async (file: File) => {
+    setImageUploading(true);
+    setImageUploadError(null);
+
+    const fd = new FormData();
+    fd.append("file", file);
+
+    try {
+      const res = await fetch("/api/upload", { method: "POST", body: fd });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setFormData((prev) => ({ ...prev, image_src: data.url }));
+        setImagePreview(data.url);
+      } else {
+        setImageUploadError(data.error || "Upload failed");
+      }
+    } catch (err: any) {
+      setImageUploadError(err.message || "Upload failed");
+    } finally {
+      setImageUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
+
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) handleImageUpload(file);
   };
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSaving(true);
 
+    if (!formData.image_src) {
+      setImageUploadError("Product image is required. Please upload an image.");
+      return;
+    }
+
+    setSaving(true);
     try {
       const res = await saveProductAction(formData);
       if (res.success) {
@@ -106,7 +192,6 @@ export function ProductsClient({ initialProducts, categories }: ProductsClientPr
     <div className="space-y-6">
       {/* Top Filter and Search Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        {/* Search Input */}
         <div className="relative w-full sm:w-80">
           <input
             type="text"
@@ -118,7 +203,6 @@ export function ProductsClient({ initialProducts, categories }: ProductsClientPr
           <Search className="w-4 h-4 text-muted-foreground absolute left-3 top-3" />
         </div>
 
-        {/* Action Button */}
         <button
           onClick={openAddModal}
           className="px-4 py-2.5 rounded-xl bg-foreground text-background font-semibold text-xs uppercase tracking-wider hover:bg-foreground/90 transition-all flex items-center gap-2 shadow-xs cursor-pointer shrink-0"
@@ -167,13 +251,14 @@ export function ProductsClient({ initialProducts, categories }: ProductsClientPr
               <th className="py-3 px-4">Category</th>
               <th className="py-3 px-4">Specifications</th>
               <th className="py-3 px-4">Badge</th>
+              <th className="py-3 px-4 text-center">Hot Deal</th>
               <th className="py-3 px-4 text-right">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border/40">
             {filtered.length === 0 ? (
               <tr>
-                <td colSpan={5} className="py-12 text-center text-xs text-muted-foreground">
+                <td colSpan={6} className="py-12 text-center text-xs text-muted-foreground">
                   No products found matching your search.
                 </td>
               </tr>
@@ -226,6 +311,23 @@ export function ProductsClient({ initialProducts, categories }: ProductsClientPr
                     ) : (
                       <span className="text-[11px] text-muted-foreground">—</span>
                     )}
+                  </td>
+
+                  <td className="py-3.5 px-4 text-center">
+                    <button
+                      type="button"
+                      onClick={() => handleToggleHotDeal(p.id, !p.is_hot_deal)}
+                      disabled={togglingId === p.id}
+                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all cursor-pointer ${
+                        p.is_hot_deal
+                          ? "bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/30 hover:bg-rose-500/25 shadow-2xs"
+                          : "bg-muted text-muted-foreground border border-border/60 hover:bg-muted/80 opacity-60 hover:opacity-100"
+                      }`}
+                      title={p.is_hot_deal ? "Hot Deal enabled. Click to disable." : "Click to enable as Hot Deal"}
+                    >
+                      <Flame className={`w-3.5 h-3.5 ${p.is_hot_deal ? "text-rose-500 fill-rose-500" : "opacity-40"}`} />
+                      <span>{p.is_hot_deal ? (p.offer_price ? `${p.offer_price}` : "Deal On") : "Deal Off"}</span>
+                    </button>
                   </td>
 
                   <td className="py-3.5 px-4 text-right">
@@ -300,6 +402,84 @@ export function ProductsClient({ initialProducts, categories }: ProductsClientPr
                 </div>
               </div>
 
+              {/* Product Image Upload — Required */}
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-foreground block">
+                  Product Image <span className="text-red-500">*</span>
+                </label>
+
+                {/* Preview + Upload zone */}
+                <div className="flex items-start gap-4">
+                  {/* Image Preview */}
+                  <div className="w-24 h-24 rounded-xl border-2 border-dashed border-border bg-muted/40 overflow-hidden shrink-0 flex items-center justify-center">
+                    {imageUploading ? (
+                      <Loader2 className="w-6 h-6 text-muted-foreground animate-spin" />
+                    ) : imagePreview ? (
+                      <img
+                        src={imagePreview}
+                        alt="Preview"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <ImageIcon className="w-7 h-7 text-muted-foreground/40" />
+                    )}
+                  </div>
+
+                  {/* Upload controls */}
+                  <div className="flex-1 space-y-2">
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp,image/avif,image/svg+xml"
+                      onChange={handleFileInputChange}
+                      disabled={imageUploading}
+                      className="hidden"
+                      id="product-image-upload"
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={imageUploading}
+                      className="w-full px-3.5 py-2.5 rounded-xl border-2 border-dashed border-border hover:border-foreground/40 bg-background hover:bg-muted/30 text-xs font-medium text-muted-foreground hover:text-foreground transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {imageUploading ? (
+                        <>
+                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                          <span>Uploading...</span>
+                        </>
+                      ) : imagePreview ? (
+                        <>
+                          <RefreshCw className="w-3.5 h-3.5" />
+                          <span>Replace Image</span>
+                        </>
+                      ) : (
+                        <>
+                          <Upload className="w-3.5 h-3.5" />
+                          <span>Upload Product Image</span>
+                        </>
+                      )}
+                    </button>
+
+                    {imagePreview && !imageUploading && (
+                      <p className="text-[10px] text-muted-foreground font-mono truncate px-1">
+                        {formData.image_src}
+                      </p>
+                    )}
+
+                    {!imagePreview && !imageUploading && (
+                      <p className="text-[10px] text-muted-foreground px-1">
+                        Accepted: JPG, PNG, WebP, AVIF, SVG
+                      </p>
+                    )}
+
+                    {imageUploadError && (
+                      <p className="text-[11px] text-red-500 font-medium px-1">{imageUploadError}</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <label className="text-xs font-medium text-foreground block">Badge / Pill</label>
@@ -313,40 +493,90 @@ export function ProductsClient({ initialProducts, categories }: ProductsClientPr
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-foreground block">Image URL / Path</label>
+                  <label className="text-xs font-medium text-foreground block">Fabric / Material Specifications</label>
                   <input
                     type="text"
-                    value={formData.image_src}
-                    onChange={(e) => setFormData({ ...formData, image_src: e.target.value })}
-                    placeholder="/images/category-knit.png"
-                    className="w-full px-3.5 py-2 bg-background border border-border rounded-xl text-xs text-foreground font-mono focus:outline-none focus:border-foreground"
+                    value={formData.specs}
+                    onChange={(e) => setFormData({ ...formData, specs: e.target.value })}
+                    placeholder="e.g. 200–240 GSM Honeycomb Pique, 100% Cotton"
+                    className="w-full px-3.5 py-2 bg-background border border-border rounded-xl text-xs text-foreground focus:outline-none focus:border-foreground"
                   />
                 </div>
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-foreground block">Fabric / Material Specifications</label>
-                <input
-                  type="text"
-                  value={formData.specs}
-                  onChange={(e) => setFormData({ ...formData, specs: e.target.value })}
-                  placeholder="e.g. 200–240 GSM Honeycomb Pique, 100% Cotton"
-                  className="w-full px-3.5 py-2 bg-background border border-border rounded-xl text-xs text-foreground focus:outline-none focus:border-foreground"
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="text-xs font-medium text-foreground block">Manufacturing Details & Seams</label>
-                <textarea
-                  rows={3}
+                <label className="text-xs font-medium text-foreground block">
+                  Product Description &amp; Specifications (Rich Text)
+                </label>
+                <RichTextEditor
                   value={formData.detail}
-                  onChange={(e) => setFormData({ ...formData, detail: e.target.value })}
-                  placeholder="e.g. Flat-knit jacquard collars and cuffs, reinforced 3-button placket, side vents..."
-                  className="w-full px-3.5 py-2 bg-background border border-border rounded-xl text-xs text-foreground focus:outline-none focus:border-foreground resize-none"
+                  onChange={(val) => setFormData({ ...formData, detail: val })}
+                  placeholder="Write detailed garment construction, fabrications, collar/cuff seams, packing ratios..."
+                  minHeight="160px"
                 />
               </div>
 
-              <div className="flex items-center gap-2 pt-2">
+              {/* Hot Deal Offer Pricing Section */}
+              <div className="p-3.5 rounded-2xl bg-muted/40 border border-border/70 space-y-3">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id="hotDealCheck"
+                    checked={formData.is_hot_deal}
+                    onChange={(e) => setFormData({ ...formData, is_hot_deal: e.target.checked })}
+                    className="rounded border-border accent-rose-500"
+                  />
+                  <label htmlFor="hotDealCheck" className="text-xs font-semibold text-foreground flex items-center gap-1.5 cursor-pointer">
+                    <Flame className="w-3.5 h-3.5 text-rose-500 fill-rose-500" />
+                    <span>Hot Deal / Promotional Offer Product</span>
+                  </label>
+                </div>
+
+                {formData.is_hot_deal && (
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-border/50">
+                    <div className="space-y-1">
+                      <label className="text-[11px] font-medium text-foreground block">
+                        Offer Price *
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.offer_price}
+                        onChange={(e) => setFormData({ ...formData, offer_price: e.target.value })}
+                        placeholder="e.g. $4.20 / pc"
+                        className="w-full px-3 py-1.5 bg-background border border-border rounded-xl text-xs text-foreground font-semibold text-rose-600 focus:outline-none focus:border-rose-500"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-[11px] font-medium text-muted-foreground block">
+                        Regular Price
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.original_price}
+                        onChange={(e) => setFormData({ ...formData, original_price: e.target.value })}
+                        placeholder="e.g. $5.80 / pc"
+                        className="w-full px-3 py-1.5 bg-background border border-border rounded-xl text-xs text-muted-foreground focus:outline-none focus:border-foreground"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-[11px] font-medium text-muted-foreground block">
+                        Deal Badge
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.deal_badge}
+                        onChange={(e) => setFormData({ ...formData, deal_badge: e.target.value })}
+                        placeholder="e.g. 28% OFF / Clearance"
+                        className="w-full px-3 py-1.5 bg-background border border-border rounded-xl text-xs text-foreground focus:outline-none focus:border-foreground"
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex items-center gap-2 pt-1">
                 <input
                   type="checkbox"
                   id="featuredCheck"
@@ -370,7 +600,7 @@ export function ProductsClient({ initialProducts, categories }: ProductsClientPr
 
                 <button
                   type="submit"
-                  disabled={saving}
+                  disabled={saving || imageUploading}
                   className="px-5 py-2 rounded-xl bg-foreground text-background font-semibold text-xs uppercase tracking-wider hover:bg-foreground/90 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
                 >
                   <Save className="w-3.5 h-3.5" />

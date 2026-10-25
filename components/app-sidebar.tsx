@@ -5,6 +5,7 @@ import {
   IconDashboard,
   IconDatabase,
   IconFileDescription,
+  IconFlame,
   IconFolder,
   IconHelp,
   IconInnerShadowTop,
@@ -53,6 +54,11 @@ const data = {
       title: "Products",
       url: "/admin/products",
       icon: IconFolder,
+    },
+    {
+      title: "Hot Deals",
+      url: "/admin/hot-deals",
+      icon: IconFlame,
     },
     {
       title: "Buyer Inquiries",

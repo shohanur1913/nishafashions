@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { saveCategoryAction, deleteCategoryAction } from "@/actions/admin";
-import { ArrowLeft, Save, Trash2, CheckCircle2, AlertCircle, ExternalLink, Image as ImageIcon } from "lucide-react";
+import { ArrowLeft, Save, Trash2, CheckCircle2, AlertCircle, ExternalLink, Image as ImageIcon, Upload, Loader2, RefreshCw } from "lucide-react";
 import Link from "next/link";
 
 interface CategoryEditorClientProps {
@@ -42,6 +42,42 @@ export function CategoryEditorClient({ category, isNew = false }: CategoryEditor
 
   const [saving, setSaving] = useState(false);
   const [statusMsg, setStatusMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
+
+  // Image upload state
+  const [imageUploading, setImageUploading] = useState(false);
+  const [imageUploadError, setImageUploadError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImageUpload = async (file: File) => {
+    setImageUploading(true);
+    setImageUploadError(null);
+
+    const fd = new FormData();
+    fd.append("file", file);
+    if (imageAlt) {
+      fd.append("altText", imageAlt);
+    }
+
+    try {
+      const res = await fetch("/api/upload", { method: "POST", body: fd });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setImageSrc(data.url);
+      } else {
+        setImageUploadError(data.error || "Upload failed");
+      }
+    } catch (err: any) {
+      setImageUploadError(err.message || "Upload failed");
+    } finally {
+      setImageUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
+
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) handleImageUpload(file);
+  };
 
   const handleTitleChange = (val: string) => {
     setTitle(val);
@@ -361,39 +397,99 @@ export function CategoryEditorClient({ category, isNew = false }: CategoryEditor
 
           {/* Featured Image */}
           <div className="p-6 rounded-2xl bg-card border border-border/70 space-y-4 shadow-xs">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Category Photograph
-            </h3>
+            <div className="flex items-center justify-between">
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Category Photograph
+              </h3>
+              {imageSrc && (
+                <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1">
+                  <CheckCircle2 className="w-3 h-3" />
+                  Image Set
+                </span>
+              )}
+            </div>
 
-            {imageSrc && (
-              <div className="relative aspect-square w-full rounded-xl overflow-hidden bg-muted/40 border border-border">
+            {/* Preview Box */}
+            <div className="relative aspect-[16/10] w-full rounded-xl overflow-hidden bg-muted/40 border-2 border-dashed border-border flex items-center justify-center">
+              {imageUploading ? (
+                <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                  <Loader2 className="w-7 h-7 animate-spin text-primary" />
+                  <span className="text-xs font-medium">Uploading image...</span>
+                </div>
+              ) : imageSrc ? (
                 <img src={imageSrc} alt={imageAlt || title} className="w-full h-full object-cover" />
-              </div>
-            )}
+              ) : (
+                <div className="flex flex-col items-center gap-1.5 text-muted-foreground/60 p-4 text-center">
+                  <ImageIcon className="w-8 h-8 opacity-40" />
+                  <span className="text-xs">No image selected</span>
+                </div>
+              )}
+            </div>
 
+            {/* Upload Button & File Input */}
             <div className="space-y-3">
-              <div className="space-y-1.5">
-                <label className="text-xs font-medium text-foreground block">Image Path or URL</label>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp,image/avif,image/svg+xml"
+                onChange={handleFileInputChange}
+                disabled={imageUploading}
+                className="hidden"
+                id="category-image-upload"
+              />
+
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={imageUploading}
+                className="w-full py-2.5 px-3 rounded-xl border-2 border-dashed border-border hover:border-foreground/40 bg-background hover:bg-muted/30 text-xs font-semibold text-foreground transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow-2xs"
+              >
+                {imageUploading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Uploading Image...</span>
+                  </>
+                ) : imageSrc ? (
+                  <>
+                    <RefreshCw className="w-4 h-4" />
+                    <span>Replace Category Image</span>
+                  </>
+                ) : (
+                  <>
+                    <Upload className="w-4 h-4" />
+                    <span>Upload Category Image</span>
+                  </>
+                )}
+              </button>
+
+              {imageUploadError && (
+                <p className="text-xs text-red-500 font-medium px-1">{imageUploadError}</p>
+              )}
+
+              {/* Direct Path Input (Optional/Advanced) */}
+              <div className="space-y-1.5 pt-1">
+                <label className="text-[11px] font-medium text-muted-foreground block">
+                  Image Path / URL (Auto-filled on upload)
+                </label>
                 <input
                   type="text"
                   value={imageSrc}
                   onChange={(e) => setImageSrc(e.target.value)}
                   placeholder="/images/category-woven.png"
-                  className="w-full px-3.5 py-2 bg-background border border-border rounded-xl text-xs text-foreground font-mono"
+                  className="w-full px-3 py-1.5 bg-background border border-border rounded-xl text-xs text-foreground font-mono"
                 />
-                <p className="text-[11px] text-muted-foreground">
-                  You can upload files in the <Link href="/admin/media" className="underline font-medium text-foreground">Media Library</Link> and paste the URL here.
-                </p>
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-foreground block">Image Alt Text (SEO)</label>
+                <label className="text-[11px] font-medium text-muted-foreground block">
+                  Image Alt Text (SEO & Accessibility)
+                </label>
                 <input
                   type="text"
                   value={imageAlt}
                   onChange={(e) => setImageAlt(e.target.value)}
-                  placeholder="Descriptive text for accessibility..."
-                  className="w-full px-3.5 py-2 bg-background border border-border rounded-xl text-xs text-foreground"
+                  placeholder="e.g. Bangladesh Woven Garments Factory Production"
+                  className="w-full px-3 py-1.5 bg-background border border-border rounded-xl text-xs text-foreground"
                 />
               </div>
             </div>

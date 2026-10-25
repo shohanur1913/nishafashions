@@ -90,7 +90,7 @@ export default function AdminLoginPage() {
         </Link>
         <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-widest bg-white text-zinc-600 border border-zinc-200 shadow-2xs">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-          Secure Portal
+          Admin Portal
         </span>
       </div>
 
@@ -107,7 +107,7 @@ export default function AdminLoginPage() {
           </div>
           <div>
             <h1 className="text-xl sm:text-2xl font-semibold text-zinc-900 tracking-tight">
-              Administrative <span className="text-primary">Portal</span>
+              Admin <span className="text-primary">Portal</span>
             </h1>
           </div>
         </div>

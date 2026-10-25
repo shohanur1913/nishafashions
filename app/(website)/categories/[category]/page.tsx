@@ -5,6 +5,7 @@ import { categoriesCatalog } from "@/lib/content/categories";
 import { getCategory, getCategories } from "@/lib/content-service";
 import { ArrowLeft, Clock, PackageCheck, Factory, ShieldCheck, CheckCircle2 } from "lucide-react";
 import { EcommerceProductCard } from "@/components/website/ecommerce-product-card";
+import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
 
 interface PageProps {
   params: Promise<{ category: string }>;
@@ -52,17 +53,17 @@ export default async function CategoryDetailPage({ params }: PageProps) {
   return (
     <div className="min-h-screen bg-background text-foreground pb-12 sm:pb-16">
       {/* Compact Top Navigation Bar */}
-      <section className="w-full border-b border-border/40 bg-muted/30 pt-20 sm:pt-22 pb-2.5">
+      <section className="w-full border-b border-border/40 bg-muted/20 py-2 sm:py-2.5">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-screen-2xl">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
             {/* Breadcrumb / Back Link */}
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <Link
-                href="/#categories"
+                href="/products"
                 className="inline-flex items-center gap-1 hover:text-foreground transition-colors font-medium text-foreground/80"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
-                <span>Capabilities</span>
+                <span>Categories</span>
               </Link>
               <span className="opacity-40">/</span>
               <span className="text-foreground font-semibold">{categoryData.title}</span>
@@ -132,19 +133,27 @@ export default async function CategoryDetailPage({ params }: PageProps) {
           <span className="font-medium uppercase tracking-wider text-foreground/80">
             {categoryData.title} Products ({categoryData.products.length})
           </span>
-          <span className="text-[11px]">Instant WhatsApp Inquiry & Costing</span>
+          <span className="text-[11px]">Click any product to view technical specifications &amp; costing</span>
         </div>
 
-        {/* 5-column grid on desktop, compact cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4">
-          {categoryData.products.map((prod, idx) => (
-            <EcommerceProductCard
-              key={idx}
-              product={prod}
-              categoryTitle={categoryData.title}
-              fallbackImage={categoryData.image.src}
-            />
-          ))}
+        {/* Products Grid (Matching Homepage Style) */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+          {categoryData.products.map((prod, idx) => {
+            const fallbackId = categoryData.slug === 'woven' ? idx + 1
+              : categoryData.slug === 'knit' ? idx + 9
+              : categoryData.slug === 'denim' ? idx + 17
+              : categoryData.slug === 'sweater' ? idx + 25
+              : idx + 32;
+            const productWithId = { ...prod, id: prod.id ?? fallbackId };
+            return (
+              <EcommerceProductCard
+                key={idx}
+                product={productWithId}
+                categoryTitle={categoryData.title}
+                fallbackImage={categoryData.image.src}
+              />
+            );
+          })}
         </div>
       </section>
 
@@ -205,9 +214,10 @@ export default async function CategoryDetailPage({ params }: PageProps) {
               href={`https://wa.me/8801715645766?text=${encodeURIComponent(`Hello Nisha Fashions, I would like to inquire about ${categoryData.title} manufacturing capabilities.`)}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-4 py-2 rounded-xl bg-[#25D366] hover:bg-[#20ba5a] text-white text-xs font-semibold tracking-wide transition-all shadow-xs"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#25D366] hover:bg-[#20ba5a] text-white text-xs font-semibold tracking-wide transition-all shadow-xs"
             >
-              Chat on WhatsApp
+              <WhatsAppIcon className="w-3.5 h-3.5 shrink-0" fill="#ffffff" />
+              <span>Chat on WhatsApp</span>
             </a>
             <Link
               href="/contact"

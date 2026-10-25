@@ -19,7 +19,6 @@ import {
   Globe, 
   Code2, 
   FileText,
-  Sparkles,
   ChevronDown,
   ChevronUp
 } from "lucide-react";
@@ -340,7 +339,7 @@ export function PageEditorClient({ page }: PageEditorClientProps) {
         {/* Hero Banner & Background Image Controls */}
         <div className="p-6 rounded-2xl bg-card border border-border/70 space-y-4 shadow-xs">
           <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-            <Sparkles className="w-3.5 h-3.5 text-primary" />
+            <ImageIcon className="w-3.5 h-3.5 text-primary" />
             <span>Hero Banner &amp; Visual Settings</span>
           </h3>
 

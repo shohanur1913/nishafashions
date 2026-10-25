@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { 
   Building, 
@@ -12,7 +12,13 @@ import {
   CheckCircle2, 
   AlertCircle, 
   ShieldCheck, 
-  Loader2 
+  Loader2,
+  Upload,
+  Image as ImageIcon,
+  Globe,
+  RefreshCw,
+  X,
+  Megaphone
 } from "lucide-react";
 import { 
   saveSiteSettingsAction, 
@@ -20,6 +26,7 @@ import {
   sendTestEmailAction, 
   handleUpdateProfile 
 } from "@/actions/admin";
+import { NoticeBar } from "@/components/website/notice-bar";
 
 interface SettingsClientProps {
   settings: Record<string, string>;
@@ -28,12 +35,54 @@ interface SettingsClientProps {
 
 export function SettingsClient({ settings, adminUser }: SettingsClientProps) {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<"general" | "mail" | "security">("general");
+  const [activeTab, setActiveTab] = useState<"general" | "notice" | "mail" | "security">("general");
+
+  // Notice Bar state
+  const [noticeData, setNoticeData] = useState({
+    notice_enabled: settings.notice_enabled ?? "true",
+    notice_text: settings.notice_text ?? "🚧 Website Maintenance: We are currently upgrading our website. If you encounter any temporary issues, please bear with us.",
+    notice_mode: settings.notice_mode ?? "auto",
+    notice_position: settings.notice_position ?? "top",
+    notice_variant: settings.notice_variant ?? "amber",
+    notice_speed: settings.notice_speed ?? "normal",
+    notice_link: settings.notice_link ?? "/contact",
+    notice_link_text: settings.notice_link_text ?? "Contact Support",
+  });
+  const [savingNotice, setSavingNotice] = useState(false);
+
+  const handleSaveNotice = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSavingNotice(true);
+    setStatusMsg(null);
+
+    try {
+      const res = await saveSiteSettingsAction(noticeData);
+      if (res.success) {
+        setStatusMsg({ type: "success", text: "Notice bar settings saved successfully." });
+        router.refresh();
+      } else {
+        setStatusMsg({ type: "error", text: "Failed to save notice bar settings." });
+      }
+    } catch (err: any) {
+      setStatusMsg({ type: "error", text: err.message || "An error occurred." });
+    } finally {
+      setSavingNotice(false);
+    }
+  };
+
+  // Logo & Favicon upload state
+  const [logoUploading, setLogoUploading] = useState(false);
+  const [faviconUploading, setFaviconUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const logoInputRef = useRef<HTMLInputElement>(null);
+  const faviconInputRef = useRef<HTMLInputElement>(null);
 
   // General Settings state
   const [formData, setFormData] = useState<Record<string, string>>({
     site_name: settings.site_name || "Nisha Fashions Wear",
     short_name: settings.short_name || "NFW",
+    header_logo_url: settings.header_logo_url || "/images/logo.jpg",
+    favicon_url: settings.favicon_url || "/favicon.ico",
     brand_color: settings.brand_color || settings.theme_color || "#E94D65",
     theme_color: settings.theme_color || settings.brand_color || "#E94D65",
     tagline: settings.tagline || "Bangladesh Apparel Supplier & Sourcing Partner",
@@ -49,6 +98,43 @@ export function SettingsClient({ settings, adminUser }: SettingsClientProps) {
     address_postal: settings.address_postal || "1209",
     address_country: settings.address_country || "BD",
   });
+
+  const handleFileUpload = async (file: File, type: "logo" | "favicon") => {
+    if (type === "logo") setLogoUploading(true);
+    if (type === "favicon") setFaviconUploading(true);
+    setUploadError(null);
+
+    const fd = new FormData();
+    fd.append("file", file);
+    fd.append("altText", type === "logo" ? "Company Logo" : "Favicon Icon");
+
+    try {
+      const res = await fetch("/api/upload", { method: "POST", body: fd });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        if (type === "logo") {
+          setFormData((prev) => ({ ...prev, header_logo_url: data.url }));
+          setStatusMsg({
+            type: "success",
+            text: "Company logo uploaded! Click 'Save Changes' below to apply to the website.",
+          });
+        } else {
+          setFormData((prev) => ({ ...prev, favicon_url: data.url }));
+          setStatusMsg({
+            type: "success",
+            text: "Favicon uploaded! Click 'Save Changes' below to apply to the website.",
+          });
+        }
+      } else {
+        setUploadError(data.error || "Upload failed");
+      }
+    } catch (err: any) {
+      setUploadError(err.message || "Upload failed");
+    } finally {
+      if (type === "logo") setLogoUploading(false);
+      if (type === "favicon") setFaviconUploading(false);
+    }
+  };
 
   const handleBrandColorChange = (newColor: string) => {
     setFormData((prev) => ({
@@ -224,6 +310,20 @@ export function SettingsClient({ settings, adminUser }: SettingsClientProps) {
 
         <button
           type="button"
+          onClick={() => { setActiveTab("notice"); setStatusMsg(null); }}
+          className={`px-4 py-2 rounded-xl text-xs font-semibold cursor-pointer transition-all flex items-center gap-2 ${
+            activeTab === "notice"
+              ? "bg-card text-foreground shadow-xs border border-border/80"
+              : "text-muted-foreground hover:text-foreground"
+          }`}
+        >
+          <Megaphone className="w-4 h-4 text-primary" />
+          <span>Notice Bar</span>
+          <span className={`w-2 h-2 rounded-full ${noticeData.notice_enabled === "true" || noticeData.notice_enabled === "1" ? "bg-emerald-500" : "bg-zinc-400"}`} />
+        </button>
+
+        <button
+          type="button"
           onClick={() => { setActiveTab("security"); setStatusMsg(null); }}
           className={`px-4 py-2 rounded-xl text-xs font-semibold cursor-pointer transition-all flex items-center gap-2 ${
             activeTab === "security"
@@ -269,6 +369,169 @@ export function SettingsClient({ settings, adminUser }: SettingsClientProps) {
               <Save className="w-3.5 h-3.5" />
               <span>{savingSettings ? "Saving..." : "Save Settings"}</span>
             </button>
+          </div>
+
+          {/* Brand Identity: Website Logo & Favicon Upload */}
+          <div className="p-5 rounded-2xl bg-muted/30 border border-border/80 space-y-4">
+            <div>
+              <h4 className="text-sm font-semibold text-foreground tracking-tight flex items-center gap-2">
+                <ImageIcon className="w-4 h-4 text-primary" />
+                <span>Brand Identity: Logo &amp; Favicon</span>
+              </h4>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Upload your official company logo for the header/footer and browser favicon
+              </p>
+            </div>
+
+            {uploadError && (
+              <p className="text-xs text-red-500 font-medium">{uploadError}</p>
+            )}
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-2">
+              {/* Header Logo */}
+              <div className="space-y-3">
+                <label className="text-xs font-semibold text-foreground block">
+                  Website Header Logo
+                </label>
+
+                <div className="flex items-center gap-3">
+                  <div className="w-24 h-16 rounded-xl border border-border bg-white dark:bg-zinc-900 p-2 flex items-center justify-center shrink-0 overflow-hidden shadow-2xs">
+                    {logoUploading ? (
+                      <Loader2 className="w-5 h-5 animate-spin text-primary" />
+                    ) : formData.header_logo_url ? (
+                      <img
+                        src={formData.header_logo_url}
+                        alt="Header Logo Preview"
+                        className="max-h-full max-w-full object-contain"
+                      />
+                    ) : (
+                      <ImageIcon className="w-6 h-6 text-muted-foreground/40" />
+                    )}
+                  </div>
+
+                  <div className="space-y-1.5 flex-1">
+                    <input
+                      ref={logoInputRef}
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp,image/svg+xml"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) handleFileUpload(file, "logo");
+                        e.target.value = "";
+                      }}
+                      className="hidden"
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() => logoInputRef.current?.click()}
+                      disabled={logoUploading}
+                      className="w-full py-1.5 px-3 rounded-lg border border-border hover:bg-muted text-xs font-medium text-foreground transition-all flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+                    >
+                      {logoUploading ? (
+                        <>
+                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                          <span>Uploading...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Upload className="w-3.5 h-3.5" />
+                          <span>Upload Logo</span>
+                        </>
+                      )}
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setFormData({ ...formData, header_logo_url: "/images/logo.jpg" })}
+                      className="text-[10px] text-muted-foreground hover:text-foreground underline block"
+                    >
+                      Reset to default
+                    </button>
+                  </div>
+                </div>
+
+                <input
+                  type="text"
+                  value={formData.header_logo_url}
+                  onChange={(e) => setFormData({ ...formData, header_logo_url: e.target.value })}
+                  placeholder="/images/logo.jpg or https://..."
+                  className="w-full px-3 py-1.5 bg-background border border-border rounded-xl text-xs font-mono text-foreground focus:outline-none focus:border-foreground"
+                />
+              </div>
+
+              {/* Favicon */}
+              <div className="space-y-3">
+                <label className="text-xs font-semibold text-foreground block">
+                  Browser Tab Favicon (.ico, .png, .svg)
+                </label>
+
+                <div className="flex items-center gap-3">
+                  <div className="w-16 h-16 rounded-xl border border-border bg-white dark:bg-zinc-900 p-2 flex items-center justify-center shrink-0 overflow-hidden shadow-2xs">
+                    {faviconUploading ? (
+                      <Loader2 className="w-5 h-5 animate-spin text-primary" />
+                    ) : formData.favicon_url ? (
+                      <img
+                        src={formData.favicon_url}
+                        alt="Favicon Preview"
+                        className="w-8 h-8 object-contain"
+                      />
+                    ) : (
+                      <Globe className="w-6 h-6 text-muted-foreground/40" />
+                    )}
+                  </div>
+
+                  <div className="space-y-1.5 flex-1">
+                    <input
+                      ref={faviconInputRef}
+                      type="file"
+                      accept="image/x-icon,image/png,image/svg+xml,image/jpeg"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) handleFileUpload(file, "favicon");
+                        e.target.value = "";
+                      }}
+                      className="hidden"
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() => faviconInputRef.current?.click()}
+                      disabled={faviconUploading}
+                      className="w-full py-1.5 px-3 rounded-lg border border-border hover:bg-muted text-xs font-medium text-foreground transition-all flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+                    >
+                      {faviconUploading ? (
+                        <>
+                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                          <span>Uploading...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Upload className="w-3.5 h-3.5" />
+                          <span>Upload Favicon</span>
+                        </>
+                      )}
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setFormData({ ...formData, favicon_url: "/favicon.ico" })}
+                      className="text-[10px] text-muted-foreground hover:text-foreground underline block"
+                    >
+                      Reset to default
+                    </button>
+                  </div>
+                </div>
+
+                <input
+                  type="text"
+                  value={formData.favicon_url}
+                  onChange={(e) => setFormData({ ...formData, favicon_url: e.target.value })}
+                  placeholder="/favicon.ico or https://..."
+                  className="w-full px-3 py-1.5 bg-background border border-border rounded-xl text-xs font-mono text-foreground focus:outline-none focus:border-foreground"
+                />
+              </div>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -694,6 +957,205 @@ export function SettingsClient({ settings, adminUser }: SettingsClientProps) {
                   onChange={(e) => setNewPassword(e.target.value)}
                   placeholder="New password"
                   className="w-full px-3.5 py-2 bg-background border border-border rounded-xl text-xs text-foreground"
+                />
+              </div>
+            </div>
+          </div>
+        </form>
+      )}
+
+      {/* ========================================================================= */}
+      {/* NOTICE BAR SETTINGS TAB */}
+      {/* ========================================================================= */}
+      {activeTab === "notice" && (
+        <form onSubmit={handleSaveNotice} className="p-5 sm:p-7 rounded-3xl bg-card border border-border/80 shadow-xs space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/60 pb-3">
+            <div className="flex items-center gap-2.5">
+              <Megaphone className="w-5 h-5 text-primary" />
+              <div>
+                <h3 className="text-base font-bold text-foreground">Header Notice Bar</h3>
+                <p className="text-xs text-muted-foreground">
+                  Configure an announcement or ticker notice bar above or below the website header.
+                </p>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={savingNotice}
+              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground font-semibold text-xs shadow-xs hover:bg-primary/90 transition-all disabled:opacity-50 cursor-pointer self-start sm:self-auto shrink-0"
+            >
+              {savingNotice ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
+              <span>{savingNotice ? "Saving..." : "Save Notice Settings"}</span>
+            </button>
+          </div>
+
+          {/* Live Preview Card */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+                <span>Live Interactive Preview</span>
+                <span className="px-1.5 py-0.5 rounded text-[10px] bg-primary/10 text-primary font-medium">Realtime</span>
+              </label>
+              <span className="text-[11px] font-medium text-muted-foreground">
+                {noticeData.notice_enabled === "true" || noticeData.notice_enabled === "1" ? "🟢 Active on site" : "⚪ Disabled"}
+              </span>
+            </div>
+
+            <div className="p-3 bg-muted/30 border border-border/80 rounded-2xl overflow-hidden space-y-2">
+              <div className="text-[11px] font-medium text-muted-foreground flex items-center justify-between px-1">
+                <span>Placement: <strong className="text-foreground capitalize">{noticeData.notice_position === "top" ? "Top of Header" : "Below Header"}</strong></span>
+                <span>Mode: <strong className="text-foreground capitalize">{noticeData.notice_mode}</strong></span>
+              </div>
+              <div className="rounded-xl overflow-hidden border border-border shadow-xs">
+                <NoticeBar settings={noticeData} previewMode={true} />
+              </div>
+              <p className="text-[11px] text-muted-foreground italic px-1">
+                * Hovering over the notice automatically pauses the ticker for comfortable reading.
+              </p>
+            </div>
+          </div>
+
+          {/* Controls Grid */}
+          <div className="space-y-4 pt-2">
+            {/* Enable / Disable Toggle */}
+            <div className="flex items-center justify-between p-4 rounded-2xl bg-muted/20 border border-border/60">
+              <div>
+                <label className="text-xs font-semibold text-foreground block">
+                  Enable Notice Bar
+                </label>
+                <p className="text-[11px] text-muted-foreground">
+                  Toggle to show or hide the notice banner on the live website.
+                </p>
+              </div>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={noticeData.notice_enabled === "true" || noticeData.notice_enabled === "1"}
+                  onChange={(e) => setNoticeData(prev => ({ ...prev, notice_enabled: e.target.checked ? "true" : "false" }))}
+                  className="sr-only peer"
+                />
+                <div className="w-11 h-6 bg-muted peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+              </label>
+            </div>
+
+            {/* Notice Text */}
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-medium text-foreground block">
+                  Notice Message <span className="text-red-500">*</span>
+                </label>
+                <span className="text-[11px] text-muted-foreground">
+                  {noticeData.notice_text.length} characters
+                </span>
+              </div>
+              <textarea
+                rows={3}
+                value={noticeData.notice_text}
+                onChange={(e) => setNoticeData(prev => ({ ...prev, notice_text: e.target.value }))}
+                placeholder="Write your notice or announcement here..."
+                className="w-full px-3.5 py-2.5 bg-background border border-border rounded-xl text-xs text-foreground focus:outline-none focus:border-foreground transition-all resize-y"
+              />
+              <p className="text-[11px] text-muted-foreground">
+                In &apos;Auto&apos; mode, messages of 55 characters or fewer stay static and centered, while longer messages scroll continuously.
+              </p>
+            </div>
+
+            {/* Mode & Position & Theme Variant Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              {/* Display Mode */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-foreground block">
+                  Display Mode
+                </label>
+                <select
+                  value={noticeData.notice_mode}
+                  onChange={(e) => setNoticeData(prev => ({ ...prev, notice_mode: e.target.value }))}
+                  className="w-full px-3.5 py-2 bg-background border border-border rounded-xl text-xs text-foreground focus:outline-none focus:border-foreground"
+                >
+                  <option value="auto">Auto (Static for short text, Rolling for long text)</option>
+                  <option value="rolling">Rolling / Ticker (Continuous marquee animation)</option>
+                  <option value="static">Static (Fixed centered text, no scrolling)</option>
+                </select>
+              </div>
+
+              {/* Position */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-foreground block">
+                  Position
+                </label>
+                <select
+                  value={noticeData.notice_position}
+                  onChange={(e) => setNoticeData(prev => ({ ...prev, notice_position: e.target.value }))}
+                  className="w-full px-3.5 py-2 bg-background border border-border rounded-xl text-xs text-foreground focus:outline-none focus:border-foreground"
+                >
+                  <option value="top">Header Top (Above navigation)</option>
+                  <option value="bottom">Below Header (Under navigation)</option>
+                </select>
+              </div>
+
+              {/* Theme Variant */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-foreground block">
+                  Color Theme
+                </label>
+                <select
+                  value={noticeData.notice_variant}
+                  onChange={(e) => setNoticeData(prev => ({ ...prev, notice_variant: e.target.value }))}
+                  className="w-full px-3.5 py-2 bg-background border border-border rounded-xl text-xs text-foreground focus:outline-none focus:border-foreground"
+                >
+                  <option value="primary">Brand Theme Color (Website Primary)</option>
+                  <option value="dark">Dark Slate (Clean Black)</option>
+                  <option value="amber">Amber / Alert (High-Visibility Warning)</option>
+                  <option value="emerald">Emerald Green (Success / Bookings)</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Speed & Optional Link Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              {/* Scroll Speed */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-foreground block">
+                  Scroll Speed
+                </label>
+                <select
+                  value={noticeData.notice_speed}
+                  onChange={(e) => setNoticeData(prev => ({ ...prev, notice_speed: e.target.value }))}
+                  disabled={noticeData.notice_mode === "static"}
+                  className="w-full px-3.5 py-2 bg-background border border-border rounded-xl text-xs text-foreground focus:outline-none focus:border-foreground disabled:opacity-50"
+                >
+                  <option value="slow">Slow (42s)</option>
+                  <option value="normal">Normal (28s - Default)</option>
+                  <option value="fast">Fast (18s)</option>
+                </select>
+              </div>
+
+              {/* Optional Link URL */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-foreground block">
+                  Action Link URL (Optional)
+                </label>
+                <input
+                  type="text"
+                  value={noticeData.notice_link}
+                  onChange={(e) => setNoticeData(prev => ({ ...prev, notice_link: e.target.value }))}
+                  placeholder="/contact or https://..."
+                  className="w-full px-3.5 py-2 bg-background border border-border rounded-xl text-xs text-foreground focus:outline-none focus:border-foreground"
+                />
+              </div>
+
+              {/* Action Link Text */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-foreground block">
+                  Button Text
+                </label>
+                <input
+                  type="text"
+                  value={noticeData.notice_link_text}
+                  onChange={(e) => setNoticeData(prev => ({ ...prev, notice_link_text: e.target.value }))}
+                  placeholder="e.g. Contact Support"
+                  className="w-full px-3.5 py-2 bg-background border border-border rounded-xl text-xs text-foreground focus:outline-none focus:border-foreground"
                 />
               </div>
             </div>

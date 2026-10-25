@@ -3,7 +3,8 @@
 import NextImage from "next/image";
 import Link from "next/link";
 import { images } from "@/lib/content/images";
-import { ArrowRight, MessageCircle } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
 import { openQuoteModal } from "@/components/website/quote-modal";
 import { PageHero } from "@/components/website/page-hero";
 
@@ -77,7 +78,7 @@ export function ServicesClient() {
     <div className="min-h-screen bg-background text-foreground pb-12 sm:pb-16">
       {/* Compact Editorial Hero */}
       <PageHero
-        badge="Capabilities & Scope"
+        badge="Services & Operations"
         title={<>Products & Sourcing <span className="text-primary">Services.</span></>}
         description="Five manufacturing divisions and full end-to-end supply chain execution managed on the ground in Dhaka."
       >
@@ -94,7 +95,7 @@ export function ServicesClient() {
           rel="noopener noreferrer"
           className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full border border-zinc-700 text-white text-xs font-medium hover:bg-zinc-800 transition-colors"
         >
-          <MessageCircle className="w-3.5 h-3.5 text-[#25D366]" />
+          <WhatsAppIcon className="w-3.5 h-3.5" fill="#25D366" />
           <span>WhatsApp</span>
         </a>
       </PageHero>
@@ -115,49 +116,42 @@ export function ServicesClient() {
               href={`/categories/${c.slug}`}
               className="group flex flex-col rounded-2xl bg-card border border-border/80 hover:border-foreground/40 shadow-xs hover:shadow-lg transition-all duration-300 overflow-hidden"
             >
-              {/* Full-bleed Top Image */}
+              {/* Clean Top Image without any text overlay */}
               <div className="relative aspect-square w-full overflow-hidden bg-muted/30">
                 <NextImage
                   src={c.image.src}
-                  alt={`${c.title} apparel manufacturing capabilities - Nisha Fashions Wear Bangladesh`}
+                  alt={`${c.title} apparel manufacturing - Nisha Fashions Wear Bangladesh`}
                   fill
                   quality={95}
                   className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
                   sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20 opacity-70 group-hover:opacity-50 transition-opacity" />
-
-                {/* Floating Top Badges */}
-                <div className="absolute top-2.5 inset-x-2.5 flex items-center justify-between">
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-white/95 text-zinc-950 shadow-xs backdrop-blur-xs">
-                    {c.num}
-                  </span>
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-black/65 text-white shadow-xs backdrop-blur-xs border border-white/10">
-                    {c.badge}
-                  </span>
-                </div>
-
-                {/* Bottom Meta on Image */}
-                <div className="absolute bottom-2.5 inset-x-2.5 flex items-center justify-between text-[11px] text-white">
-                  <span className="font-medium bg-black/60 px-2 py-0.5 rounded-md backdrop-blur-xs text-[10px]">
-                    MOQ: <strong className="font-bold">{c.moq}</strong>
-                  </span>
-                  <span className="font-medium bg-black/60 px-2 py-0.5 rounded-md backdrop-blur-xs text-[10px] text-zinc-200">
-                    {c.leadTime}
-                  </span>
-                </div>
               </div>
 
               {/* Card Body */}
               <div className="p-3 sm:p-3.5 flex-1 flex flex-col justify-between space-y-2.5">
                 <div>
+                  <div className="flex items-center justify-between gap-1.5 mb-1.5">
+                    <span className="text-[10px] font-mono font-bold text-muted-foreground">
+                      {c.num}
+                    </span>
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-muted text-muted-foreground border border-border/60">
+                      {c.badge}
+                    </span>
+                  </div>
+
                   <h3 className="font-serif text-base sm:text-lg font-medium text-foreground tracking-tight group-hover:text-primary transition-colors">
                     {c.title}
                   </h3>
 
-                  <p className="text-xs text-foreground/85 font-normal line-clamp-2 leading-relaxed mt-1">
+                  <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed mt-1">
                     {c.products}
                   </p>
+
+                  <div className="flex items-center justify-between text-[11px] text-muted-foreground pt-2 mt-2 border-t border-border/40">
+                    <span>MOQ: <strong className="text-foreground font-semibold">{c.moq}</strong></span>
+                    <span>{c.leadTime}</span>
+                  </div>
                 </div>
 
                 {/* Bottom Action */}

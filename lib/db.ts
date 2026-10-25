@@ -118,6 +118,10 @@ async function initAndSeedDb() {
       specs TEXT,
       image_src VARCHAR(500) DEFAULT '',
       is_featured BOOLEAN DEFAULT FALSE,
+      is_hot_deal BOOLEAN DEFAULT FALSE,
+      offer_price VARCHAR(100) DEFAULT '',
+      original_price VARCHAR(100) DEFAULT '',
+      deal_badge VARCHAR(100) DEFAULT '',
       is_published BOOLEAN DEFAULT TRUE,
       sort_order INT DEFAULT 0,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -125,6 +129,12 @@ async function initAndSeedDb() {
       INDEX idx_category (category_slug)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
   `);
+
+  // Ensure new columns exist on existing databases
+  try { await conn.query(`ALTER TABLE products ADD COLUMN is_hot_deal BOOLEAN DEFAULT FALSE`); } catch {}
+  try { await conn.query(`ALTER TABLE products ADD COLUMN offer_price VARCHAR(100) DEFAULT ''`); } catch {}
+  try { await conn.query(`ALTER TABLE products ADD COLUMN original_price VARCHAR(100) DEFAULT ''`); } catch {}
+  try { await conn.query(`ALTER TABLE products ADD COLUMN deal_badge VARCHAR(100) DEFAULT ''`); } catch {}
 
   // 6. Enquiries Table (RFQs and Contact Messages)
   await conn.query(`
@@ -220,6 +230,14 @@ async function initAndSeedDb() {
       ]),
       header_logo_url: "https://www.nishafashions.com/wp-content/uploads/2022/11/nfw_logo3.jpg",
       whatsapp_message: "Hello, I am interested in sourcing apparel from Nisha Fashions Wear. I would like to discuss my requirements.",
+      notice_enabled: "true",
+      notice_text: "🚧 Website Maintenance: We are currently upgrading our website. If you encounter any temporary issues, please bear with us.",
+      notice_mode: "auto",
+      notice_position: "top",
+      notice_variant: "amber",
+      notice_link: "/contact",
+      notice_link_text: "Contact Support",
+      notice_speed: "normal",
     };
 
     for (const [key, value] of Object.entries(initialSettings)) {
@@ -396,7 +414,7 @@ async function initAndSeedDb() {
     // 3. Services page
     const servicesContent = {
       hero: {
-        badge: "Capabilities & Scope",
+        badge: "Services & Operations",
         title: "Products & Sourcing Services",
         description: "Five manufacturing divisions and full end-to-end supply chain execution managed on the ground in Dhaka.",
       },

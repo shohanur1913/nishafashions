@@ -17,73 +17,91 @@ const fontSerif = Newsreader({
   style: ["normal", "italic"],
 });
 
-export const metadata: Metadata = {
-  metadataBase: new URL(site.url || "https://www.nishafashions.com"),
-  title: {
-    default: "Nisha Fashions Wear | Bangladesh Apparel Manufacturer & Supplier",
-    template: "%s | Nisha Fashions Wear",
-  },
-  description: "Premier Bangladesh apparel manufacturer, supplier and garment sourcing partner with 20+ years of export experience in Knitwear, Woven, Denim, and Sweaters for global brands.",
-  keywords: [
-    "Apparel manufacturer Bangladesh",
-    "Bangladesh garment supplier",
-    "Clothing sourcing Bangladesh",
-    "Knitwear manufacturer Dhaka",
-    "Woven shirts factory",
-    "Denim jeans supplier Bangladesh",
-    "Sweater production Dhaka",
-    "FOB apparel manufacturing",
-    "RMG exporter Bangladesh",
-    "Nisha Fashions Wear"
-  ],
-  authors: [{ name: "Nisha Fashions Wear", url: "https://www.nishafashions.com" }],
-  creator: "Nisha Fashions Wear",
-  publisher: "Nisha Fashions Wear",
-  formatDetection: {
-    email: false,
-    address: false,
-    telephone: false,
-  },
-  alternates: {
-    canonical: "/",
-  },
-  openGraph: {
-    type: "website",
-    locale: "en_US",
-    url: "https://www.nishafashions.com",
-    siteName: "Nisha Fashions Wear",
-    title: "Nisha Fashions Wear | Bangladesh Apparel Manufacturer & Supplier",
-    description: "Global apparel sourcing, ethical production management, and quality assurance in Bangladesh for Knit, Woven, Denim, and Sweaters.",
-    images: [
-      {
-        url: "/images/hero-apparel.png",
-        width: 1200,
-        height: 630,
-        alt: "Nisha Fashions Wear - Bangladesh Apparel Sourcing & Production",
-      },
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSiteSettings();
+  const favicon = settings.favicon_url || "/favicon.ico";
+  const siteName = settings.site_name || "Nisha Fashions Wear";
+  const tagline = settings.tagline || "Bangladesh Apparel Supplier & Sourcing Partner";
+
+  return {
+    metadataBase: new URL(site.url || "https://www.nishafashions.com"),
+    title: {
+      default: `${siteName} | ${tagline}`,
+      template: `%s | ${siteName}`,
+    },
+    description: settings.experience 
+      ? `Premier Bangladesh apparel manufacturer and supplier with ${settings.experience}.` 
+      : "Premier Bangladesh apparel manufacturer, supplier and garment sourcing partner with 20+ years of export experience in Knitwear, Woven, Denim, and Sweaters for global brands.",
+    keywords: [
+      "Apparel manufacturer Bangladesh",
+      "Bangladesh garment supplier",
+      "Clothing sourcing Bangladesh",
+      "Knitwear manufacturer Dhaka",
+      "Woven shirts factory",
+      "Denim jeans supplier Bangladesh",
+      "Sweater production Dhaka",
+      "FOB apparel manufacturing",
+      "RMG exporter Bangladesh",
+      siteName,
     ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Nisha Fashions Wear | Bangladesh Apparel Manufacturer",
-    description: "Apparel sourcing and production partner in Bangladesh serving European, US, and Canadian fashion brands.",
-    images: ["/images/hero-apparel.png"],
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
+    authors: [{ name: siteName, url: "https://www.nishafashions.com" }],
+    creator: siteName,
+    publisher: siteName,
+    formatDetection: {
+      email: false,
+      address: false,
+      telephone: false,
+    },
+    alternates: {
+      canonical: "/",
+    },
+    icons: {
+      icon: [
+        {
+          url: favicon,
+        },
+      ],
+      shortcut: [favicon],
+      apple: [favicon],
+    },
+    openGraph: {
+      type: "website",
+      locale: "en_US",
+      url: "https://www.nishafashions.com",
+      siteName,
+      title: `${siteName} | Bangladesh Apparel Manufacturer & Supplier`,
+      description: "Global apparel sourcing, ethical production management, and quality assurance in Bangladesh for Knit, Woven, Denim, and Sweaters.",
+      images: [
+        {
+          url: settings.header_logo_url || "/images/hero-apparel.png",
+          width: 1200,
+          height: 630,
+          alt: `${siteName} - Bangladesh Apparel Sourcing & Production`,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${siteName} | Bangladesh Apparel Manufacturer`,
+      description: "Apparel sourcing and production partner in Bangladesh serving European, US, and Canadian fashion brands.",
+      images: [settings.header_logo_url || "/images/hero-apparel.png"],
+    },
+    robots: {
       index: true,
       follow: true,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-video-preview": -1,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+      },
     },
-  },
-  verification: {
-    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || undefined,
-  },
-};
+    verification: {
+      google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || undefined,
+    },
+  };
+}
 
 export default async function RootLayout({
   children,
@@ -92,6 +110,16 @@ export default async function RootLayout({
 }>) {
   const settings = await getSiteSettings();
   const brandColor = settings.brand_color || settings.theme_color || site.brandColor || "#E94D65";
+  const favicon = settings.favicon_url || "/favicon.ico";
+  const faviconType = favicon.endsWith(".png")
+    ? "image/png"
+    : favicon.endsWith(".svg")
+    ? "image/svg+xml"
+    : favicon.endsWith(".jpg") || favicon.endsWith(".jpeg")
+    ? "image/jpeg"
+    : favicon.endsWith(".webp")
+    ? "image/webp"
+    : "image/x-icon";
 
   return (
     <html 
@@ -101,6 +129,9 @@ export default async function RootLayout({
       style={{ colorScheme: "light" }}
     >
       <head>
+        <link rel="icon" href={favicon} type={faviconType} />
+        <link rel="shortcut icon" href={favicon} />
+        <link rel="apple-touch-icon" href={favicon} />
         <style
           id="brand-theme-styles"
           dangerouslySetInnerHTML={{

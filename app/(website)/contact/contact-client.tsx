@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { MapPin, Phone, Mail, Clock, Send, MessageSquare, ArrowRight, Copy, Check, CheckCircle2 } from "lucide-react";
 import { ContactMap } from "@/components/website/contact-map";
 import { PageHero } from "@/components/website/page-hero";
+import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
 
 export function ContactClient() {
   const [selectedCategory, setSelectedCategory] = useState("Knitwear");
@@ -111,7 +112,7 @@ export function ContactClient() {
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl bg-[#25D366] hover:bg-[#20ba5a] text-white text-xs font-semibold tracking-wide transition-all shadow-xs hover:shadow-md cursor-pointer"
               >
-                <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M17.472 14.382c-.301-.15-1.78-.878-2.056-.978-.276-.1-.477-.15-.678.15-.201.3-.778.978-.954 1.179-.176.2-.351.226-.653.075-.301-.15-1.272-.469-2.423-1.496-.895-.799-1.5-1.786-1.676-2.087-.176-.301-.019-.464.132-.614.136-.135.301-.351.452-.527.151-.176.201-.301.301-.502.101-.201.05-.377-.025-.527-.075-.15-.678-1.634-.929-2.237-.245-.588-.494-.508-.678-.518-.176-.009-.377-.01-.578-.01-.201 0-.527.075-.803.377s-1.054 1.029-1.054 2.51c0 1.481 1.079 2.91 1.23 3.111.151.201 2.124 3.243 5.145 4.549.718.311 1.279.497 1.716.636.722.23 1.378.197 1.897.12.578-.087 1.78-.728 2.031-1.431.251-.703.251-1.305.176-1.431-.075-.126-.276-.201-.577-.351zM12.004 21.996h-.002c-1.733 0-3.431-.462-4.921-1.336l-.353-.209-3.66.96.977-3.567-.23-.366a9.92 9.92 0 0 1-1.523-5.275c0-5.498 4.475-9.973 9.978-9.973 2.664 0 5.168 1.038 7.049 2.92a9.917 9.917 0 0 1 2.917 7.054c-.001 5.499-4.476 9.987-9.232 9.787z" /></svg>
+                <WhatsAppIcon className="w-4 h-4 shrink-0" fill="#ffffff" />
                 <span>Chat on WhatsApp (+880 1715 645766)</span>
               </a>
             </div>

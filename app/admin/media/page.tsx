@@ -16,7 +16,7 @@ export default async function AdminMediaPage() {
       <div className="flex-1 pb-16">
         <AdminHeader 
           title="Media Library" 
-          subtitle="Upload product photography, factory banners and certification badges" 
+          subtitle="All site images — uploaded media and static assets from /public/images" 
         />
 
         <div className="p-4 sm:p-6 lg:p-8 w-full min-w-0 max-w-7xl mx-auto space-y-6">

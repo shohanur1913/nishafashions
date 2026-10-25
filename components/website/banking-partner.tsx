@@ -82,17 +82,7 @@ export function BankingPartner({ details, className }: BankingPartnerProps) {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
           {/* Left Column: Entity & Brand Overview */}
           <div className="lg:col-span-5 space-y-6">
-            <div className="flex flex-wrap items-center gap-2.5">
-              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold uppercase tracking-[0.2em] bg-primary/10 text-primary border border-primary/25">
-                <Building2 className="w-3.5 h-3.5 text-primary" />
-                Financial Governance
-              </span>
 
-              <span className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
-                <ShieldCheck className="w-3.5 h-3.5" />
-                <span>L/C &amp; Trade Verified</span>
-              </span>
-            </div>
 
             <div className="space-y-3">
               <h2 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-light text-foreground tracking-tight">

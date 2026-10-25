@@ -352,6 +352,10 @@ export async function saveProductAction(data: {
   specs?: string;
   image_src?: string;
   is_featured?: boolean;
+  is_hot_deal?: boolean;
+  offer_price?: string;
+  original_price?: string;
+  deal_badge?: string;
   is_published?: boolean;
   sort_order?: number;
 }) {
@@ -360,7 +364,9 @@ export async function saveProductAction(data: {
   if (data.id) {
     await execute(
       `UPDATE products 
-       SET category_slug = ?, name = ?, detail = ?, badge = ?, specs = ?, image_src = ?, is_featured = ?, is_published = ?, sort_order = ?
+       SET category_slug = ?, name = ?, detail = ?, badge = ?, specs = ?, image_src = ?, 
+           is_featured = ?, is_hot_deal = ?, offer_price = ?, original_price = ?, deal_badge = ?, 
+           is_published = ?, sort_order = ?
        WHERE id = ?`,
       [
         data.category_slug,
@@ -370,6 +376,10 @@ export async function saveProductAction(data: {
         data.specs || "",
         data.image_src || "",
         Boolean(data.is_featured),
+        Boolean(data.is_hot_deal),
+        data.offer_price || "",
+        data.original_price || "",
+        data.deal_badge || "",
         data.is_published !== false,
         data.sort_order || 0,
         data.id,
@@ -378,8 +388,8 @@ export async function saveProductAction(data: {
   } else {
     await execute(
       `INSERT INTO products 
-       (category_slug, name, detail, badge, specs, image_src, is_featured, is_published, sort_order) 
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+       (category_slug, name, detail, badge, specs, image_src, is_featured, is_hot_deal, offer_price, original_price, deal_badge, is_published, sort_order) 
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         data.category_slug,
         data.name,
@@ -388,6 +398,10 @@ export async function saveProductAction(data: {
         data.specs || "",
         data.image_src || "",
         Boolean(data.is_featured),
+        Boolean(data.is_hot_deal),
+        data.offer_price || "",
+        data.original_price || "",
+        data.deal_badge || "",
         data.is_published !== false,
         data.sort_order || 0,
       ]
@@ -397,6 +411,31 @@ export async function saveProductAction(data: {
   revalidatePath("/");
   revalidatePath(`/categories/${data.category_slug}`);
   revalidatePath("/admin/products");
+  revalidatePath("/admin/hot-deals");
+  return { success: true };
+}
+
+export async function toggleProductHotDealAction(id: number, is_hot_deal: boolean, offer_price?: string) {
+  await requireAdmin();
+  if (offer_price !== undefined) {
+    await execute(`UPDATE products SET is_hot_deal = ?, offer_price = ? WHERE id = ?`, [Boolean(is_hot_deal), offer_price, id]);
+  } else {
+    await execute(`UPDATE products SET is_hot_deal = ? WHERE id = ?`, [Boolean(is_hot_deal), id]);
+  }
+  revalidatePath("/");
+  revalidatePath("/admin/products");
+  revalidatePath("/admin/hot-deals");
+  return { success: true };
+}
+
+export async function bulkSetHotDealsAction(productIds: number[], is_hot_deal: boolean) {
+  await requireAdmin();
+  if (!productIds || productIds.length === 0) return { success: false, error: "No products selected" };
+  const placeholders = productIds.map(() => "?").join(",");
+  await execute(`UPDATE products SET is_hot_deal = ? WHERE id IN (${placeholders})`, [Boolean(is_hot_deal), ...productIds]);
+  revalidatePath("/");
+  revalidatePath("/admin/products");
+  revalidatePath("/admin/hot-deals");
   return { success: true };
 }
 
@@ -405,6 +444,7 @@ export async function deleteProductAction(id: number) {
   await execute(`DELETE FROM products WHERE id = ?`, [id]);
   revalidatePath("/");
   revalidatePath("/admin/products");
+  revalidatePath("/admin/hot-deals");
   return { success: true };
 }
 
@@ -441,6 +481,7 @@ export async function saveSiteSettingsAction(settings: Record<string, string>) {
 
   revalidatePath("/", "layout");
   revalidatePath("/admin/settings");
+  revalidatePath("/favicon.ico");
   return { success: true };
 }
 

@@ -22,7 +22,7 @@ export async function getCategories(): Promise<CategoryData[]> {
 
     for (const cat of dbCategories) {
       const dbProducts: any = await query(
-        `SELECT name, detail, badge, specs, image_src FROM products WHERE category_slug = ? AND is_published = TRUE ORDER BY sort_order ASC, id ASC`,
+        `SELECT id, name, detail, badge, specs, image_src FROM products WHERE category_slug = ? AND is_published = TRUE ORDER BY sort_order ASC, id ASC`,
         [cat.slug]
       );
 
@@ -128,5 +128,98 @@ export async function getSiteSettings(): Promise<Record<string, string>> {
     contact_email: defaultSite.email,
     brand_color: defaultSite.brandColor || "#E94D65",
     theme_color: defaultSite.themeColor || "#E94D65",
+    notice_enabled: "true",
+    notice_text: "🚧 Website Maintenance: We are currently upgrading our website. If you encounter any temporary issues, please bear with us.",
+    notice_mode: "auto",
+    notice_position: "top",
+    notice_variant: "primary",
+    notice_speed: "slow",
+    notice_link: "/contact",
+    notice_link_text: "Contact Support",
   };
+}
+
+export interface HotDealProduct {
+  id: number;
+  category_slug: string;
+  category_title?: string;
+  name: string;
+  detail?: string;
+  badge?: string;
+  specs?: string;
+  image_src?: string;
+  offer_price: string;
+  original_price?: string;
+  deal_badge?: string;
+  is_featured?: boolean;
+}
+
+/**
+ * Fetch products currently marked as Hot Deals for the homepage
+ */
+export async function getHotDeals(): Promise<HotDealProduct[]> {
+  try {
+    const products: any = await query(`
+      SELECT p.*, c.title as category_title 
+      FROM products p 
+      LEFT JOIN categories c ON p.category_slug = c.slug 
+      WHERE p.is_hot_deal = TRUE AND p.is_published = TRUE 
+      ORDER BY p.sort_order ASC, p.id DESC
+    `);
+    return products || [];
+  } catch (err) {
+    console.warn("Error fetching hot deals from DB:", err);
+    return [];
+  }
+}
+
+/**
+ * Fetch a single product by ID with category specifications
+ */
+export async function getProductById(id: number | string) {
+  try {
+    const products: any = await query(`
+      SELECT p.*, c.title as category_title, c.slug as category_slug, 
+             c.moq as category_moq, c.lead_time as category_lead_time, 
+             c.production_capacity as category_capacity,
+             c.fabrics_json, c.constructions_json, c.certifications_json
+      FROM products p 
+      LEFT JOIN categories c ON p.category_slug = c.slug 
+      WHERE p.id = ? AND p.is_published = TRUE 
+      LIMIT 1
+    `, [id]);
+
+    if (!products || products.length === 0) return null;
+    const p = products[0];
+
+    return {
+      ...p,
+      fabrics: p.fabrics_json ? JSON.parse(p.fabrics_json) : [],
+      constructions: p.constructions_json ? JSON.parse(p.constructions_json) : [],
+      certifications: p.certifications_json ? JSON.parse(p.certifications_json) : [],
+    };
+  } catch (err) {
+    console.warn(`Error fetching product ${id} from DB:`, err);
+    return null;
+  }
+}
+
+/**
+ * Fetch related products from the same category
+ */
+export async function getRelatedProducts(categorySlug: string, currentProductId: number, limit: number = 4) {
+  try {
+    const products: any = await query(`
+      SELECT p.*, c.title as category_title 
+      FROM products p 
+      LEFT JOIN categories c ON p.category_slug = c.slug 
+      WHERE p.category_slug = ? AND p.id != ? AND p.is_published = TRUE 
+      ORDER BY p.sort_order ASC, p.id DESC 
+      LIMIT ?
+    `, [categorySlug, currentProductId, limit]);
+    return products || [];
+  } catch (err) {
+    console.warn("Error fetching related products:", err);
+    return [];
+  }
 }

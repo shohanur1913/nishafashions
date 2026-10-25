@@ -1,10 +1,13 @@
 import { images, SiteImage } from "@/lib/content/images";
 
 export interface CategoryProduct {
+  id?: number | string;
   name: string;
   detail: string;
   badge?: string;
   specs?: string;
+  image_src?: string;
+  image?: SiteImage | string;
 }
 
 export interface CategoryData {

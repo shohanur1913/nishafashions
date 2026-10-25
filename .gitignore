@@ -41,6 +41,20 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# backups
+# backups & dumps
 /backups/
 *.sql
+
+# archives & bundles
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.rar
+*.7z
+
+# AI agent & workflow files
+.agents/
+AGENTS.md
+CLAUDE.md
+

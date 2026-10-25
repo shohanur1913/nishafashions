@@ -174,3 +174,25 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Notice Bar Ticker Animation */
+@keyframes notice-ticker {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-notice-ticker {
+  display: flex;
+  width: max-content;
+  animation: notice-ticker var(--notice-duration, 28s) linear infinite;
+  will-change: transform;
+}
+
+.animate-notice-ticker:hover {
+  animation-play-state: paused;
+}
+

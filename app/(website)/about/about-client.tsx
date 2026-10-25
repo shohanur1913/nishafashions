@@ -5,7 +5,7 @@ import NextImage from "next/image";
 import { images } from "@/lib/content/images";
 import { PageHero } from "@/components/website/page-hero";
 import { openQuoteModal } from "@/components/website/quote-modal";
-import { MessageCircle } from "lucide-react";
+import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
 import { BankingPartner } from "@/components/website/banking-partner";
 
 export function AboutClient() {
@@ -20,7 +20,6 @@ export function AboutClient() {
     <div className="min-h-screen bg-background text-foreground pb-24">
       {/* Universal Page Hero with Brand Accents */}
       <PageHero
-        badge="Corporate Heritage & Sourcing Partner"
         title={<>Our <span className="text-primary">Story.</span></>}
         description="Nisha Fashions Wear is a dedicated apparel production management and sourcing partner, backed by over 20 years of garment business experience serving the Europe, Canada, and USA markets."
       >
@@ -37,7 +36,7 @@ export function AboutClient() {
           rel="noopener noreferrer"
           className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full border border-zinc-700 text-white text-xs font-medium hover:bg-zinc-800 transition-colors"
         >
-          <MessageCircle className="w-3.5 h-3.5 text-[#25D366]" />
+          <WhatsAppIcon className="w-3.5 h-3.5" fill="#25D366" />
           <span>WhatsApp Us</span>
         </a>
       </PageHero>

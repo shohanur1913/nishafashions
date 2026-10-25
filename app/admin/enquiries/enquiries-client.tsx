@@ -20,11 +20,11 @@ import {
   AlertCircle, 
   Settings, 
   RefreshCw, 
-  Sparkles, 
   History, 
   ChevronDown, 
   ChevronUp 
 } from "lucide-react";
+import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
 
 interface EnquiryReply {
   id: number;
@@ -368,7 +368,7 @@ export function EnquiriesClient({
                     className="p-3 rounded-xl bg-[#25D366]/10 border border-[#25D366]/30 hover:bg-[#25D366]/20 transition-colors flex items-center gap-3 text-xs"
                   >
                     <div className="w-8 h-8 rounded-lg bg-[#25D366] text-white flex items-center justify-center shrink-0">
-                      <MessageSquare className="w-4 h-4" />
+                      <WhatsAppIcon className="w-4 h-4 shrink-0" fill="#ffffff" />
                     </div>
                     <div className="overflow-hidden">
                       <span className="text-[10px] text-emerald-700 block font-medium">WhatsApp Buyer</span>

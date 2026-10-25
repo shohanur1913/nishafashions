@@ -128,14 +128,14 @@ const chartData = [
 
 const chartConfig = {
   visitors: {
-    label: "Visitors",
+    label: "Buyer Traffic",
   },
   desktop: {
-    label: "Desktop",
+    label: "Direct & Web RFQs",
     color: "var(--primary)",
   },
   mobile: {
-    label: "Mobile",
+    label: "Mobile & WhatsApp",
     color: "var(--primary)",
   },
 } satisfies ChartConfig
@@ -152,7 +152,7 @@ export function ChartAreaInteractive() {
 
   const filteredData = chartData.filter((item) => {
     const date = new Date(item.date)
-    const referenceDate = new Date("2024-06-30")
+    const referenceDate = new Date(chartData[chartData.length - 1].date)
     let daysToSubtract = 90
     if (timeRange === "30d") {
       daysToSubtract = 30
@@ -167,12 +167,12 @@ export function ChartAreaInteractive() {
   return (
     <Card className="@container/card">
       <CardHeader>
-        <CardTitle>Total Visitors</CardTitle>
+        <CardTitle>Buyer Traffic &amp; Inquiry Trends</CardTitle>
         <CardDescription>
           <span className="hidden @[540px]/card:block">
-            Total for the last 3 months
+            Global retail buyer visits and sourcing interactions for the last 3 months
           </span>
-          <span className="@[540px]/card:hidden">Last 3 months</span>
+          <span className="@[540px]/card:hidden">Last 3 months buyer activity</span>
         </CardDescription>
         <CardAction>
           <ToggleGroup
@@ -260,7 +260,7 @@ export function ChartAreaInteractive() {
               content={
                 <ChartTooltipContent
                   labelFormatter={(value) => {
-                    return new Date(value).toLocaleDateString("en-US", {
+                    return new Date(value as string | number).toLocaleDateString("en-US", {
                       month: "short",
                       day: "numeric",
                     })

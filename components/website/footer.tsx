@@ -4,7 +4,7 @@ import { ArrowRight, Mail, MapPin, Phone } from "lucide-react";
 import DotField from "@/components/ui/dot-field";
 import ParticleText from "@/components/ui/particle-text";
 
-export function Footer() {
+export function Footer({ logoImage }: { logoImage?: string }) {
   return (
     <footer className="relative w-full bg-zinc-900 text-zinc-300 pt-6 pb-4 sm:pt-10 sm:pb-6 overflow-hidden border-t border-zinc-800">
       
@@ -35,7 +35,7 @@ export function Footer() {
           <div className="lg:col-span-5 space-y-5 sm:space-y-10">
             <div>
               <img 
-                src="/images/logo.jpg" 
+                src={logoImage || "/images/logo.jpg"} 
                 alt="Nisha Fashions Wear - Bangladesh Apparel Manufacturer and Sourcing Partner" 
                 className="h-10 sm:h-12 w-auto object-contain mb-3 sm:mb-6 bg-white p-1.5 sm:p-2 rounded"
               />
