@@ -12,17 +12,77 @@ const pool = mysql.createPool({
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
+  connectTimeout: 8000,
 });
 
 let isInitialized = false;
+
+/**
+ * Fast direct diagnostic ping to test database connectivity
+ */
+export async function checkDatabaseHealth(): Promise<{
+  connected: boolean;
+  latencyMs: number;
+  host: string;
+  port: number;
+  database: string;
+  tablesCount?: number;
+  error?: string;
+  code?: string;
+}> {
+  const start = Date.now();
+  const host = process.env.DB_HOST || "127.0.0.1";
+  const port = Number(process.env.DB_PORT) || 3306;
+  const database = process.env.DB_NAME || "nishafashions";
+
+  try {
+    const testConn = await mysql.createConnection({
+      host,
+      port,
+      user: process.env.DB_USER || "root",
+      password: process.env.DB_PASSWORD || "",
+      database,
+      connectTimeout: 6000,
+    });
+
+    await testConn.query("SELECT 1 as alive");
+    const [tables]: any = await testConn.query("SHOW TABLES");
+    await testConn.end();
+
+    const latencyMs = Date.now() - start;
+    return {
+      connected: true,
+      latencyMs,
+      host,
+      port,
+      database,
+      tablesCount: Array.isArray(tables) ? tables.length : 0,
+    };
+  } catch (err: any) {
+    const latencyMs = Date.now() - start;
+    return {
+      connected: false,
+      latencyMs,
+      host,
+      port,
+      database,
+      error: err.message || "Failed to connect",
+      code: err.code || "UNKNOWN",
+    };
+  }
+}
 
 /**
  * Initialize database tables and seed with current website content
  */
 export async function getDb() {
   if (!isInitialized) {
-    await initAndSeedDb();
-    isInitialized = true;
+    try {
+      await initAndSeedDb();
+      isInitialized = true;
+    } catch (err) {
+      console.warn("Database initialization failed (will retry on next request):", err);
+    }
   }
   return pool;
 }
