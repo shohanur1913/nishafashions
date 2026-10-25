@@ -253,14 +253,24 @@ async function initAndSeedDb() {
     CREATE TABLE IF NOT EXISTS media (
       id INT AUTO_INCREMENT PRIMARY KEY,
       filename VARCHAR(255) NOT NULL,
-      file_path VARCHAR(500) NOT NULL,
-      file_url VARCHAR(500) NOT NULL,
+      file_path LONGTEXT,
+      file_url LONGTEXT NOT NULL,
       mime_type VARCHAR(100) DEFAULT '',
       file_size INT DEFAULT 0,
       alt_text VARCHAR(255) DEFAULT '',
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
   `);
+
+  // Ensure file_url and image_src columns are expanded to LONGTEXT in existing databases
+  try {
+    await conn.query(`ALTER TABLE media MODIFY COLUMN file_url LONGTEXT NOT NULL`);
+    await conn.query(`ALTER TABLE media MODIFY COLUMN file_path LONGTEXT`);
+    await conn.query(`ALTER TABLE categories MODIFY COLUMN image_src LONGTEXT`);
+    await conn.query(`ALTER TABLE products MODIFY COLUMN image_src LONGTEXT`);
+  } catch {
+    // Non-fatal if already applied or if dialect differs
+  }
 
   // 8. Enquiry Email Replies Table
   await conn.query(`

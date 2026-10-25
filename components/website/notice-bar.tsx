@@ -49,23 +49,8 @@ export function NoticeBar({ settings, positionFilter, previewMode = false }: Not
   if (speed === "fast") duration = "45s";
 
   const brandColor = settings?.brand_color || settings?.theme_color || "#E94D65";
-  const variant = settings?.notice_variant || "primary";
-  let variantStyles = "text-white font-medium";
-  let linkStyles = "text-white underline decoration-white/70 hover:decoration-white font-semibold";
-
-  if (variant === "dark") {
-    variantStyles = "bg-zinc-950 text-zinc-100 border-b border-zinc-800";
-    linkStyles = "text-primary underline decoration-primary/70 hover:decoration-primary font-semibold";
-  } else if (variant === "amber") {
-    variantStyles = "bg-amber-500 text-amber-950 font-medium";
-    linkStyles = "text-amber-950 underline decoration-amber-900 hover:decoration-amber-950 font-bold";
-  } else if (variant === "emerald") {
-    variantStyles = "bg-emerald-600 text-white font-medium";
-    linkStyles = "text-white underline decoration-white/70 hover:decoration-white font-bold";
-  } else {
-    // primary theme color
-    variantStyles = "text-white font-medium shadow-xs";
-  }
+  const variantStyles = "text-white font-medium shadow-xs";
+  const linkStyles = "text-white underline decoration-white/70 hover:decoration-white font-semibold";
 
   const link = settings?.notice_link?.trim();
   const linkText = settings?.notice_link_text?.trim() || "Inquire Now";
@@ -111,7 +96,7 @@ export function NoticeBar({ settings, positionFilter, previewMode = false }: Not
       className={`relative w-full overflow-hidden transition-all duration-300 z-50 select-none ${variantStyles}`}
       style={{
         ["--notice-duration" as any]: duration,
-        ...(variant === "primary" ? { backgroundColor: brandColor } : {}),
+        backgroundColor: brandColor,
       }}
     >
       <div className="relative mx-auto max-w-screen-2xl flex items-center h-8 sm:h-9">
@@ -142,7 +127,7 @@ export function NoticeBar({ settings, positionFilter, previewMode = false }: Not
           <button
             type="button"
             onClick={handleDismiss}
-            className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-md opacity-70 hover:opacity-100 hover:bg-black/10 transition-all cursor-pointer z-10"
+            className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-md text-white/80 hover:text-white hover:bg-white/15 transition-all cursor-pointer z-10"
             title="Dismiss notice"
             aria-label="Dismiss notice"
           >
