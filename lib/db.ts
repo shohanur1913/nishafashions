@@ -14,13 +14,21 @@ const sslConfig = useSsl
     }
   : undefined;
 
+// Ensure we don't accidentally connect to MySQL's internal read-only 'sys' schema
+const targetDb =
+  process.env.DB_NAME &&
+  process.env.DB_NAME.trim().toLowerCase() !== "sys" &&
+  process.env.DB_NAME.trim() !== ""
+    ? process.env.DB_NAME.trim()
+    : "test";
+
 // Create MySQL connection pool
 const pool = mysql.createPool({
   host: process.env.DB_HOST || "127.0.0.1",
   port: Number(process.env.DB_PORT) || 3306,
   user: process.env.DB_USER || "root",
   password: process.env.DB_PASSWORD || "",
-  database: process.env.DB_NAME || "test",
+  database: targetDb,
   ssl: sslConfig,
   waitForConnections: true,
   connectionLimit: 10,
@@ -46,7 +54,7 @@ export async function checkDatabaseHealth(): Promise<{
   const start = Date.now();
   const host = process.env.DB_HOST || "127.0.0.1";
   const port = Number(process.env.DB_PORT) || 3306;
-  const database = process.env.DB_NAME || "nishafashions";
+  const database = targetDb;
 
   try {
     const testConn = await mysql.createConnection({
@@ -94,8 +102,9 @@ export async function getDb() {
     try {
       await initAndSeedDb();
       isInitialized = true;
-    } catch (err) {
-      console.warn("Database initialization failed (will retry on next request):", err);
+    } catch (err: any) {
+      console.error("Database initialization failed:", err?.message || err);
+      throw err;
     }
   }
   return pool;
@@ -115,6 +124,14 @@ export async function execute(sql: string, params: any[] = []) {
 
 async function initAndSeedDb() {
   const conn = pool;
+
+  // Ensure target database exists and is selected
+  try {
+    await conn.query(`CREATE DATABASE IF NOT EXISTS \`${targetDb}\``);
+    await conn.query(`USE \`${targetDb}\``);
+  } catch (err: any) {
+    // If user lacks CREATE DATABASE privilege, proceed with current active database
+  }
 
   // 1. Admin Users Table
   await conn.query(`
