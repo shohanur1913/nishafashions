@@ -26,7 +26,6 @@ export function ThreeFireTitle({
     const container = containerRef.current;
     if (!canvas || !container) return;
 
-    // Check WebGL support
     let renderer: THREE.WebGLRenderer;
     try {
       renderer = new THREE.WebGLRenderer({
@@ -35,8 +34,8 @@ export function ThreeFireTitle({
         antialias: true,
         powerPreference: "high-performance",
       });
+      renderer.setClearColor(0x000000, 0);
     } catch {
-      // Fallback gracefully if WebGL fails
       return;
     }
 
@@ -46,14 +45,14 @@ export function ThreeFireTitle({
     const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 10);
     camera.position.z = 1;
 
-    let width = container.clientWidth || 320;
-    let height = container.clientHeight || 80;
+    let width = 260;
+    let height = 70;
 
     const updateSize = () => {
-      if (!container || !renderer) return;
-      width = container.clientWidth;
-      height = container.clientHeight;
-      if (width <= 0 || height <= 0) return;
+      if (!canvas || !renderer) return;
+      const rect = canvas.getBoundingClientRect();
+      width = Math.max(rect.width, 100);
+      height = Math.max(rect.height, 40);
 
       renderer.setSize(width, height, false);
       camera.left = 0;
@@ -66,20 +65,19 @@ export function ThreeFireTitle({
     updateSize();
 
     // ----------------------------------------------------
-    // 1. FLAME PARTICLES (Licking Fire Tongue System)
+    // 1. SUBTLE DANCING FLAMES (Around text edges & baseline)
+    // Delicate, translucent flame tongues that don't block text
     // ----------------------------------------------------
-    const FLAME_COUNT = 450;
+    const FLAME_COUNT = 85;
     const flameGeo = new THREE.BufferGeometry();
     const flamePos = new Float32Array(FLAME_COUNT * 3);
     const flameColor = new Float32Array(FLAME_COUNT * 3);
     const flameSize = new Float32Array(FLAME_COUNT);
     const flameAlpha = new Float32Array(FLAME_COUNT);
 
-    // Particle state tracking
     const flameData: Array<{
       x: number;
       y: number;
-      baseX: number;
       vx: number;
       vy: number;
       life: number;
@@ -89,22 +87,21 @@ export function ThreeFireTitle({
     }> = [];
 
     const resetFlame = (idx: number, fullRandomY = false) => {
-      // Spawn flames distributed across the width of the text
-      const x = Math.random() * (width * 0.96) + width * 0.02;
-      const maxLife = 0.8 + Math.random() * 0.9;
+      const x = Math.random() * (width * 0.94) + width * 0.03;
+      const maxLife = 0.9 + Math.random() * 0.8;
       const life = fullRandomY ? Math.random() * maxLife : 0;
-      const y = fullRandomY ? (life / maxLife) * (height * 0.85) : Math.random() * 6;
+      // Start near the baseline of the text
+      const y = fullRandomY ? (life / maxLife) * (height * 0.7) : Math.random() * (height * 0.25);
 
       flameData[idx] = {
         x,
         y,
-        baseX: x,
-        vx: (Math.random() - 0.5) * 12,
-        vy: 28 + Math.random() * 45,
+        vx: (Math.random() - 0.5) * 8,
+        vy: 16 + Math.random() * 24,
         life,
         maxLife,
-        size: 14 + Math.random() * 22,
-        seed: Math.random() * 1000,
+        size: 5 + Math.random() * 7, // Small, delicate flame size
+        seed: Math.random() * 500,
       };
     };
 
@@ -113,9 +110,9 @@ export function ThreeFireTitle({
     }
 
     // ----------------------------------------------------
-    // 2. EMBER SPARKS SYSTEM (Fast flying sparks)
+    // 2. SPARKLING EMBERS (Tiny floating fiery specks)
     // ----------------------------------------------------
-    const EMBER_COUNT = 160;
+    const EMBER_COUNT = 65;
     const emberGeo = new THREE.BufferGeometry();
     const emberPos = new Float32Array(EMBER_COUNT * 3);
     const emberColor = new Float32Array(EMBER_COUNT * 3);
@@ -135,19 +132,19 @@ export function ThreeFireTitle({
 
     const resetEmber = (idx: number, fullRandomY = false) => {
       const x = Math.random() * width;
-      const maxLife = 1.2 + Math.random() * 1.5;
+      const maxLife = 1.1 + Math.random() * 1.4;
       const life = fullRandomY ? Math.random() * maxLife : 0;
-      const y = fullRandomY ? (life / maxLife) * (height * 1.4) : Math.random() * 8;
+      const y = fullRandomY ? (life / maxLife) * height : Math.random() * (height * 0.4);
 
       emberData[idx] = {
         x,
         y,
-        vx: (Math.random() - 0.5) * 25,
-        vy: 45 + Math.random() * 65,
+        vx: (Math.random() - 0.5) * 16,
+        vy: 28 + Math.random() * 42,
         life,
         maxLife,
-        size: 3 + Math.random() * 5,
-        wobbleSpeed: 2 + Math.random() * 4,
+        size: 1.8 + Math.random() * 2.8, // Tiny sharp sparks
+        wobbleSpeed: 2 + Math.random() * 3,
       };
     };
 
@@ -156,7 +153,7 @@ export function ThreeFireTitle({
     }
 
     // ----------------------------------------------------
-    // Custom Point Shader for Ultra-Crisp Fire Rendering
+    // GLSL Shaders for Soft Gaussian Glow Points
     // ----------------------------------------------------
     const fireVertexShader = `
       attribute float aSize;
@@ -169,7 +166,7 @@ export function ThreeFireTitle({
         vColor = aColor;
         vAlpha = aAlpha;
         vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-        gl_PointSize = aSize;
+        gl_PointSize = aSize * 2.0;
         gl_Position = projectionMatrix * mvPosition;
       }
     `;
@@ -179,18 +176,17 @@ export function ThreeFireTitle({
       varying float vAlpha;
 
       void main() {
-        // Create soft circular radial glow with hot center
         vec2 coord = gl_PointCoord - vec2(0.5);
         float dist = length(coord);
         if (dist > 0.5) discard;
 
-        // Quadratic falloff for smooth fiery bloom
-        float intensity = pow(1.0 - (dist * 2.0), 1.8);
-        gl_FragColor = vec4(vColor * intensity, vAlpha * intensity);
+        // Smooth circular falloff with hot center
+        float intensity = pow(1.0 - (dist * 2.0), 2.0);
+        gl_FragColor = vec4(vColor, intensity * vAlpha);
       }
     `;
 
-    // Flame Material
+    // Flame Material with controlled translucency
     const flameMat = new THREE.ShaderMaterial({
       vertexShader: fireVertexShader,
       fragmentShader: fireFragmentShader,
@@ -224,29 +220,25 @@ export function ThreeFireTitle({
     const emberPoints = new THREE.Points(emberGeo, emberMat);
     scene.add(emberPoints);
 
-    // ----------------------------------------------------
-    // Color Palette Transition for Fire
-    // ----------------------------------------------------
-    const colorWhite = new THREE.Color("#FFFFFF");
-    const colorYellow = new THREE.Color("#FFDE59");
-    const colorOrange = new THREE.Color("#FF6700");
-    const colorRed = new THREE.Color("#CC1100");
-    const colorDark = new THREE.Color("#440000");
+    // Colors
+    const colorWhite = new THREE.Color("#FFF8E7");
+    const colorGold = new THREE.Color("#FFB703");
+    const colorOrange = new THREE.Color("#FB8500");
+    const colorRed = new THREE.Color("#D90429");
+    const tempColor = new THREE.Color();
 
     const getFlameColor = (progress: number, target: THREE.Color) => {
-      if (progress < 0.2) {
-        target.copy(colorWhite).lerp(colorYellow, progress / 0.2);
-      } else if (progress < 0.5) {
-        target.copy(colorYellow).lerp(colorOrange, (progress - 0.2) / 0.3);
-      } else if (progress < 0.8) {
-        target.copy(colorOrange).lerp(colorRed, (progress - 0.5) / 0.3);
+      if (progress < 0.25) {
+        target.copy(colorWhite).lerp(colorGold, progress / 0.25);
+      } else if (progress < 0.65) {
+        target.copy(colorGold).lerp(colorOrange, (progress - 0.25) / 0.4);
       } else {
-        target.copy(colorRed).lerp(colorDark, (progress - 0.8) / 0.2);
+        target.copy(colorOrange).lerp(colorRed, (progress - 0.65) / 0.35);
       }
     };
 
     // ----------------------------------------------------
-    // Mouse Interactive Wind Physics
+    // Mouse Interactive Wind
     // ----------------------------------------------------
     let mouseX = -9999;
     let mouseY = -9999;
@@ -269,12 +261,11 @@ export function ThreeFireTitle({
     container.addEventListener("mouseleave", handlePointerLeave);
 
     // ----------------------------------------------------
-    // Animation Loop with Visibility Observer
+    // Animation Loop
     // ----------------------------------------------------
     let animationFrameId: number;
     let lastTime = performance.now();
     let isVisible = true;
-    const tempColor = new THREE.Color();
 
     const render = (time: number) => {
       const delta = Math.min((time - lastTime) / 1000, 0.05);
@@ -287,7 +278,7 @@ export function ThreeFireTitle({
 
       const tSec = time * 0.001;
 
-      // 1. Update Flames
+      // 1. Update Flames (Subtle dancing flame tongues)
       const posAttr = flameGeo.getAttribute("position") as THREE.BufferAttribute;
       const colAttr = flameGeo.getAttribute("aColor") as THREE.BufferAttribute;
       const sizeAttr = flameGeo.getAttribute("aSize") as THREE.BufferAttribute;
@@ -304,20 +295,19 @@ export function ThreeFireTitle({
 
         const progress = p.life / p.maxLife;
 
-        // Upward movement + dynamic turbulence
         p.y += p.vy * delta;
-        const turbulence = Math.sin(tSec * 4 + p.seed) * 14 * (1 - progress * 0.5);
+        const turbulence = Math.sin(tSec * 3.5 + p.seed) * 8 * (1 - progress * 0.5);
         p.x += (p.vx + turbulence) * delta;
 
-        // Interactive mouse wind
+        // Mouse interaction
         if (isHovering) {
           const dx = p.x - mouseX;
           const dy = p.y - mouseY;
           const distSq = dx * dx + dy * dy;
-          if (distSq < 7000 && distSq > 0) {
-            const force = (1 - Math.sqrt(distSq) / 84) * 80;
+          if (distSq < 5000 && distSq > 0) {
+            const force = (1 - Math.sqrt(distSq) / 70) * 50;
             p.x += (dx / Math.sqrt(distSq)) * force * delta;
-            p.y += Math.abs(dy / Math.sqrt(distSq)) * force * delta * 0.8;
+            p.y += 30 * delta;
           }
         }
 
@@ -326,12 +316,12 @@ export function ThreeFireTitle({
         getFlameColor(progress, tempColor);
         colAttr.setXYZ(i, tempColor.r, tempColor.g, tempColor.b);
 
-        // Size grows initially with heat expansion, then shrinks to smoke tip
-        const currentSize = p.size * (1 + Math.sin(progress * Math.PI) * 0.8);
+        // Controlled subtle size: does not blow out
+        const currentSize = p.size * (0.8 + Math.sin(progress * Math.PI) * 0.5);
         sizeAttr.setX(i, currentSize);
 
-        // Alpha fades as it burns out
-        const alpha = Math.sin(progress * Math.PI) * 0.95;
+        // Gentle translucent alpha (max ~0.35) so text remains 100% visible
+        const alpha = Math.sin(progress * Math.PI) * 0.35;
         alphaAttr.setX(i, alpha);
       }
 
@@ -358,37 +348,35 @@ export function ThreeFireTitle({
         const progress = ep.life / ep.maxLife;
 
         ep.y += ep.vy * delta;
-        ep.x += (ep.vx + Math.sin(tSec * ep.wobbleSpeed + i) * 16) * delta;
+        ep.x += (ep.vx + Math.sin(tSec * ep.wobbleSpeed + i) * 10) * delta;
 
-        // Mouse interaction for embers
         if (isHovering) {
           const dx = ep.x - mouseX;
           const dy = ep.y - mouseY;
           const distSq = dx * dx + dy * dy;
-          if (distSq < 10000 && distSq > 0) {
-            const force = (1 - Math.sqrt(distSq) / 100) * 120;
+          if (distSq < 6400 && distSq > 0) {
+            const force = (1 - Math.sqrt(distSq) / 80) * 60;
             ep.x += (dx / Math.sqrt(distSq)) * force * delta;
-            ep.y += 60 * delta;
+            ep.y += 40 * delta;
           }
         }
 
         ePosAttr.setXYZ(i, ep.x, ep.y, 0);
 
-        // Ember colors: sparkling golden to ruby red
-        if (progress < 0.4) {
-          tempColor.set("#FFF176"); // Bright spark
+        // Ember spark colors
+        if (progress < 0.35) {
+          tempColor.set("#FFF59D"); // Yellow spark
         } else if (progress < 0.7) {
           tempColor.set("#FF9100"); // Orange spark
         } else {
-          tempColor.set("#FF1744"); // Glowing ruby ember
+          tempColor.set("#FF3D00"); // Red ember
         }
 
-        // Twinkle flicker
-        const twinkle = 0.6 + Math.sin(tSec * 15 + i * 2) * 0.4;
+        const twinkle = 0.7 + Math.sin(tSec * 12 + i) * 0.3;
         eColAttr.setXYZ(i, tempColor.r * twinkle, tempColor.g * twinkle, tempColor.b * twinkle);
 
-        eSizeAttr.setX(i, ep.size * (1 - progress * 0.5));
-        eAlphaAttr.setX(i, (1 - progress) * twinkle);
+        eSizeAttr.setX(i, ep.size * (1 - progress * 0.4));
+        eAlphaAttr.setX(i, (1 - progress) * 0.75 * twinkle);
       }
 
       ePosAttr.needsUpdate = true;
@@ -402,7 +390,6 @@ export function ThreeFireTitle({
 
     animationFrameId = requestAnimationFrame(render);
 
-    // Visibility observer to save battery / GPU when offscreen
     const observer = new IntersectionObserver(
       ([entry]) => {
         isVisible = entry.isIntersecting;
@@ -411,7 +398,6 @@ export function ThreeFireTitle({
     );
     observer.observe(container);
 
-    // Resize observer
     const resizeObserver = new ResizeObserver(() => {
       updateSize();
     });
@@ -435,17 +421,25 @@ export function ThreeFireTitle({
   return (
     <div
       ref={containerRef}
-      className={`relative inline-block select-none overflow-visible ${className}`}
+      className={`relative inline-flex items-center select-none overflow-visible ${className}`}
     >
-      {/* Three.js Fire Particle Canvas Overlay */}
+      {/* 
+        Three.js Fire Particle Canvas: 
+        Placed behind the text (z-0) with pointer-events-none.
+        Gives a gorgeous glowing halo and rising sparks without obscuring the text!
+      */}
       <canvas
         ref={canvasRef}
         aria-hidden="true"
-        className="pointer-events-none absolute -inset-x-6 -inset-top-12 -inset-bottom-4 z-20 h-[calc(100%+64px)] w-[calc(100%+48px)]"
+        className="pointer-events-none absolute -inset-x-3 -top-6 -bottom-2 z-0 h-[calc(100%+32px)] w-[calc(100%+24px)]"
       />
 
-      {/* Burning Molten Text Layer */}
-      <span className="relative z-10 burning-fire-text font-serif italic font-normal tracking-tight">
+      {/* 
+        Burning Title Text: 
+        Rendered IN FRONT (z-20) with razor-sharp typography and burning molten gradient.
+        Crystal clear readability!
+      */}
+      <span className="relative z-20 burning-fire-text font-serif italic font-normal tracking-tight">
         {text}
       </span>
     </div>

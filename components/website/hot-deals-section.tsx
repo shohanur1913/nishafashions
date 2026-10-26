@@ -28,11 +28,6 @@ export function HotDealsSection({ deals }: HotDealsSectionProps) {
         <div className="max-w-2xl mb-10 sm:mb-12">
           {/* Animated Fire Title - Full burning effect across entire "Hot Deals." */}
           <div className="relative inline-block">
-            {/* Ambient heat aura behind the burning title */}
-            <div 
-              aria-hidden="true"
-              className="absolute -inset-x-8 -inset-y-4 bg-gradient-to-r from-orange-600/25 via-amber-500/30 to-red-600/25 blur-2xl rounded-full pointer-events-none opacity-90 animate-pulse"
-            />
 
             <h2 className="relative font-serif text-3xl sm:text-4xl lg:text-5xl tracking-tight leading-tight flex items-center flex-wrap gap-x-3.5 gap-y-1">
               <span className="inline-flex items-center gap-3">
