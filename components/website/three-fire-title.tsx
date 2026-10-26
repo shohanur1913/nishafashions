@@ -81,7 +81,7 @@ export function ThreeFireTitle({
       const fontSize = style.fontSize || "40px";
       const fontFamily = style.fontFamily || "serif";
       const fontWeight = style.fontWeight || "700";
-      const fontStyle = style.fontStyle || "italic";
+      const fontStyle = "normal";
 
       ctx.clearRect(0, 0, offscreen.width, offscreen.height);
       ctx.font = `${fontStyle} ${fontWeight} ${fontSize} ${fontFamily}`;
@@ -301,21 +301,13 @@ export function ThreeFireTitle({
     const emberPoints = new THREE.Points(emberGeo, emberMat);
     scene.add(emberPoints);
 
-    // Color Transitions matching brand theme (#E94D65)
-    const colorWhite = new THREE.Color("#FFFFFF");
-    const colorLightPink = new THREE.Color("#FFB3C1");
-    const colorThemeRose = new THREE.Color("#FF4D6D");
-    const colorBrandPrimary = new THREE.Color("#E94D65");
+    // Color Transitions matching exact brand theme (#E94D65)
+    const colorThemePrimary = new THREE.Color("#E94D65");
+    const colorThemeGlow = new THREE.Color("#FF607B");
     const tempColor = new THREE.Color();
 
     const getFlameColor = (progress: number, target: THREE.Color) => {
-      if (progress < 0.25) {
-        target.copy(colorWhite).lerp(colorLightPink, progress / 0.25);
-      } else if (progress < 0.65) {
-        target.copy(colorLightPink).lerp(colorThemeRose, (progress - 0.25) / 0.4);
-      } else {
-        target.copy(colorThemeRose).lerp(colorBrandPrimary, (progress - 0.65) / 0.35);
-      }
+      target.copy(colorThemeGlow).lerp(colorThemePrimary, progress);
     };
 
     // Mouse Interaction
@@ -443,13 +435,7 @@ export function ThreeFireTitle({
 
         ePosAttr.setXYZ(i, ep.x, ep.y, 0);
 
-        if (progress < 0.35) {
-          tempColor.set("#FFF0F3");
-        } else if (progress < 0.7) {
-          tempColor.set("#FF758F");
-        } else {
-          tempColor.set("#E94D65");
-        }
+        tempColor.set("#E94D65");
 
         const twinkle = 0.7 + Math.sin(tSec * 14 + i) * 0.3;
         eColAttr.setXYZ(i, tempColor.r * twinkle, tempColor.g * twinkle, tempColor.b * twinkle);
@@ -515,11 +501,11 @@ export function ThreeFireTitle({
 
       {/* 
         Burning Title Text: 
-        Rendered with bold serif typography and crisp molten flame styling.
+        Rendered with bold serif typography (NOT italic) and crisp molten flame styling.
       */}
       <span
         ref={textRef}
-        className="relative z-10 burning-fire-text font-serif italic font-bold sm:font-extrabold tracking-tight"
+        className="relative z-10 burning-fire-text font-serif font-bold sm:font-extrabold tracking-tight"
       >
         {text}
       </span>
