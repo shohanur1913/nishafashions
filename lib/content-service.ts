@@ -236,7 +236,44 @@ export async function getProductById(id: number | string) {
     };
   }
 
-  // 3. Fallback: Search in default categoriesCatalog
+  // 3. Match 'cat-{slug}-{index}' IDs (e.g. cat-knit-0)
+  const catMatch = String(id).match(/^cat-([a-z0-9-]+)-(\d+)$/i);
+  if (catMatch) {
+    const [, catSlug, indexStr] = catMatch;
+    const cat = categoriesCatalog.find(c => c.slug.toLowerCase() === catSlug.toLowerCase());
+    const idx = parseInt(indexStr, 10);
+    if (cat && cat.products && cat.products[idx]) {
+      const p = cat.products[idx];
+      const fallbackId = cat.slug === 'woven' ? idx + 1
+        : cat.slug === 'knit' ? idx + 9
+        : cat.slug === 'denim' ? idx + 17
+        : cat.slug === 'sweater' ? idx + 25
+        : idx + 32;
+
+      return {
+        id: id,
+        numericId: fallbackId,
+        slug: `product-${fallbackId}`,
+        name: p.name,
+        detail: p.detail,
+        specs: p.specs,
+        badge: p.badge || "Export Quality",
+        image_src: (p.image as any)?.src || cat.image.src,
+        category_slug: cat.slug,
+        category_title: cat.title,
+        category_moq: cat.moq,
+        category_lead_time: cat.leadTime,
+        category_capacity: cat.productionCapacity,
+        offer_price: "Inquire for FOB Chittagong",
+        original_price: "",
+        fabrics: cat.fabrics,
+        constructions: cat.constructions,
+        certifications: cat.certifications,
+      };
+    }
+  }
+
+  // 4. Fallback: Search in default categoriesCatalog by id, fallbackId, or name
   for (const cat of categoriesCatalog) {
     for (let i = 0; i < cat.products.length; i++) {
       const p = cat.products[i];
@@ -245,21 +282,29 @@ export async function getProductById(id: number | string) {
         : cat.slug === 'denim' ? i + 17
         : cat.slug === 'sweater' ? i + 25
         : i + 32;
+      const catCompositeId = `cat-${cat.slug}-${i}`;
       
-      if (String(p.id) === String(id) || String(fallbackId) === String(id)) {
+      if (
+        String(p.id) === String(id) || 
+        String(fallbackId) === String(id) ||
+        catCompositeId === String(id) ||
+        p.name.toLowerCase() === String(id).toLowerCase()
+      ) {
         return {
           id: p.id ?? fallbackId,
+          numericId: fallbackId,
+          slug: `product-${fallbackId}`,
           name: p.name,
           detail: p.detail,
           specs: p.specs,
-          badge: p.badge,
+          badge: p.badge || "Export Quality",
           image_src: (p.image as any)?.src || cat.image.src,
           category_slug: cat.slug,
           category_title: cat.title,
           category_moq: cat.moq,
           category_lead_time: cat.leadTime,
           category_capacity: cat.productionCapacity,
-          offer_price: "Inquire for FOB",
+          offer_price: "Inquire for FOB Chittagong",
           original_price: "",
           fabrics: cat.fabrics,
           constructions: cat.constructions,
@@ -271,6 +316,7 @@ export async function getProductById(id: number | string) {
 
   return null;
 }
+
 
 /**
  * Fetch related products from the same category

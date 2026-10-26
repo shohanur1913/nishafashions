@@ -111,36 +111,48 @@ export function CategoryExplorerClient({ categoryData, allCategories }: Category
     // 2. Fallback if no specific products matched or master list is light for this subcategory
     if (items.length === 0) {
       // Return general category products mapped with IDs
-      return categoryData.products.map((p, idx) => ({
-        id: `cat-${categoryData.slug}-${idx}`,
-        numericId: typeof p.id === 'number' ? p.id : idx + 1,
-        slug: `product-${idx + 1}`,
-        name: p.name,
-        categorySlug: currentCategorySlug,
-        categoryTitle: categoryData.title,
-        demographic: activeDemographic,
-        demographicLabel: DEMOGRAPHICS.find(d => d.id === activeDemographic)?.label || "Men's",
-        subcategoryId: activeSubcategory,
-        subcategoryName: activeSubcategory === "all" ? "Core Collection" : activeSubcategory,
-        badge: p.badge || "Export Quality",
-        specs: p.specs || "Custom export specifications available on inquiry",
-        fabricComposition: categoryData.fabrics?.[0] || "100% Combed Cotton",
-        gsmOrWeight: "Standard Export Weight",
-        moq: categoryData.moq || "1,000 pcs",
-        priceRange: "Inquire for FOB Chittagong",
-        leadTime: categoryData.leadTime || "45-60 Days",
-        productionCapacity: categoryData.productionCapacity || "1,000,000 pcs / month",
-        finishes: categoryData.finishes || [],
-        certifications: categoryData.certifications || [],
-        colors: ["White", "Black", "Navy", "Heather Grey"],
-        packaging: "Standard export polybag & carton packaging",
-        detail: p.detail,
-        image_src: typeof p.image === 'string' ? p.image : (p.image as any)?.src || categoryData.image.src,
-      }));
+      return categoryData.products.map((p, idx) => {
+        const fallbackId = categoryData.slug === 'woven' ? idx + 1
+          : categoryData.slug === 'knit' ? idx + 9
+          : categoryData.slug === 'denim' ? idx + 17
+          : categoryData.slug === 'sweater' ? idx + 25
+          : idx + 32;
+
+        const subMeta = availableSubcategories.find(s => s.id === activeSubcategory);
+        const resolvedSubName = subMeta ? subMeta.name : (activeSubcategory !== "all" ? activeSubcategory : categoryData.title);
+
+        return {
+          id: `cat-${categoryData.slug}-${idx}`,
+          numericId: typeof p.id === 'number' ? p.id : fallbackId,
+          slug: `product-${fallbackId}`,
+          name: p.name,
+          categorySlug: currentCategorySlug,
+          categoryTitle: categoryData.title,
+          demographic: activeDemographic,
+          demographicLabel: DEMOGRAPHICS.find(d => d.id === activeDemographic)?.label || "Men's",
+          subcategoryId: activeSubcategory,
+          subcategoryName: resolvedSubName,
+          badge: p.badge || "Export Quality",
+          specs: p.specs || "Custom export specifications available on inquiry",
+          fabricComposition: categoryData.fabrics?.[0] || "100% Combed Cotton",
+          gsmOrWeight: "",
+          moq: categoryData.moq || "1,000 pcs",
+          priceRange: "Inquire for FOB Chittagong",
+          leadTime: categoryData.leadTime || "45-60 Days",
+          productionCapacity: categoryData.productionCapacity || "1,000,000 pcs / month",
+          finishes: categoryData.finishes || [],
+          certifications: categoryData.certifications || [],
+          colors: ["White", "Black", "Navy", "Heather Grey"],
+          packaging: "Standard export polybag & carton packaging",
+          detail: p.detail,
+          image_src: typeof p.image === 'string' ? p.image : (p.image as any)?.src || categoryData.image.src,
+        };
+      });
     }
 
     return items;
-  }, [currentCategorySlug, activeDemographic, activeSubcategory, categoryData]);
+  }, [currentCategorySlug, activeDemographic, activeSubcategory, categoryData, availableSubcategories]);
+
 
   const activeDemoInfo = DEMOGRAPHICS.find(d => d.id === activeDemographic) || DEMOGRAPHICS[0];
   const activeSubMeta = availableSubcategories.find(s => s.id === activeSubcategory);
@@ -372,8 +384,9 @@ export function CategoryExplorerClient({ categoryData, allCategories }: Category
         {/* Product Cards Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
           {filteredProducts.map((prod) => {
-            const productHref = `/products/${prod.id || prod.numericId}`;
+            const productHref = `/products/${prod.numericId || prod.id}`;
             return (
+
               <div
                 key={prod.id}
                 className="group flex flex-col rounded-2xl bg-card border border-border/70 hover:border-primary/40 hover:shadow-lg transition-all duration-300 overflow-hidden h-full"
@@ -412,9 +425,12 @@ export function CategoryExplorerClient({ categoryData, allCategories }: Category
                 <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between space-y-3">
                   <div className="space-y-1.5">
                     <div className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider flex items-center justify-between">
-                      <span>{prod.subcategoryName}</span>
-                      <span className="font-mono text-primary font-semibold">{prod.gsmOrWeight}</span>
+                      <span>{prod.subcategoryName && prod.subcategoryName !== "all" && prod.subcategoryName !== "Core Collection" ? prod.subcategoryName : prod.categoryTitle}</span>
+                      {prod.gsmOrWeight && prod.gsmOrWeight !== "Standard Export Weight" && (
+                        <span className="font-mono text-primary font-semibold">{prod.gsmOrWeight}</span>
+                      )}
                     </div>
+
 
                     <Link href={productHref}>
                       <h3 className="font-medium text-sm sm:text-base text-foreground leading-snug group-hover:text-primary transition-colors line-clamp-2">
