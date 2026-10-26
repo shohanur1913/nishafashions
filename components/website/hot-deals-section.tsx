@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { Flame, Shirt, ArrowUpRight } from "lucide-react";
 import { HotDealProduct } from "@/lib/content-service";
+import { ThreeFireTitle } from "./three-fire-title";
 
 interface HotDealsSectionProps {
   deals: HotDealProduct[];
@@ -80,20 +81,9 @@ export function HotDealsSection({ deals }: HotDealsSectionProps) {
                   </svg>
                 </span>
 
-                {/* The entire "Hot Deals." burns with fire! */}
-                <span className="burning-fire-text font-serif italic font-normal tracking-tight">
-                  Hot Deals.
-                </span>
+                {/* Three.js 3D Fire Particle Canvas & Burning Title */}
+                <ThreeFireTitle text="Hot Deals." />
               </span>
-
-              {/* Multiple Rising Fire Embers / Sparks drifting upward */}
-              <div aria-hidden="true" className="absolute -top-3 left-10 right-0 h-10 pointer-events-none overflow-visible">
-                <span className="absolute left-[18%] bottom-1 w-1.5 h-1.5 rounded-full bg-amber-300 animate-ember-1 blur-[0.3px]" />
-                <span className="absolute left-[38%] bottom-2 w-1 h-1 rounded-full bg-orange-400 animate-ember-2 blur-[0.2px]" />
-                <span className="absolute left-[58%] bottom-1 w-1.5 h-1.5 rounded-full bg-yellow-300 animate-ember-3 blur-[0.3px]" />
-                <span className="absolute left-[78%] bottom-2 w-1 h-1 rounded-full bg-rose-400 animate-ember-1 blur-[0.2px]" style={{ animationDelay: '0.8s' }} />
-                <span className="absolute left-[92%] bottom-1 w-1.5 h-1.5 rounded-full bg-amber-400 animate-ember-2 blur-[0.3px]" style={{ animationDelay: '1.4s' }} />
-              </div>
             </h2>
           </div>
 
