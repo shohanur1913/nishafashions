@@ -301,20 +301,20 @@ export function ThreeFireTitle({
     const emberPoints = new THREE.Points(emberGeo, emberMat);
     scene.add(emberPoints);
 
-    // Color Transitions
-    const colorWhite = new THREE.Color("#FFF9E6");
-    const colorGold = new THREE.Color("#FFB703");
-    const colorOrange = new THREE.Color("#FB8500");
-    const colorRed = new THREE.Color("#D90429");
+    // Color Transitions matching brand theme (#E94D65)
+    const colorWhite = new THREE.Color("#FFFFFF");
+    const colorLightPink = new THREE.Color("#FFB3C1");
+    const colorThemeRose = new THREE.Color("#FF4D6D");
+    const colorBrandPrimary = new THREE.Color("#E94D65");
     const tempColor = new THREE.Color();
 
     const getFlameColor = (progress: number, target: THREE.Color) => {
       if (progress < 0.25) {
-        target.copy(colorWhite).lerp(colorGold, progress / 0.25);
+        target.copy(colorWhite).lerp(colorLightPink, progress / 0.25);
       } else if (progress < 0.65) {
-        target.copy(colorGold).lerp(colorOrange, (progress - 0.25) / 0.4);
+        target.copy(colorLightPink).lerp(colorThemeRose, (progress - 0.25) / 0.4);
       } else {
-        target.copy(colorOrange).lerp(colorRed, (progress - 0.65) / 0.35);
+        target.copy(colorThemeRose).lerp(colorBrandPrimary, (progress - 0.65) / 0.35);
       }
     };
 
@@ -444,11 +444,11 @@ export function ThreeFireTitle({
         ePosAttr.setXYZ(i, ep.x, ep.y, 0);
 
         if (progress < 0.35) {
-          tempColor.set("#FFF59D");
+          tempColor.set("#FFF0F3");
         } else if (progress < 0.7) {
-          tempColor.set("#FF9100");
+          tempColor.set("#FF758F");
         } else {
-          tempColor.set("#FF3D00");
+          tempColor.set("#E94D65");
         }
 
         const twinkle = 0.7 + Math.sin(tSec * 14 + i) * 0.3;

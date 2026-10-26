@@ -294,35 +294,35 @@
   animation: fire-particle-3 1.6s ease-out 0.8s infinite;
 }
 
-/* Professional Crisp Burning Text with high readability */
+/* Professional Burning Text matching brand theme color (#E94D65) */
 .burning-fire-text {
   font-weight: 750;
   background: linear-gradient(
     180deg,
-    #991b1b 0%,
-    #c2410c 35%,
-    #ea580c 70%,
-    #d97706 100%
+    #D42B49 0%,
+    #E94D65 35%,
+    #FF6B8B 70%,
+    #FF8FA3 100%
   );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   display: inline-block;
-  filter: drop-shadow(0 2px 4px rgba(185, 28, 28, 0.3));
+  filter: drop-shadow(0 2px 8px rgba(233, 77, 101, 0.35));
 }
 
 :is(.dark) .burning-fire-text {
   background: linear-gradient(
     180deg,
-    #fffbeb 0%,
-    #fde047 30%,
-    #f97316 70%,
-    #ef4444 100%
+    #FFFFFF 0%,
+    #FFC2CD 25%,
+    #FF6B8B 60%,
+    #E94D65 100%
   );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  filter: drop-shadow(0 0 10px rgba(249, 115, 22, 0.5));
+  filter: drop-shadow(0 0 14px rgba(233, 77, 101, 0.7));
 }
 
 @keyframes ember-rise-1 {

@@ -31,29 +31,29 @@ export function HotDealsSection({ deals }: HotDealsSectionProps) {
 
             <h2 className="relative font-serif text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight leading-tight flex items-center justify-center flex-wrap gap-x-3.5 gap-y-1">
               <span className="inline-flex items-center justify-center gap-3">
-                {/* Multi-layered animated burning torch flame */}
+                {/* Multi-layered animated burning torch flame in theme color */}
                 <span className="relative inline-flex items-center justify-center shrink-0">
-                  <span className="absolute inset-0 rounded-full bg-orange-500/40 blur-md animate-pulse pointer-events-none" />
+                  <span className="absolute inset-0 rounded-full bg-[#E94D65]/35 blur-md animate-pulse pointer-events-none" />
                   
                   <svg
                     viewBox="0 0 24 24"
                     fill="none"
-                    className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 drop-shadow-[0_0_20px_rgba(255,87,34,0.95)] animate-flame-wobble shrink-0"
+                    className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 drop-shadow-[0_0_18px_rgba(233,77,101,0.85)] animate-flame-wobble shrink-0"
                   >
-                    {/* Outer Red-Orange Flame */}
+                    {/* Outer Theme Rose Flame */}
                     <path
                       d="M12 2C9.5 5 7 8 7 12C7 15.5 9.24 18.5 12 19.8C14.76 18.5 17 15.5 17 12C17 8 14.5 5 12 2Z"
                       fill="url(#fireOuter)"
                     />
-                    {/* Mid Golden-Orange Flame */}
+                    {/* Mid Coral Flame */}
                     <path
                       d="M12 5C10.5 7.5 8.5 10 8.5 13C8.5 15.8 10 17.8 12 18.8C14 17.8 15.5 15.8 15.5 13C15.5 10 13.5 7.5 12 5Z"
                       fill="url(#fireMid)"
                     />
-                    {/* Inner Yellow Core */}
+                    {/* Inner Light Core */}
                     <path
                       d="M12 9C11 10.5 10.2 12 10.2 13.8C10.2 15.5 11 16.8 12 17.3C13 16.8 13.8 15.5 13.8 13.8C13.8 12 13 10.5 12 9Z"
-                      fill="#FFF59D"
+                      fill="#FFF0F3"
                     />
                     {/* White Core Heat Center */}
                     <path
@@ -62,15 +62,15 @@ export function HotDealsSection({ deals }: HotDealsSectionProps) {
                     />
                     <defs>
                       <linearGradient id="fireOuter" x1="12" y1="2" x2="12" y2="20" gradientUnits="userSpaceOnUse">
-                        <stop stopColor="#D90429" />
-                        <stop offset="0.4" stopColor="#FF4500" />
-                        <stop offset="0.8" stopColor="#FF8C00" />
-                        <stop offset="1" stopColor="#FFD000" />
+                        <stop stopColor="#D42B49" />
+                        <stop offset="0.4" stopColor="#E94D65" />
+                        <stop offset="0.8" stopColor="#FF6B8B" />
+                        <stop offset="1" stopColor="#FFAEC0" />
                       </linearGradient>
                       <linearGradient id="fireMid" x1="12" y1="5" x2="12" y2="19" gradientUnits="userSpaceOnUse">
-                        <stop stopColor="#FF3D00" />
-                        <stop offset="0.5" stopColor="#FF9100" />
-                        <stop offset="1" stopColor="#FFEA00" />
+                        <stop stopColor="#E94D65" />
+                        <stop offset="0.5" stopColor="#FF6B8B" />
+                        <stop offset="1" stopColor="#FFD6DF" />
                       </linearGradient>
                     </defs>
                   </svg>
