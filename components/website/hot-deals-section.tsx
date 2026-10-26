@@ -25,78 +25,75 @@ export function HotDealsSection({ deals }: HotDealsSectionProps) {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-screen-2xl relative z-10">
         {/* Section Header */}
         <div className="max-w-2xl mb-10 sm:mb-12">
-          {/* Flame Pill Badge */}
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r from-orange-500/15 via-rose-500/15 to-amber-500/15 border border-orange-500/30 text-xs font-semibold uppercase tracking-wider text-orange-600 dark:text-orange-400 mb-3.5 shadow-[0_0_20px_rgba(249,115,22,0.2)]">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
-            </span>
-            <span className="flex items-center gap-1.5">
-              <Flame className="w-3.5 h-3.5 fill-orange-500 text-orange-500 animate-pulse" />
-              <span>Limited Factory Allocations</span>
-            </span>
-          </div>
-
-          {/* Animated Fire Title (Apparel deleted, fire animation added) */}
+          {/* Animated Fire Title - Full burning effect across entire "Hot Deals." */}
           <div className="relative inline-block">
-            <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-light text-foreground tracking-tight leading-tight flex items-center flex-wrap gap-x-3 gap-y-1">
-              <span className="inline-flex items-center gap-2.5">
-                {/* Multi-layered animated fire flame */}
-                <span className="relative inline-flex items-center justify-center">
-                  <span className="absolute inset-0 rounded-full bg-orange-500/30 blur-md animate-pulse pointer-events-none" />
+            {/* Ambient heat aura behind the burning title */}
+            <div 
+              aria-hidden="true"
+              className="absolute -inset-x-8 -inset-y-4 bg-gradient-to-r from-orange-600/25 via-amber-500/30 to-red-600/25 blur-2xl rounded-full pointer-events-none opacity-90 animate-pulse"
+            />
+
+            <h2 className="relative font-serif text-3xl sm:text-4xl lg:text-5xl tracking-tight leading-tight flex items-center flex-wrap gap-x-3.5 gap-y-1">
+              <span className="inline-flex items-center gap-3">
+                {/* Multi-layered animated burning torch flame */}
+                <span className="relative inline-flex items-center justify-center shrink-0">
+                  <span className="absolute inset-0 rounded-full bg-orange-500/40 blur-md animate-pulse pointer-events-none" />
                   
                   <svg
                     viewBox="0 0 24 24"
                     fill="none"
-                    className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-orange-500 drop-shadow-[0_0_18px_rgba(255,100,0,0.85)] animate-flame-wobble shrink-0"
+                    className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 drop-shadow-[0_0_20px_rgba(255,87,34,0.95)] animate-flame-wobble shrink-0"
                   >
                     {/* Outer Red-Orange Flame */}
                     <path
                       d="M12 2C9.5 5 7 8 7 12C7 15.5 9.24 18.5 12 19.8C14.76 18.5 17 15.5 17 12C17 8 14.5 5 12 2Z"
-                      fill="url(#outerFlame)"
+                      fill="url(#fireOuter)"
                     />
                     {/* Mid Golden-Orange Flame */}
                     <path
-                      d="M12 6C10.5 8 9 10 9 13C9 15.5 10.3 17.5 12 18.5C13.7 17.5 15 15.5 15 13C15 10 13.5 8 12 6Z"
-                      fill="url(#midFlame)"
-                      className="animate-pulse"
+                      d="M12 5C10.5 7.5 8.5 10 8.5 13C8.5 15.8 10 17.8 12 18.8C14 17.8 15.5 15.8 15.5 13C15.5 10 13.5 7.5 12 5Z"
+                      fill="url(#fireMid)"
                     />
-                    {/* Inner Yellow Flame Core */}
+                    {/* Inner Yellow Core */}
                     <path
-                      d="M12 10C11.2 11.2 10.5 12.5 10.5 14C10.5 15.5 11.2 16.8 12 17.2C12.8 16.8 13.5 15.5 13.5 14C13.5 12.5 12.8 11.2 12 10Z"
+                      d="M12 9C11 10.5 10.2 12 10.2 13.8C10.2 15.5 11 16.8 12 17.3C13 16.8 13.8 15.5 13.8 13.8C13.8 12 13 10.5 12 9Z"
                       fill="#FFF59D"
                     />
+                    {/* White Core Heat Center */}
+                    <path
+                      d="M12 12C11.5 12.8 11.2 13.5 11.2 14.3C11.2 15.2 11.6 15.8 12 16.1C12.4 15.8 12.8 15.2 12.8 14.3C12.8 13.5 12.5 12.8 12 12Z"
+                      fill="#FFFFFF"
+                    />
                     <defs>
-                      <linearGradient id="outerFlame" x1="12" y1="2" x2="12" y2="20" gradientUnits="userSpaceOnUse">
-                        <stop stopColor="#FF1744" />
-                        <stop offset="0.6" stopColor="#FF5722" />
-                        <stop offset="1" stopColor="#FF9100" />
+                      <linearGradient id="fireOuter" x1="12" y1="2" x2="12" y2="20" gradientUnits="userSpaceOnUse">
+                        <stop stopColor="#D90429" />
+                        <stop offset="0.4" stopColor="#FF4500" />
+                        <stop offset="0.8" stopColor="#FF8C00" />
+                        <stop offset="1" stopColor="#FFD000" />
                       </linearGradient>
-                      <linearGradient id="midFlame" x1="12" y1="6" x2="12" y2="19" gradientUnits="userSpaceOnUse">
-                        <stop stopColor="#FF6D00" />
-                        <stop offset="0.8" stopColor="#FFD600" />
+                      <linearGradient id="fireMid" x1="12" y1="5" x2="12" y2="19" gradientUnits="userSpaceOnUse">
+                        <stop stopColor="#FF3D00" />
+                        <stop offset="0.5" stopColor="#FF9100" />
+                        <stop offset="1" stopColor="#FFEA00" />
                       </linearGradient>
                     </defs>
                   </svg>
                 </span>
 
-                <span className="font-light text-foreground">Hot</span>
-              </span>
-
-              {/* Animated Fiery "Deals." with floating spark motes */}
-              <span className="relative inline-block">
-                <span className="font-normal italic bg-gradient-to-r from-orange-500 via-amber-400 to-rose-600 bg-clip-text text-transparent bg-[length:200%_auto] animate-fire-gradient drop-shadow-[0_2px_12px_rgba(255,100,0,0.35)]">
-                  Deals
-                </span>
-                <span className="text-rose-500 font-normal">.</span>
-
-                {/* Floating Fiery Spark Particles */}
-                <span className="absolute -top-1 -right-3 flex space-x-1 pointer-events-none">
-                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-fire-particle-1 blur-[0.5px]" />
-                  <span className="w-1 h-1 rounded-full bg-orange-500 animate-fire-particle-2 blur-[0.5px]" />
-                  <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-fire-particle-3 blur-[0.5px]" />
+                {/* The entire "Hot Deals." burns with fire! */}
+                <span className="burning-fire-text font-serif italic font-normal tracking-tight">
+                  Hot Deals.
                 </span>
               </span>
+
+              {/* Multiple Rising Fire Embers / Sparks drifting upward */}
+              <div aria-hidden="true" className="absolute -top-3 left-10 right-0 h-10 pointer-events-none overflow-visible">
+                <span className="absolute left-[18%] bottom-1 w-1.5 h-1.5 rounded-full bg-amber-300 animate-ember-1 blur-[0.3px]" />
+                <span className="absolute left-[38%] bottom-2 w-1 h-1 rounded-full bg-orange-400 animate-ember-2 blur-[0.2px]" />
+                <span className="absolute left-[58%] bottom-1 w-1.5 h-1.5 rounded-full bg-yellow-300 animate-ember-3 blur-[0.3px]" />
+                <span className="absolute left-[78%] bottom-2 w-1 h-1 rounded-full bg-rose-400 animate-ember-1 blur-[0.2px]" style={{ animationDelay: '0.8s' }} />
+                <span className="absolute left-[92%] bottom-1 w-1.5 h-1.5 rounded-full bg-amber-400 animate-ember-2 blur-[0.3px]" style={{ animationDelay: '1.4s' }} />
+              </div>
             </h2>
           </div>
 
@@ -104,6 +101,7 @@ export function HotDealsSection({ deals }: HotDealsSectionProps) {
             Direct factory allocations and special volume pricing for export apparel production. Click any product to view complete technical specifications and costing details.
           </p>
         </div>
+
 
         {/* Hot Deals Grid — Clean, Clickable Cards Linking to Product View Page */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
