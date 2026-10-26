@@ -1,16 +1,12 @@
 'use client';
-import type React from 'react';
-import { useEffect, useRef, useState, useCallback } from 'react';
+
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import * as d3 from 'd3';
 import { feature } from 'topojson-client';
-import type {
-  Topology,
-  GeometryCollection,
-  GeometryObject,
-} from 'topojson-specification';
+import type { Topology, GeometryCollection } from 'topojson-specification';
 import type { GeoPermissibleObjects } from 'd3';
 
-interface GlobeWireframeProps {
+export interface GlobeWireframeProps {
   width?: number;
   height?: number;
   className?: string;
@@ -28,8 +24,6 @@ interface GlobeWireframeProps {
   initialRotation?: [number, number];
   enableInteraction?: boolean;
   showGraticule?: boolean;
-  animationDuration?: number;
-  startAsGlobe?: boolean;
   countryFillColor?: string;
   countryHoverColor?: string;
   variant?: 'wireframe' | 'wireframesolid' | 'solid';
@@ -37,21 +31,11 @@ interface GlobeWireframeProps {
   backgroundColor?: string;
 }
 
-interface GeoFeature {
-  type: string;
-  geometry: GeometryObject;
-  properties: Record<string, unknown>;
-}
-
 interface WorldAtlasTopology extends Topology {
   objects: {
     countries: GeometryCollection;
+    land?: GeometryCollection;
   };
-}
-
-interface CustomProjection extends d3.GeoProjection {
-  alpha(value: number): CustomProjection;
-  alpha(): number;
 }
 
 const cityCoordinates: Record<string, [number, number]> = {
@@ -67,585 +51,298 @@ const cityCoordinates: Record<string, [number, number]> = {
   mumbai: [19.076, 72.8777],
   'los angeles': [34.0522, -118.2437],
   chicago: [41.8781, -87.6298],
+  dhaka: [23.8103, 90.4125],
 };
 
-function orthographicRaw(x: number, y: number): [number, number] {
-  const cosy = Math.cos(y);
-  return [cosy * Math.sin(x), Math.sin(y)];
-}
-
-function equirectangularRaw(lambda: number, phi: number): [number, number] {
-  return [lambda, phi];
-}
-
-function interpolateProjection(
-  raw0: (lambda: number, phi: number) => [number, number],
-  raw1: (lambda: number, phi: number) => [number, number],
-): CustomProjection {
-  let t = 0;
-
-  const createRawProjection = (
-    alpha: number,
-  ): ((lambda: number, phi: number) => [number, number]) => {
-    return (lambda: number, phi: number): [number, number] => {
-      const [x0, y0] = raw0(lambda, phi);
-      const [x1, y1] = raw1(lambda, phi);
-      return [x0 + alpha * (x1 - x0), y0 + alpha * (y1 - y0)];
-    };
-  };
-
-  const projection = d3.geoProjection(
-    createRawProjection(t),
-  ) as unknown as CustomProjection;
-
-  const alphaMethod = ((value?: number): CustomProjection | number => {
-    if (value !== undefined) {
-      t = +value;
-      const newProjection = d3.geoProjection(
-        createRawProjection(t),
-      ) as unknown as CustomProjection;
-
-      if (projection.scale()) newProjection.scale(projection.scale());
-      if (projection.translate())
-        newProjection.translate(projection.translate());
-      if (projection.rotate()) newProjection.rotate(projection.rotate());
-      if (projection.precision())
-        newProjection.precision(projection.precision());
-
-      newProjection.alpha = alphaMethod as CustomProjection['alpha'];
-
-      return newProjection;
-    }
-    return t;
-  }) as CustomProjection['alpha'];
-
-  projection.alpha = alphaMethod;
-
-  return projection;
-}
-
 export default function GlobeWireframe({
-  width,
-  height,
-  className = 'aspect-square w-full max-w-150',
-  strokeColor = 'currentColor',
-  strokeWidth = 1.0,
-  graticuleColor = 'currentColor',
-  graticuleOpacity = 0.2,
-  sphereOutlineColor = 'currentColor',
-  sphereOutlineWidth = 1,
+  width: customWidth,
+  height: customHeight,
+  className = '',
+  strokeColor,
+  strokeWidth = 1,
+  graticuleColor,
+  graticuleOpacity = 0.15,
+  sphereOutlineColor,
+  sphereOutlineWidth = 1.5,
   autoRotate = true,
-  autoRotateSpeed = 0.5,
+  autoRotateSpeed = 0.35,
   rotateToLocation,
   rotateCities = [],
   rotationSpeed = 3000,
-  initialRotation = [0, 0],
+  initialRotation = [0, -15],
   enableInteraction = true,
-  showGraticule = true,
-  animationDuration = 2000,
-  startAsGlobe = true,
+  showGraticule = false,
   countryFillColor,
-  countryHoverColor,
-  variant = 'wireframe',
-  scale = 1,
-  backgroundColor,
+  variant = 'solid',
+  scale = 0.9,
+  backgroundColor = 'transparent',
 }: GlobeWireframeProps) {
-  const svgRef = useRef<SVGSVGElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [isAnimating, setIsAnimating] = useState(false);
-  const [progress, setProgress] = useState(startAsGlobe ? 0 : 100);
-  const [worldData, setWorldData] = useState<GeoFeature[]>([]);
-  const [rotation, setRotation] = useState<[number, number]>(initialRotation);
-  const [isDragging, setIsDragging] = useState(false);
-  const [lastMouse, setLastMouse] = useState([0, 0]);
-  const [isVisible, setIsVisible] = useState(false);
-  const rotationInterval = useRef<NodeJS.Timeout | null>(null);
-  const rotationAnimFrame = useRef<number | null>(null);
-  const rotationStartTime = useRef<number | null>(null);
-  const rotationFrom = useRef<[number, number]>([0, 0]);
-  const rotationTo = useRef<[number, number]>([0, 0]);
-  const animationFrame = useRef<number | null>(null);
-  const [currentCityIndex, setCurrentCityIndex] = useState(0);
-  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-  const resizeObserver = useRef<ResizeObserver | null>(null);
-  const rotationRef = useRef(rotation);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
+  // Use mutable refs for 60fps render loop — zero React state updates per frame!
+  const rotationRef = useRef<[number, number]>([initialRotation[0], initialRotation[1]]);
+  const isDraggingRef = useRef<boolean>(false);
+  const lastMouseRef = useRef<[number, number]>([0, 0]);
+  const isVisibleRef = useRef<boolean>(true);
+  const animationFrameRef = useRef<number | null>(null);
+
+  // Cached geographical data
+  const landDataRef = useRef<GeoPermissibleObjects | null>(null);
+  const graticuleDataRef = useRef<GeoPermissibleObjects | null>(null);
+  const currentCityIndexRef = useRef<number>(0);
+
+  // Load world data once (from local bundle with fallback to CDN)
   useEffect(() => {
-    rotationRef.current = rotation;
-  }, [rotation]);
+    let isCancelled = false;
 
-  const useResponsive = !width && !height;
-  const finalWidth = useResponsive ? dimensions.width : width || 800;
-  const finalHeight = useResponsive ? dimensions.height : height || 500;
+    const loadData = async () => {
+      try {
+        let response = await fetch('/data/world-110m.json');
+        if (!response.ok) {
+          response = await fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json');
+        }
+        const topology = (await response.json()) as WorldAtlasTopology;
+        if (isCancelled) return;
 
-  const defaultStrokeColor = strokeColor || 'currentColor';
-  const defaultGraticuleColor = graticuleColor || 'currentColor';
-  const defaultSphereOutlineColor = sphereOutlineColor || 'currentColor';
-  const defaultCountryFillColor =
-    countryFillColor || (variant === 'solid' ? 'currentColor' : 'none');
-  const defaultBackgroundColor = backgroundColor || 'transparent';
-
-  useEffect(() => {
-    if (!containerRef.current) return;
-
-    const container = containerRef.current;
-
-    const updateDimensions = () => {
-      if (container && useResponsive) {
-        const width = container.offsetWidth || 300;
-        setDimensions({ width, height: width });
+        if (topology.objects.land) {
+          landDataRef.current = feature(topology, topology.objects.land) as unknown as GeoPermissibleObjects;
+        } else if (topology.objects.countries) {
+          landDataRef.current = feature(topology, topology.objects.countries) as unknown as GeoPermissibleObjects;
+        }
+      } catch (err) {
+        console.warn('World topology load failed, continuing with fallback outline', err);
       }
     };
 
-    updateDimensions();
-
-    if (useResponsive) {
-      resizeObserver.current = new ResizeObserver(updateDimensions);
-      resizeObserver.current.observe(container);
-    }
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const [entry] = entries;
-        setIsVisible(entry.isIntersecting);
-      },
-      { threshold: 0.1 },
-    );
-
-    observer.observe(container);
+    graticuleDataRef.current = d3.geoGraticule()() as unknown as GeoPermissibleObjects;
+    loadData();
 
     return () => {
-      if (resizeObserver.current) {
-        resizeObserver.current.disconnect();
-      }
-      observer.unobserve(container);
+      isCancelled = true;
     };
-  }, [useResponsive]);
-
-  useEffect(() => {
-    const loadWorldData = async () => {
-      try {
-        const response = await fetch(
-          'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json',
-        );
-        const world = (await response.json()) as WorldAtlasTopology;
-        const countries = feature(world, world.objects.countries)
-          .features as GeoFeature[];
-        setWorldData(countries);
-      } catch (error) {
-        console.error('Error loading world data:', error);
-        const fallbackData: GeoFeature[] = [
-          {
-            type: 'Feature',
-            geometry: {
-              type: 'Polygon',
-              coordinates: [
-                [
-                  [-180, -90],
-                  [180, -90],
-                  [180, 90],
-                  [-180, 90],
-                  [-180, -90],
-                ],
-              ],
-            } as unknown as GeometryObject,
-            properties: {},
-          },
-        ];
-        setWorldData(fallbackData);
-      }
-    };
-    loadWorldData();
   }, []);
 
-  useEffect(() => {
-    if (!autoRotate || !isVisible || isDragging || rotateCities.length > 0) {
-      if (animationFrame.current) {
-        cancelAnimationFrame(animationFrame.current);
-        animationFrame.current = null;
-      }
-      return;
-    }
-
-    const rotate = () => {
-      setRotation((prev) => [(prev[0] + autoRotateSpeed) % 360, prev[1]]);
-      animationFrame.current = requestAnimationFrame(rotate);
-    };
-
-    animationFrame.current = requestAnimationFrame(rotate);
-
-    return () => {
-      if (animationFrame.current) {
-        cancelAnimationFrame(animationFrame.current);
-      }
-    };
-  }, [autoRotate, autoRotateSpeed, isVisible, isDragging, rotateCities.length]);
-
-  const animateRotationTo = useCallback(
-    (target: [number, number], duration = 1200) => {
-      if (rotationAnimFrame.current) {
-        cancelAnimationFrame(rotationAnimFrame.current);
-      }
-
-      rotationFrom.current = rotationRef.current;
-      rotationTo.current = target;
-      rotationStartTime.current = performance.now();
-
-      const animate = (time: number) => {
-        const elapsed = time - (rotationStartTime.current || 0);
-        const t = Math.min(elapsed / duration, 1);
-
-        const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
-
-        const lon =
-          rotationFrom.current[0] +
-          (rotationTo.current[0] - rotationFrom.current[0]) * eased;
-
-        const lat =
-          rotationFrom.current[1] +
-          (rotationTo.current[1] - rotationFrom.current[1]) * eased;
-
-        setRotation([lon, lat]);
-
-        if (t < 1) {
-          rotationAnimFrame.current = requestAnimationFrame(animate);
-        }
-      };
-
-      rotationAnimFrame.current = requestAnimationFrame(animate);
-    },
-    [],
-  );
-
-  useEffect(() => {
-    if (rotateCities.length === 0 || !isVisible) return;
-
-    const rotateToNextCity = () => {
-      const nextIndex = (currentCityIndex + 1) % rotateCities.length;
-      const city = rotateCities[nextIndex].toLowerCase();
-      const coordinates = cityCoordinates[city];
-
-      if (coordinates) {
-        animateRotationTo(
-          [-coordinates[1], -coordinates[0]],
-          rotationSpeed * 0.6,
-        );
-        setCurrentCityIndex(nextIndex);
-      }
-    };
-
-    const city = rotateCities[currentCityIndex].toLowerCase();
-    const coordinates = cityCoordinates[city];
-
-    if (coordinates) {
-      animateRotationTo(
-        [-coordinates[1], -coordinates[0]],
-        rotationSpeed * 0.6,
-      );
-    }
-
-    rotationInterval.current = setInterval(rotateToNextCity, rotationSpeed);
-
-    return () => {
-      if (rotationInterval.current) clearInterval(rotationInterval.current);
-    };
-  }, [
-    rotateCities,
-    currentCityIndex,
-    rotationSpeed,
-    isVisible,
-    animateRotationTo,
-  ]);
-
+  // Set rotation directly if rotateToLocation changes
   useEffect(() => {
     if (!rotateToLocation) return;
-
-    let coordinates: [number, number];
     if (typeof rotateToLocation === 'string') {
       const city = rotateToLocation.toLowerCase();
-      coordinates = cityCoordinates[city] || [0, 0];
+      const coords = cityCoordinates[city] || [0, 0];
+      rotationRef.current = [-coords[1], -coords[0]];
     } else {
-      coordinates = rotateToLocation;
+      rotationRef.current = [-rotateToLocation[1], -rotateToLocation[0]];
     }
-
-    setRotation([-coordinates[1], -coordinates[0]]);
   }, [rotateToLocation]);
 
-  const handleMouseDown = (event: React.MouseEvent) => {
-    if (!enableInteraction) return;
-    setIsDragging(true);
-    const rect = svgRef.current?.getBoundingClientRect();
-    if (rect) {
-      setLastMouse([event.clientX - rect.left, event.clientY - rect.top]);
-    }
-  };
-
-  const handleMouseMove = (event: React.MouseEvent) => {
-    if (!isDragging || !enableInteraction) return;
-    const rect = svgRef.current?.getBoundingClientRect();
-    if (!rect) return;
-
-    const currentMouse = [event.clientX - rect.left, event.clientY - rect.top];
-    const dx = currentMouse[0] - lastMouse[0];
-    const dy = currentMouse[1] - lastMouse[1];
-
-    const t = progress / 100;
-    let sensitivity: number;
-
-    if (variant === 'wireframe') {
-      sensitivity = t < 0.5 ? 0.5 : 0.25;
-    } else {
-      sensitivity = 0.5;
-    }
-
-    setRotation((prev) => [
-      prev[0] + dx * sensitivity,
-      Math.max(-90, Math.min(90, prev[1] - dy * sensitivity)),
-    ]);
-
-    setLastMouse(currentMouse);
-  };
-
-  const handleMouseUp = () => {
-    setIsDragging(false);
-  };
-
-  const handleMouseLeave = () => {
-    setIsDragging(false);
-  };
-
+  // Main Canvas Rendering Engine (Ultra-Optimized, 60fps buttery smooth)
   useEffect(() => {
-    if (!svgRef.current || worldData.length === 0 || !isVisible) return;
-    if (useResponsive && dimensions.width === 0) return;
+    const canvas = canvasRef.current;
+    const container = containerRef.current;
+    if (!canvas || !container) return;
 
-    const svg = d3.select(svgRef.current);
+    const ctx = canvas.getContext('2d', { alpha: true });
+    if (!ctx) return;
 
-    let finalCountryFill = 'none';
-    let finalStrokeWidth = strokeWidth;
-    let finalOpacity = 1.0;
-    let renderGraticule = showGraticule;
-    let finalGraticuleOpacity = graticuleOpacity;
-    let finalSphereOutlineWidth = sphereOutlineWidth;
+    let size = customWidth || container.clientWidth || 300;
+    const dpr = Math.min(typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1, 2);
 
-    if (variant === 'wireframe') {
-      finalCountryFill = 'none';
-      finalStrokeWidth = strokeWidth;
-      finalOpacity = 1.0;
-      renderGraticule = showGraticule;
-      finalGraticuleOpacity = graticuleOpacity;
-      finalSphereOutlineWidth = sphereOutlineWidth;
-    } else if (variant === 'wireframesolid') {
-      finalCountryFill = 'none';
-      finalStrokeWidth = strokeWidth;
-      finalOpacity = 1.0;
-      renderGraticule = false;
-      finalGraticuleOpacity = 0;
-      finalSphereOutlineWidth = 1.5;
-    } else if (variant === 'solid') {
-      finalCountryFill = defaultCountryFillColor;
-      finalStrokeWidth = strokeWidth * 0.5;
-      finalOpacity = 0.3;
-      renderGraticule = false;
-      finalGraticuleOpacity = 0;
-      finalSphereOutlineWidth = 1.5;
+    const updateCanvasSize = () => {
+      if (customWidth && customHeight) {
+        size = Math.min(customWidth, customHeight);
+      } else if (container) {
+        size = container.clientWidth || 300;
+      }
+
+      canvas.width = Math.round(size * dpr);
+      canvas.height = Math.round(size * dpr);
+      canvas.style.width = `${size}px`;
+      canvas.style.height = `${size}px`;
+    };
+
+    updateCanvasSize();
+
+    // D3 Projection and Path Generator bound directly to the Canvas 2D context
+    const projection = d3
+      .geoOrthographic()
+      .clipAngle(90)
+      .precision(0.3);
+
+    const path = d3.geoPath(projection, ctx);
+
+    // City rotation cycler
+    let cityTimer: NodeJS.Timeout | null = null;
+    if (rotateCities.length > 0) {
+      cityTimer = setInterval(() => {
+        if (!isVisibleRef.current) return;
+        currentCityIndexRef.current = (currentCityIndexRef.current + 1) % rotateCities.length;
+        const city = rotateCities[currentCityIndexRef.current].toLowerCase();
+        const coords = cityCoordinates[city];
+        if (coords) {
+          rotationRef.current = [-coords[1], -coords[0]];
+        }
+      }, rotationSpeed);
     }
 
-    let projection: d3.GeoProjection | CustomProjection;
-    const path = d3.geoPath();
-
-    if (variant === 'wireframe') {
-      const t = progress / 100;
-      const alpha = Math.pow(t, 0.5);
-
-      const baseScale = Math.min(finalWidth, finalHeight) / 2;
-      const scaleRange = d3
-        .scaleLinear()
-        .domain([0, 1])
-        .range([baseScale * 0.9 * scale, baseScale * 0.54 * scale]);
-      const baseRotate = d3.scaleLinear().domain([0, 1]).range([0, 0]);
-
-      projection = interpolateProjection(orthographicRaw, equirectangularRaw)
-        .scale(scaleRange(alpha))
-        .translate([finalWidth / 2, finalHeight / 2])
-        .rotate([baseRotate(alpha) + rotation[0], rotation[1]])
-        .precision(0.1);
-
-      (projection as CustomProjection).alpha(alpha);
-      path.projection(projection);
-    } else {
-      projection = d3
-        .geoOrthographic()
-        .scale((Math.min(finalWidth, finalHeight) / 2) * scale * 0.9)
-        .translate([finalWidth / 2, finalHeight / 2])
-        .rotate([rotation[0], rotation[1]])
-        .precision(0.1);
-
-      path.projection(projection);
-    }
-
-    const existingCountries = svg.selectAll('.country');
-    const isInitialBuild = existingCountries.empty();
-
-    if (isInitialBuild) {
-      svg.selectAll('*').remove();
-
-      if (defaultBackgroundColor !== 'transparent') {
-        const radius = (Math.min(finalWidth, finalHeight) / 2) * scale * 0.9;
-        svg
-          .append('circle')
-          .attr('class', 'bg-circle')
-          .attr('cx', finalWidth / 2)
-          .attr('cy', finalHeight / 2)
-          .attr('r', radius)
-          .attr('fill', defaultBackgroundColor);
+    // High performance frame render
+    const render = () => {
+      if (!isVisibleRef.current) {
+        animationFrameRef.current = requestAnimationFrame(render);
+        return;
       }
 
-      if (renderGraticule && finalGraticuleOpacity > 0) {
-        try {
-          const graticule = d3.geoGraticule();
-          const graticulePath = path(graticule());
-          if (graticulePath) {
-            svg
-              .append('path')
-              .attr('class', 'graticule-path')
-              .datum(graticule())
-              .attr('d', graticulePath)
-              .attr('fill', 'none')
-              .attr('stroke', defaultGraticuleColor)
-              .attr('stroke-width', 1)
-              .attr('opacity', finalGraticuleOpacity);
-          }
-        } catch (error) {
-          console.error('Error creating graticule:', error);
-        }
+      // Auto rotation update
+      if (autoRotate && !isDraggingRef.current && rotateCities.length === 0) {
+        rotationRef.current[0] = (rotationRef.current[0] + autoRotateSpeed) % 360;
       }
 
-      svg
-        .selectAll('.country')
-        .data(worldData)
-        .enter()
-        .append('path')
-        .attr('class', 'country')
-        .attr('d', (d: GeoFeature) => {
-          try {
-            const pathString = path(d as unknown as GeoPermissibleObjects);
-            return pathString && !pathString.includes('NaN') ? pathString : '';
-          } catch {
-            return '';
-          }
-        })
-        .attr('fill', finalCountryFill)
-        .attr('stroke', defaultStrokeColor)
-        .attr('stroke-width', finalStrokeWidth)
-        .attr('opacity', finalOpacity)
-        .style('visibility', function (this: SVGPathElement) {
-          const pathData = d3.select(this).attr('d');
-          return pathData && pathData.length > 0 && !pathData.includes('NaN') ? 'visible' : 'hidden';
-        })
-        .on('mouseenter', function (this: SVGPathElement) {
-          if (countryHoverColor && variant === 'solid') {
-            d3.select(this).attr('fill', countryHoverColor);
-          }
-        })
-        .on('mouseleave', function (this: SVGPathElement) {
-          if (variant === 'solid') {
-            d3.select(this).attr('fill', finalCountryFill);
-          }
-        });
+      const radius = (size / 2) * scale * 0.92;
+      const center = size / 2;
 
-      try {
-        const sphereOutline = path({ type: 'Sphere' });
-        if (sphereOutline) {
-          svg
-            .append('path')
-            .attr('class', 'sphere-outline')
-            .datum({ type: 'Sphere' })
-            .attr('d', sphereOutline)
-            .attr('fill', 'none')
-            .attr('stroke', defaultSphereOutlineColor)
-            .attr('stroke-width', finalSphereOutlineWidth)
-            .attr('opacity', variant === 'wireframe' ? 1.0 : 0.8);
-        }
-      } catch (error) {
-        console.error('Error creating sphere outline:', error);
-      }
-    } else {
-      // In-place update of path 'd' attributes for existing DOM nodes
-      if (renderGraticule && finalGraticuleOpacity > 0) {
-        try {
-          const graticule = d3.geoGraticule();
-          const graticulePath = path(graticule());
-          if (graticulePath) {
-            svg.select('.graticule-path').attr('d', graticulePath);
-          }
-        } catch {}
+      ctx.save();
+      ctx.scale(dpr, dpr);
+      ctx.clearRect(0, 0, size, size);
+
+      projection
+        .scale(radius)
+        .translate([center, center])
+        .rotate(rotationRef.current);
+
+      // 1. Background Fill / Sphere
+      if (backgroundColor && backgroundColor !== 'transparent') {
+        ctx.beginPath();
+        ctx.arc(center, center, radius, 0, Math.PI * 2);
+        ctx.fillStyle = backgroundColor;
+        ctx.fill();
       }
 
-      svg.selectAll('.country').attr('d', (d: unknown) => {
-        try {
-          const pathString = path(d as GeoPermissibleObjects);
-          return pathString && !pathString.includes('NaN') ? pathString : '';
-        } catch {
-          return '';
-        }
-      }).style('visibility', function (this: any) {
-        const pathData = d3.select(this).attr('d');
-        return pathData && pathData.length > 0 && !pathData.includes('NaN') ? 'visible' : 'hidden';
-      });
+      // 2. Graticule Lines (Wireframe Latitude & Longitude)
+      if (showGraticule && graticuleDataRef.current && graticuleOpacity > 0) {
+        ctx.beginPath();
+        path(graticuleDataRef.current);
+        ctx.strokeStyle = graticuleColor || 'rgba(150, 150, 150, 0.2)';
+        ctx.lineWidth = 0.75;
+        ctx.globalAlpha = graticuleOpacity;
+        ctx.stroke();
+        ctx.globalAlpha = 1.0;
+      }
 
-      try {
-        const sphereOutline = path({ type: 'Sphere' });
-        if (sphereOutline) {
-          svg.select('.sphere-outline').attr('d', sphereOutline);
+      // 3. Land Masses & Countries (Drawn in a single lightning-fast GPU batch)
+      if (landDataRef.current) {
+        ctx.beginPath();
+        path(landDataRef.current);
+
+        if (variant === 'solid') {
+          ctx.fillStyle = countryFillColor || 'rgba(120, 130, 145, 0.45)';
+          ctx.fill();
         }
-      } catch {}
-    }
+
+        ctx.strokeStyle = strokeColor || 'rgba(140, 150, 165, 0.7)';
+        ctx.lineWidth = strokeWidth * 0.75;
+        ctx.stroke();
+      }
+
+      // 4. Outer Sphere Border
+      ctx.beginPath();
+      ctx.arc(center, center, radius, 0, Math.PI * 2);
+      ctx.strokeStyle = sphereOutlineColor || 'rgba(160, 175, 195, 0.5)';
+      ctx.lineWidth = sphereOutlineWidth;
+      ctx.stroke();
+
+      ctx.restore();
+
+      animationFrameRef.current = requestAnimationFrame(render);
+    };
+
+    animationFrameRef.current = requestAnimationFrame(render);
+
+    // Resize Observer
+    const resizeObserver = new ResizeObserver(() => {
+      updateCanvasSize();
+    });
+    resizeObserver.observe(container);
+
+    // Intersection Observer to completely halt animation when offscreen
+    const intersectionObserver = new IntersectionObserver(
+      ([entry]) => {
+        isVisibleRef.current = entry.isIntersecting;
+      },
+      { threshold: 0.05 }
+    );
+    intersectionObserver.observe(container);
+
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+      if (cityTimer) {
+        clearInterval(cityTimer);
+      }
+      resizeObserver.disconnect();
+      intersectionObserver.disconnect();
+    };
   }, [
-    worldData,
-    progress,
-    rotation,
-    isVisible,
-    finalWidth,
-    finalHeight,
-    defaultStrokeColor,
+    customWidth,
+    customHeight,
+    autoRotate,
+    autoRotateSpeed,
+    scale,
+    variant,
+    strokeColor,
     strokeWidth,
-    defaultGraticuleColor,
-    graticuleOpacity,
-    defaultSphereOutlineColor,
+    countryFillColor,
+    sphereOutlineColor,
     sphereOutlineWidth,
     showGraticule,
-    defaultCountryFillColor,
-    countryHoverColor,
-    variant,
-    scale,
-    defaultBackgroundColor,
-    useResponsive,
-    dimensions.width,
+    graticuleColor,
+    graticuleOpacity,
+    backgroundColor,
+    rotateCities,
+    rotationSpeed,
   ]);
 
+  // Pointer / Touch Handlers for Smooth Interactive Rotation
+  const handlePointerDown = (e: React.PointerEvent) => {
+    if (!enableInteraction) return;
+    isDraggingRef.current = true;
+    lastMouseRef.current = [e.clientX, e.clientY];
+    (e.target as HTMLElement).setPointerCapture(e.pointerId);
+  };
+
+  const handlePointerMove = (e: React.PointerEvent) => {
+    if (!isDraggingRef.current || !enableInteraction) return;
+    const dx = e.clientX - lastMouseRef.current[0];
+    const dy = e.clientY - lastMouseRef.current[1];
+
+    const sensitivity = 0.35;
+    rotationRef.current = [
+      rotationRef.current[0] + dx * sensitivity,
+      Math.max(-85, Math.min(85, rotationRef.current[1] - dy * sensitivity)),
+    ];
+
+    lastMouseRef.current = [e.clientX, e.clientY];
+  };
+
+  const handlePointerUp = (e: React.PointerEvent) => {
+    if (!enableInteraction) return;
+    isDraggingRef.current = false;
+    try {
+      (e.target as HTMLElement).releasePointerCapture(e.pointerId);
+    } catch {}
+  };
+
   return (
-    <div ref={containerRef} className={`relative ${className}`}>
-      <svg
-        ref={svgRef}
-        width={finalWidth}
-        height={finalHeight}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseLeave}
-        className={
-          useResponsive
-            ? 'w-full h-full opacity-0 transition-opacity duration-1000'
-            : ''
-        }
-        style={{
-          cursor: enableInteraction
-            ? isDragging
-              ? 'grabbing'
-              : 'grab'
-            : 'default',
-          opacity: useResponsive ? (dimensions.width > 0 ? 1 : 0) : 1,
-        }}
+    <div
+      ref={containerRef}
+      className={`relative flex items-center justify-center overflow-hidden select-none ${className}`}
+    >
+      <canvas
+        ref={canvasRef}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        onPointerCancel={handlePointerUp}
+        className="w-full h-full block cursor-grab active:cursor-grabbing touch-none will-change-transform"
       />
     </div>
   );

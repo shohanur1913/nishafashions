@@ -29,10 +29,14 @@ export default function GlobeWireframeDemo() {
       </div>
 
       <div 
-        className='absolute bottom-[-45%] sm:bottom-[-40%] md:bottom-[-45%] lg:bottom-[-50%] left-1/2 w-[140%] sm:w-[110%] md:w-[90%] lg:w-[70%] -translate-x-1/2 aspect-square'
-        style={{ WebkitMaskImage: 'linear-gradient(to bottom, transparent 10%, black 40%)', maskImage: 'linear-gradient(to bottom, transparent 10%, black 40%)' }}
+        className='absolute bottom-[-45%] sm:bottom-[-40%] md:bottom-[-45%] lg:bottom-[-50%] left-1/2 w-[130%] sm:w-[105%] md:w-[85%] lg:w-[68%] -translate-x-1/2 aspect-square pointer-events-auto overflow-hidden'
       >
-        <GlobeWireframe className='w-full aspect-square opacity-80' variant='solid' scale={0.9} />
+        <GlobeWireframe className='w-full aspect-square opacity-85' variant='solid' scale={0.9} />
+        {/* High performance hardware-accelerated fade overlay */}
+        <div 
+          aria-hidden="true" 
+          className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/40" 
+        />
       </div>
     </div>
   );
