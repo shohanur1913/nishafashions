@@ -173,11 +173,15 @@ export async function getHotDeals(): Promise<HotDealProduct[]> {
   }
 }
 
+import { getApparelProductBySlugOrId, MASTER_APPAREL_PRODUCTS } from "@/lib/content/apparel-taxonomy";
+
 /**
- * Fetch a single product by ID with category specifications
+ * Fetch a single product by ID or slug with category specifications (DB with Taxonomy Fallback)
  */
 export async function getProductById(id: number | string) {
+  // 1. Try DB lookup first
   try {
+    const isNum = !isNaN(Number(id));
     const products: any = await query(`
       SELECT p.*, c.title as category_title, c.slug as category_slug, 
              c.moq as category_moq, c.lead_time as category_lead_time, 
@@ -185,29 +189,93 @@ export async function getProductById(id: number | string) {
              c.fabrics_json, c.constructions_json, c.certifications_json
       FROM products p 
       LEFT JOIN categories c ON p.category_slug = c.slug 
-      WHERE p.id = ? AND p.is_published = TRUE 
+      WHERE ${isNum ? "p.id = ?" : "p.id = ? OR p.name LIKE ?"} AND p.is_published = TRUE 
       LIMIT 1
-    `, [id]);
+    `, isNum ? [Number(id)] : [id, `%${id}%`]);
 
-    if (!products || products.length === 0) return null;
-    const p = products[0];
-
-    return {
-      ...p,
-      fabrics: p.fabrics_json ? JSON.parse(p.fabrics_json) : [],
-      constructions: p.constructions_json ? JSON.parse(p.constructions_json) : [],
-      certifications: p.certifications_json ? JSON.parse(p.certifications_json) : [],
-    };
+    if (products && products.length > 0) {
+      const p = products[0];
+      return {
+        ...p,
+        fabrics: p.fabrics_json ? JSON.parse(p.fabrics_json) : [],
+        constructions: p.constructions_json ? JSON.parse(p.constructions_json) : [],
+        certifications: p.certifications_json ? JSON.parse(p.certifications_json) : [],
+      };
+    }
   } catch (err) {
-    console.warn(`Error fetching product ${id} from DB:`, err);
-    return null;
+    console.warn(`Database query failed for product ${id}, falling back to static catalog:`, err);
   }
+
+  // 2. Try Master Apparel Taxonomy Lookup (String ID, slug, or numeric ID)
+  const taxonomyProduct = getApparelProductBySlugOrId(id);
+  if (taxonomyProduct) {
+    return {
+      id: taxonomyProduct.numericId || taxonomyProduct.id,
+      slug: taxonomyProduct.slug,
+      name: taxonomyProduct.name,
+      detail: taxonomyProduct.detail,
+      specs: taxonomyProduct.specs,
+      badge: taxonomyProduct.badge,
+      image_src: taxonomyProduct.image_src,
+      category_slug: taxonomyProduct.categorySlug,
+      category_title: taxonomyProduct.categoryTitle,
+      category_moq: taxonomyProduct.moq,
+      category_lead_time: taxonomyProduct.leadTime,
+      category_capacity: taxonomyProduct.productionCapacity,
+      offer_price: taxonomyProduct.priceRange,
+      original_price: "",
+      demographic: taxonomyProduct.demographic,
+      demographicLabel: taxonomyProduct.demographicLabel,
+      subcategoryId: taxonomyProduct.subcategoryId,
+      subcategoryName: taxonomyProduct.subcategoryName,
+      colors: taxonomyProduct.colors,
+      packaging: taxonomyProduct.packaging,
+      fabrics: [taxonomyProduct.fabricComposition, taxonomyProduct.gsmOrWeight, ...(taxonomyProduct.finishes || [])],
+      constructions: [taxonomyProduct.gaugeOrWeave, taxonomyProduct.yarnCount].filter(Boolean),
+      certifications: taxonomyProduct.certifications,
+    };
+  }
+
+  // 3. Fallback: Search in default categoriesCatalog
+  for (const cat of categoriesCatalog) {
+    for (let i = 0; i < cat.products.length; i++) {
+      const p = cat.products[i];
+      const fallbackId = cat.slug === 'woven' ? i + 1
+        : cat.slug === 'knit' ? i + 9
+        : cat.slug === 'denim' ? i + 17
+        : cat.slug === 'sweater' ? i + 25
+        : i + 32;
+      
+      if (String(p.id) === String(id) || String(fallbackId) === String(id)) {
+        return {
+          id: p.id ?? fallbackId,
+          name: p.name,
+          detail: p.detail,
+          specs: p.specs,
+          badge: p.badge,
+          image_src: (p.image as any)?.src || cat.image.src,
+          category_slug: cat.slug,
+          category_title: cat.title,
+          category_moq: cat.moq,
+          category_lead_time: cat.leadTime,
+          category_capacity: cat.productionCapacity,
+          offer_price: "Inquire for FOB",
+          original_price: "",
+          fabrics: cat.fabrics,
+          constructions: cat.constructions,
+          certifications: cat.certifications,
+        };
+      }
+    }
+  }
+
+  return null;
 }
 
 /**
  * Fetch related products from the same category
  */
-export async function getRelatedProducts(categorySlug: string, currentProductId: number, limit: number = 4) {
+export async function getRelatedProducts(categorySlug: string, currentProductId: number | string, limit: number = 4) {
   try {
     const products: any = await query(`
       SELECT p.*, c.title as category_title 
@@ -217,9 +285,47 @@ export async function getRelatedProducts(categorySlug: string, currentProductId:
       ORDER BY p.sort_order ASC, p.id DESC 
       LIMIT ?
     `, [categorySlug, currentProductId, limit]);
-    return products || [];
+    
+    if (products && products.length > 0) return products;
   } catch (err) {
-    console.warn("Error fetching related products:", err);
-    return [];
+    console.warn("Error fetching related products from DB:", err);
   }
+
+  // Static fallback related products
+  const relatedInTaxonomy = MASTER_APPAREL_PRODUCTS.filter(
+    (p) => p.categorySlug === categorySlug && String(p.numericId) !== String(currentProductId) && p.id !== String(currentProductId)
+  ).slice(0, limit);
+
+  if (relatedInTaxonomy.length > 0) {
+    return relatedInTaxonomy.map((p) => ({
+      id: p.numericId,
+      name: p.name,
+      detail: p.detail,
+      specs: p.specs,
+      badge: p.badge,
+      image_src: p.image_src,
+      category_slug: p.categorySlug,
+      category_title: p.categoryTitle,
+      offer_price: p.priceRange,
+    }));
+  }
+
+  const cat = categoriesCatalog.find((c) => c.slug === categorySlug);
+  if (!cat) return [];
+
+  return cat.products
+    .filter((p) => String(p.id) !== String(currentProductId))
+    .slice(0, limit)
+    .map((p, idx) => ({
+      id: p.id ?? (idx + 100),
+      name: p.name,
+      detail: p.detail,
+      specs: p.specs,
+      badge: p.badge,
+      image_src: (p.image as any)?.src || cat.image.src,
+      category_slug: cat.slug,
+      category_title: cat.title,
+      offer_price: "Inquire for FOB",
+    }));
 }
+

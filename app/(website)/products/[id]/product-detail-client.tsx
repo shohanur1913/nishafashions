@@ -95,25 +95,48 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
               Home
             </Link>
             <ChevronRight className="w-3.5 h-3.5 opacity-40" />
-            <Link href="/products" className="hover:text-foreground transition-colors">
-              Products
+            <Link href="/#categories" className="hover:text-foreground transition-colors">
+              Categories
             </Link>
             {product.category_slug && (
               <>
                 <ChevronRight className="w-3.5 h-3.5 opacity-40" />
                 <Link
                   href={`/categories/${product.category_slug}`}
-                  className="hover:text-foreground transition-colors uppercase font-mono text-[11px]"
+                  className="hover:text-foreground transition-colors uppercase font-mono text-[11px] font-semibold"
                 >
                   {product.category_title || product.category_slug}
                 </Link>
               </>
             )}
+            {product.demographic && product.category_slug && (
+              <>
+                <ChevronRight className="w-3.5 h-3.5 opacity-40" />
+                <Link
+                  href={`/categories/${product.category_slug}?gender=${product.demographic}`}
+                  className="hover:text-foreground transition-colors font-medium text-foreground/80"
+                >
+                  {product.demographicLabel || (product.demographic === "mens" ? "Men's" : product.demographic === "womens" ? "Women's" : product.demographic)}
+                </Link>
+              </>
+            )}
+            {product.subcategoryName && product.category_slug && (
+              <>
+                <ChevronRight className="w-3.5 h-3.5 opacity-40" />
+                <Link
+                  href={`/categories/${product.category_slug}?gender=${product.demographic || "mens"}&item=${product.subcategoryId || ""}`}
+                  className="hover:text-foreground transition-colors font-medium text-foreground/80"
+                >
+                  {product.subcategoryName}
+                </Link>
+              </>
+            )}
             <ChevronRight className="w-3.5 h-3.5 opacity-40" />
-            <span className="text-foreground font-medium truncate max-w-xs">{product.name}</span>
+            <span className="text-foreground font-semibold truncate max-w-xs">{product.name}</span>
           </div>
         </div>
       </section>
+
 
       {/* Main Product Showcase Section */}
       <section className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-screen-2xl mt-4 sm:mt-6">
@@ -228,6 +251,42 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
               </div>
             )}
 
+            {/* Extended Sourcing Specs (Colors, Packaging, Standards) */}
+            {(product.colors || product.packaging || (product.certifications && product.certifications.length > 0)) && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 rounded-2xl bg-muted/20 border border-border/60 text-xs">
+                {product.colors && (
+                  <div className="space-y-1">
+                    <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground block">
+                      Color Range / Lab Dips
+                    </span>
+                    <p className="font-medium text-foreground">{product.colors}</p>
+                  </div>
+                )}
+                {product.packaging && (
+                  <div className="space-y-1">
+                    <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground block">
+                      Export Packing
+                    </span>
+                    <p className="font-medium text-foreground">{product.packaging}</p>
+                  </div>
+                )}
+                {product.certifications && product.certifications.length > 0 && (
+                  <div className="sm:col-span-2 space-y-1 pt-1 border-t border-border/40">
+                    <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground block">
+                      Compliance Standards
+                    </span>
+                    <div className="flex flex-wrap gap-1.5 pt-0.5">
+                      {product.certifications.map((cert: string, cIdx: number) => (
+                        <span key={cIdx} className="px-2 py-0.5 rounded-md bg-background border border-border/70 text-[11px] font-medium text-foreground">
+                          {cert}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* Direct Sourcing Actions */}
             <div className="pt-4 border-t border-border/60 space-y-3">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -243,7 +302,10 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
 
                 <button
                   type="button"
-                  onClick={openQuoteModal}
+                  onClick={() => openQuoteModal({
+                    category: product.category_title || product.category_slug,
+                    productName: product.name,
+                  })}
                   className="py-3 px-5 rounded-2xl bg-foreground text-background hover:bg-foreground/90 text-xs font-semibold uppercase tracking-wider transition-all shadow-xs flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <FileText className="w-4 h-4" />
@@ -255,6 +317,7 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
                 Submit tech-packs to <strong className="text-foreground">info@nishafashions.com</strong> for indicative FOB response within 48 hours.
               </p>
             </div>
+
 
           </div>
         </div>

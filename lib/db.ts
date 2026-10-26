@@ -268,6 +268,13 @@ async function initAndSeedDb() {
     await conn.query(`ALTER TABLE media MODIFY COLUMN file_path LONGTEXT`);
     await conn.query(`ALTER TABLE categories MODIFY COLUMN image_src LONGTEXT`);
     await conn.query(`ALTER TABLE products MODIFY COLUMN image_src LONGTEXT`);
+    
+    // Ensure category order matches Knit -> Woven -> Denim -> Sweater -> Various Items
+    await conn.query(`UPDATE categories SET sort_order = 1 WHERE slug = 'knit'`);
+    await conn.query(`UPDATE categories SET sort_order = 2 WHERE slug = 'woven'`);
+    await conn.query(`UPDATE categories SET sort_order = 3 WHERE slug = 'denim'`);
+    await conn.query(`UPDATE categories SET sort_order = 4 WHERE slug = 'sweater'`);
+    await conn.query(`UPDATE categories SET sort_order = 5 WHERE slug = 'various-items'`);
   } catch {
     // Non-fatal if already applied or if dialect differs
   }

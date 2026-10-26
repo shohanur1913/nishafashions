@@ -6,11 +6,21 @@ import { X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { ChoiceChips, ChoiceChip } from "@/components/ui/choice-chips";
 
-export const openQuoteModal = () => {
+export interface QuoteModalPayload {
+  category?: string;
+  productName?: string;
+  leadTime?: string;
+  moq?: string;
+}
+
+export const openQuoteModal = (payload?: QuoteModalPayload | any) => {
   if (typeof window !== "undefined") {
-    window.dispatchEvent(new Event("open-quote-modal"));
+    const isEvent = payload && typeof payload === "object" && ("nativeEvent" in payload || "target" in payload || "bubbles" in payload);
+    const detail = isEvent ? undefined : payload;
+    window.dispatchEvent(new CustomEvent("open-quote-modal", { detail }));
   }
 };
+
 
 export function QuoteModal() {
   const [isOpen, setIsOpen] = useState(false);
@@ -33,13 +43,26 @@ export function QuoteModal() {
   });
 
   useEffect(() => {
-    const handleOpen = () => {
+    const handleOpen = (e: Event) => {
+      const customEvent = e as CustomEvent<QuoteModalPayload>;
       setIsOpen(true);
       setSubmitted(false);
+      if (customEvent.detail) {
+        if (customEvent.detail.category) {
+          setSelectedCats([customEvent.detail.category.toLowerCase()]);
+        }
+        if (customEvent.detail.productName) {
+          setFormValues((prev) => ({
+            ...prev,
+            styles: customEvent.detail?.productName || prev.styles,
+          }));
+        }
+      }
     };
     window.addEventListener("open-quote-modal", handleOpen);
     return () => window.removeEventListener("open-quote-modal", handleOpen);
   }, []);
+
 
   // Prevent background scrolling when modal is open
   useEffect(() => {
