@@ -20,16 +20,24 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const title = `${product.name} | Bangladesh Apparel Manufacturer & Supplier`;
   const description = product.specs || product.detail || `${product.name} apparel manufacturing in Bangladesh by Nisha Fashions Wear.`;
 
+  const rawImg = product.image_src;
+  const imageUrl = typeof rawImg === "string" 
+    ? rawImg 
+    : typeof rawImg?.src === "string" 
+      ? rawImg.src 
+      : "";
+
   return {
     title,
     description,
     openGraph: {
       title,
       description,
-      images: product.image_src ? [{ url: product.image_src }] : undefined,
+      images: imageUrl ? [{ url: imageUrl }] : undefined,
     },
   };
 }
+
 
 export default async function ProductDetailPage({ params }: PageProps) {
   const { id } = await params;

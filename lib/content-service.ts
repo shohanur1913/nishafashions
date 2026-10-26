@@ -176,9 +176,21 @@ export async function getHotDeals(): Promise<HotDealProduct[]> {
 import { getApparelProductBySlugOrId, MASTER_APPAREL_PRODUCTS } from "@/lib/content/apparel-taxonomy";
 
 /**
+ * Safely extract a string URL from an image input (string, StaticImageData, or object with src)
+ */
+export function resolveImageString(img: any): string {
+  if (!img) return "/images/category-knit.png";
+  if (typeof img === "string") return img;
+  if (typeof img.src === "string") return img.src;
+  if (img.src && typeof img.src.src === "string") return img.src.src;
+  return "/images/category-knit.png";
+}
+
+/**
  * Fetch a single product by ID or slug with category specifications (DB with Taxonomy Fallback)
  */
 export async function getProductById(id: number | string) {
+
   // 1. Try DB lookup first
   try {
     const isNum = !isNaN(Number(id));
@@ -237,6 +249,7 @@ export async function getProductById(id: number | string) {
   }
 
   // 3. Match 'cat-{slug}-{index}' IDs (e.g. cat-knit-0)
+
   const catMatch = String(id).match(/^cat-([a-z0-9-]+)-(\d+)$/i);
   if (catMatch) {
     const [, catSlug, indexStr] = catMatch;
@@ -258,7 +271,7 @@ export async function getProductById(id: number | string) {
         detail: p.detail,
         specs: p.specs,
         badge: p.badge || "Export Quality",
-        image_src: (p.image as any)?.src || cat.image.src,
+        image_src: resolveImageString((p.image as any)?.src || cat.image.src || cat.image),
         category_slug: cat.slug,
         category_title: cat.title,
         category_moq: cat.moq,
@@ -272,6 +285,7 @@ export async function getProductById(id: number | string) {
       };
     }
   }
+
 
   // 4. Fallback: Search in default categoriesCatalog by id, fallbackId, or name
   for (const cat of categoriesCatalog) {
@@ -298,7 +312,7 @@ export async function getProductById(id: number | string) {
           detail: p.detail,
           specs: p.specs,
           badge: p.badge || "Export Quality",
-          image_src: (p.image as any)?.src || cat.image.src,
+          image_src: resolveImageString((p.image as any)?.src || cat.image.src || cat.image),
           category_slug: cat.slug,
           category_title: cat.title,
           category_moq: cat.moq,
@@ -310,6 +324,7 @@ export async function getProductById(id: number | string) {
           constructions: cat.constructions,
           certifications: cat.certifications,
         };
+
       }
     }
   }
@@ -368,10 +383,11 @@ export async function getRelatedProducts(categorySlug: string, currentProductId:
       detail: p.detail,
       specs: p.specs,
       badge: p.badge,
-      image_src: (p.image as any)?.src || cat.image.src,
+      image_src: resolveImageString((p.image as any)?.src || cat.image.src || cat.image),
       category_slug: cat.slug,
       category_title: cat.title,
       offer_price: "Inquire for FOB",
     }));
 }
+
 

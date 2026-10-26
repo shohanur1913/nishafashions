@@ -144,21 +144,31 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
           
           {/* Left Column: Product Photography */}
           <div className="lg:col-span-6 space-y-4">
-            <div className="relative aspect-[4/3] sm:aspect-square w-full rounded-3xl bg-muted/30 border border-border/80 overflow-hidden shadow-xs flex items-center justify-center">
-              {product.image_src ? (
-                <img
-                  src={product.image_src}
-                  alt={product.name}
-                  className="w-full h-full object-cover object-center"
-                />
-              ) : (
-                <div className="flex flex-col items-center gap-2 text-muted-foreground/40">
-                  <Shirt className="w-16 h-16 opacity-30" />
-                  <span className="text-xs">Product Image Pending</span>
+            {(() => {
+              const productImageUrl = typeof product.image_src === "string" 
+                ? product.image_src 
+                : typeof product.image_src?.src === "string" 
+                  ? product.image_src.src 
+                  : "";
+              return (
+                <div className="relative aspect-[4/3] sm:aspect-square w-full rounded-3xl bg-muted/30 border border-border/80 overflow-hidden shadow-xs flex items-center justify-center">
+                  {productImageUrl ? (
+                    <img
+                      src={productImageUrl}
+                      alt={product.name}
+                      className="w-full h-full object-cover object-center"
+                    />
+                  ) : (
+                    <div className="flex flex-col items-center gap-2 text-muted-foreground/40">
+                      <Shirt className="w-16 h-16 opacity-30" />
+                      <span className="text-xs">Product Image Pending</span>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
+              );
+            })()}
           </div>
+
 
           {/* Right Column: Technical Details, Pricing & Sourcing Actions */}
           <div className="lg:col-span-6 space-y-6">
