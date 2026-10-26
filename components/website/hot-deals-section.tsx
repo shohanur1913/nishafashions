@@ -24,13 +24,13 @@ export function HotDealsSection({ deals }: HotDealsSectionProps) {
       />
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-screen-2xl relative z-10">
-        {/* Section Header */}
-        <div className="max-w-2xl mb-10 sm:mb-12">
+        {/* Section Header - Centered */}
+        <div className="max-w-2xl mx-auto mb-10 sm:mb-12 text-center flex flex-col items-center">
           {/* Animated Fire Title - Full burning effect across entire "Hot Deals." */}
-          <div className="relative inline-block">
+          <div className="relative inline-block text-center">
 
-            <h2 className="relative font-serif text-3xl sm:text-4xl lg:text-5xl tracking-tight leading-tight flex items-center flex-wrap gap-x-3.5 gap-y-1">
-              <span className="inline-flex items-center gap-3">
+            <h2 className="relative font-serif text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight leading-tight flex items-center justify-center flex-wrap gap-x-3.5 gap-y-1">
+              <span className="inline-flex items-center justify-center gap-3">
                 {/* Multi-layered animated burning torch flame */}
                 <span className="relative inline-flex items-center justify-center shrink-0">
                   <span className="absolute inset-0 rounded-full bg-orange-500/40 blur-md animate-pulse pointer-events-none" />
@@ -82,7 +82,7 @@ export function HotDealsSection({ deals }: HotDealsSectionProps) {
             </h2>
           </div>
 
-          <p className="text-sm sm:text-base text-muted-foreground leading-relaxed mt-2.5 font-normal">
+          <p className="text-sm sm:text-base text-muted-foreground leading-relaxed mt-3 font-normal text-center max-w-xl mx-auto">
             Direct factory allocations and special volume pricing for export apparel production. Click any product to view complete technical specifications and costing details.
           </p>
         </div>

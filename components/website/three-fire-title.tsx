@@ -439,7 +439,7 @@ export function ThreeFireTitle({
         Rendered IN FRONT (z-20) with razor-sharp typography and burning molten gradient.
         Crystal clear readability!
       */}
-      <span className="relative z-20 burning-fire-text font-serif italic font-normal tracking-tight">
+      <span className="relative z-20 burning-fire-text font-serif italic font-bold sm:font-extrabold tracking-tight">
         {text}
       </span>
     </div>

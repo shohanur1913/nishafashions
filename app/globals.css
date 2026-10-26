@@ -296,6 +296,7 @@
 
 /* Professional Crisp Burning Text with high readability */
 .burning-fire-text {
+  font-weight: 750;
   background: linear-gradient(
     180deg,
     #991b1b 0%,
