@@ -15,13 +15,14 @@ export const metadata: Metadata = {
     url: "https://www.nishafashions.com",
   },
 };
+
 import { Hero } from "@/components/website/hero";
 import { TrustStrip } from "@/components/website/trust-strip";
 import { Partners } from "@/components/website/partners";
 import { Stages } from "@/components/website/stages";
 import { Categories } from "@/components/website/categories";
-import { HotDealsSection } from "@/components/website/hot-deals-section";
 import { About } from "@/components/website/about";
+import { HotDealsSection } from "@/components/website/hot-deals-section";
 
 // Dynamically import heavy WebGL/Canvas/Animation components to optimize load time
 const ProductsWall = dynamic(() => import("@/components/website/products-wall").then(m => m.ProductsWall));
@@ -31,9 +32,11 @@ const GlobeWireframeDemo = dynamic(() => import("@/components/website/globe-wire
 import { getCategories, getPageContent, getHotDeals } from "@/lib/content-service";
 
 export default async function Homepage() {
-  const categories = await getCategories();
-  const hotDeals = await getHotDeals();
-  const homeData = await getPageContent("home");
+  const [categories, hotDeals, homeData] = await Promise.all([
+    getCategories(),
+    getHotDeals(),
+    getPageContent("home"),
+  ]);
   const heroContent = homeData?.content?.hero;
 
   return (
@@ -43,10 +46,10 @@ export default async function Homepage() {
       <Partners />
       <Stages />
       <Categories initialCatalog={categories} />
-      <HotDealsSection deals={hotDeals} />
       <ProductsWall />
       <About />
       <Compliance />
+      <HotDealsSection deals={hotDeals} />
       <GlobeWireframeDemo />
     </>
   );

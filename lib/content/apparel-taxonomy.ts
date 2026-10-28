@@ -14,7 +14,7 @@ export type DemographicId = "mens" | "womens" | "boys" | "girls" | "kids";
 export interface DemographicInfo {
   id: DemographicId;
   label: string;
-  bengaliLabel: string;
+  bengaliLabel?: string;
   badge: string;
   description: string;
 }
@@ -23,35 +23,30 @@ export const DEMOGRAPHICS: DemographicInfo[] = [
   {
     id: "mens",
     label: "Men's",
-    bengaliLabel: "ম্যান্স",
     badge: "Core Buyer Division",
     description: "Export-grade menswear engineered for fit consistency, durability, and commercial volume.",
   },
   {
     id: "womens",
     label: "Women's",
-    bengaliLabel: "উইমেন্স",
     badge: "Fashion & Contemporary",
     description: "Trend-driven silhouettes, refined drape, premium stretch fabrics, and ethical finishing.",
   },
   {
     id: "boys",
     label: "Boy's",
-    bengaliLabel: "বয়েজ",
     badge: "Youth & Active",
     description: "High-durability everyday apparel with anti-pilling and colorfast properties.",
   },
   {
     id: "girls",
     label: "Girl's",
-    bengaliLabel: "গার্লস",
     badge: "Soft Comfort & Style",
     description: "Breathable natural fibers, soft seam constructions, and cheerful colorways.",
   },
   {
     id: "kids",
     label: "Kids & Baby",
-    bengaliLabel: "কিডস ও বেবি",
     badge: "Safety Certified (OEKO-TEX)",
     description: "Nickel-free snaps, organic cotton, non-toxic dyes, and stringent safety compliance.",
   },
@@ -61,7 +56,7 @@ export interface SubcategoryMeta {
   id: string;
   slug: string;
   name: string;
-  bengaliName: string;
+  bengaliName?: string;
   description: string;
   icon?: string;
 }
@@ -103,137 +98,137 @@ export interface ApparelProductItem {
 export const SUBCATEGORIES_BY_CATEGORY: Record<CategorySlug, Record<DemographicId, SubcategoryMeta[]>> = {
   knit: {
     mens: [
-      { id: "t-shirts", slug: "t-shirts", name: "T-Shirts", bengaliName: "টিশার্ট", description: "Crew, V-neck, drop shoulder, heavyweight & cut & sew tees" },
-      { id: "polo-shirts", slug: "polo-shirts", name: "Polo Shirts", bengaliName: "পোলো শার্ট", description: "Pique, jersey, and engineered collar polos" },
-      { id: "tank-tops", slug: "tank-tops", name: "Tank Tops & Singlets", bengaliName: "টেংক টপ", description: "Athletic tanks, ribbed singlets and summer muscle tees" },
-      { id: "sweatshirts", slug: "sweatshirts", name: "Sweatshirts", bengaliName: "সুইট শার্ট", description: "Loopback French terry and fleece crewneck pullovers" },
-      { id: "hoodies", slug: "hoodies", name: "Hoodies", bengaliName: "হুডি", description: "Kangaroo pocket pullovers and full-zip heavy hoodies" },
-      { id: "fleece-jackets", slug: "fleece-jackets", name: "Fleece Jackets", bengaliName: "ফিলিস জ্যাকেট", description: "Polar fleece, microfleece, and quarter-zip outerwear" },
-      { id: "pajamas", slug: "pajamas", name: "Pajamas & Sleepwear", bengaliName: "পাজামা", description: "Single jersey lounge pants, sleep tees and sets" },
-      { id: "joggers", slug: "joggers", name: "Joggers & Sweatpants", bengaliName: "জগারস", description: "Tapered cuffed fleece pants and utility cargo joggers" },
+      { id: "t-shirts", slug: "t-shirts", name: "T-Shirts", description: "Crew, V-neck, drop shoulder, heavyweight & cut & sew tees" },
+      { id: "polo-shirts", slug: "polo-shirts", name: "Polo Shirts", description: "Pique, jersey, and engineered collar polos" },
+      { id: "tank-tops", slug: "tank-tops", name: "Tank Tops & Singlets", description: "Athletic tanks, ribbed singlets and summer muscle tees" },
+      { id: "sweatshirts", slug: "sweatshirts", name: "Sweatshirts", description: "Loopback French terry and fleece crewneck pullovers" },
+      { id: "hoodies", slug: "hoodies", name: "Hoodies", description: "Kangaroo pocket pullovers and full-zip heavy hoodies" },
+      { id: "fleece-jackets", slug: "fleece-jackets", name: "Fleece Jackets", description: "Polar fleece, microfleece, and quarter-zip outerwear" },
+      { id: "pajamas", slug: "pajamas", name: "Pajamas & Sleepwear", description: "Single jersey lounge pants, sleep tees and sets" },
+      { id: "joggers", slug: "joggers", name: "Joggers & Sweatpants", description: "Tapered cuffed fleece pants and utility cargo joggers" },
     ],
     womens: [
-      { id: "t-shirts", slug: "t-shirts", name: "T-Shirts & Tops", bengaliName: "টিশার্ট ও টপস", description: "Fitted tees, relaxed baby tees, and fashion silhouettes" },
-      { id: "crop-tops", slug: "crop-tops", name: "Crop Tops & Singlets", bengaliName: "ক্রপ টপ", description: "Ribbed crop tops, racerback singlets and camisoles" },
-      { id: "polo-shirts", slug: "polo-shirts", name: "Polo Shirts", bengaliName: "পোলো শার্ট", description: "Slim-fit pique and stretch cotton casual polos" },
-      { id: "hoodies", slug: "hoodies", name: "Hoodies & Sweats", bengaliName: "হুডি ও সোয়েটশার্ট", description: "Cropped hoodies, oversized fleece pullovers and crewnecks" },
-      { id: "leggings", slug: "leggings", name: "Leggings & Bike Shorts", bengaliName: "লেগিংস ও শর্টস", description: "Squat-proof stretch cotton/spandex athletic bottoms" },
-      { id: "joggers", slug: "joggers", name: "Joggers & Loungewear", bengaliName: "জগারস", description: "Wide-leg knit pants, cuffed joggers and lounge bottoms" },
-      { id: "pajamas", slug: "pajamas", name: "Pajama Sets", bengaliName: "নাইটওয়্যার ও পাজামা", description: "Breathable jersey sleep sets and modal nightshirts" },
+      { id: "t-shirts", slug: "t-shirts", name: "T-Shirts & Tops", description: "Fitted tees, relaxed baby tees, and fashion silhouettes" },
+      { id: "crop-tops", slug: "crop-tops", name: "Crop Tops & Singlets", description: "Ribbed crop tops, racerback singlets and camisoles" },
+      { id: "polo-shirts", slug: "polo-shirts", name: "Polo Shirts", description: "Slim-fit pique and stretch cotton casual polos" },
+      { id: "hoodies", slug: "hoodies", name: "Hoodies & Sweats", description: "Cropped hoodies, oversized fleece pullovers and crewnecks" },
+      { id: "leggings", slug: "leggings", name: "Leggings & Bike Shorts", description: "Squat-proof stretch cotton/spandex athletic bottoms" },
+      { id: "joggers", slug: "joggers", name: "Joggers & Loungewear", description: "Wide-leg knit pants, cuffed joggers and lounge bottoms" },
+      { id: "pajamas", slug: "pajamas", name: "Pajama Sets", description: "Breathable jersey sleep sets and modal nightshirts" },
     ],
     boys: [
-      { id: "t-shirts", slug: "t-shirts", name: "Graphic & Plain Tees", bengaliName: "টিশার্ট", description: "Durable crewneck t-shirts with high-density print" },
-      { id: "polo-shirts", slug: "polo-shirts", name: "Polo Shirts", bengaliName: "পোলো শার্ট", description: "Casual and school pique knit polos" },
-      { id: "hoodies", slug: "hoodies", name: "Hoodies & Sweatshirts", bengaliName: "হুডি", description: "Warm brushed fleece pullovers and zip jackets" },
-      { id: "joggers", slug: "joggers", name: "Fleece Joggers", bengaliName: "জগারস", description: "Reinforced knee ribbed fleece sweatpants" },
-      { id: "pajamas", slug: "pajamas", name: "Sleepwear Sets", bengaliName: "পাজামা", description: "Cozy 100% cotton print sleep sets" },
+      { id: "t-shirts", slug: "t-shirts", name: "Graphic & Plain Tees", description: "Durable crewneck t-shirts with high-density print" },
+      { id: "polo-shirts", slug: "polo-shirts", name: "Polo Shirts", description: "Casual and school pique knit polos" },
+      { id: "hoodies", slug: "hoodies", name: "Hoodies & Sweatshirts", description: "Warm brushed fleece pullovers and zip jackets" },
+      { id: "joggers", slug: "joggers", name: "Fleece Joggers", description: "Reinforced knee ribbed fleece sweatpants" },
+      { id: "pajamas", slug: "pajamas", name: "Sleepwear Sets", description: "Cozy 100% cotton print sleep sets" },
     ],
     girls: [
-      { id: "t-shirts", slug: "t-shirts", name: "Tees & Tunics", bengaliName: "টিশার্ট ও টিউনিকে", description: "Soft cotton jersey tops with delicate detailing" },
-      { id: "leggings", slug: "leggings", name: "Stretch Leggings", bengaliName: "লেগিংস", description: "High-recovery cotton/elastane everyday tights" },
-      { id: "hoodies", slug: "hoodies", name: "Hoodies & Sweaters", bengaliName: "হুডি", description: "Pastel and brushed fleece pullovers" },
-      { id: "pajamas", slug: "pajamas", name: "Pajama Sets", bengaliName: "পাজামা", description: "Soft rib and jersey overnight sets" },
+      { id: "t-shirts", slug: "t-shirts", name: "Tees & Tunics", description: "Soft cotton jersey tops with delicate detailing" },
+      { id: "leggings", slug: "leggings", name: "Stretch Leggings", description: "High-recovery cotton/elastane everyday tights" },
+      { id: "hoodies", slug: "hoodies", name: "Hoodies & Sweaters", description: "Pastel and brushed fleece pullovers" },
+      { id: "pajamas", slug: "pajamas", name: "Pajama Sets", description: "Soft rib and jersey overnight sets" },
     ],
     kids: [
-      { id: "rompers", slug: "rompers", name: "Bodysuits & Rompers", bengaliName: "বডিস্যুট ও রম্পার", description: "Envelope neck and bottom snap organic cotton babywear" },
-      { id: "sleepsuits", slug: "sleepsuits", name: "Baby Sleepsuits", bengaliName: "বেবি স্লিপস্যুট", description: "Footed and zippered organic cotton sleepsuits" },
-      { id: "t-shirts", slug: "t-shirts", name: "Baby T-Shirts & Sets", bengaliName: "বেবি টিশার্ট সেট", description: "Two-piece soft knit sets for toddlers" },
+      { id: "rompers", slug: "rompers", name: "Bodysuits & Rompers", description: "Envelope neck and bottom snap organic cotton babywear" },
+      { id: "sleepsuits", slug: "sleepsuits", name: "Baby Sleepsuits", description: "Footed and zippered organic cotton sleepsuits" },
+      { id: "t-shirts", slug: "t-shirts", name: "Baby T-Shirts & Sets", description: "Two-piece soft knit sets for toddlers" },
     ],
   },
   woven: {
     mens: [
-      { id: "formal-shirts", slug: "formal-shirts", name: "Formal & Dress Shirts", bengaliName: "ফরমাল শার্ট", description: "High-count poplin, twill, French cuffs and fused collars" },
-      { id: "casual-shirts", slug: "casual-shirts", name: "Casual Oxford Shirts", bengaliName: "ক্যাজুয়াল শার্ট", description: "Camp collars, chambray, washed linen, and yarn-dyed checks" },
-      { id: "chinos", slug: "chinos", name: "Chinos & Trousers", bengaliName: "চিনো ও ট্রাউজার্স", description: "Tailored stretch twill trousers with clean curtain waistband" },
-      { id: "cargo-pants", slug: "cargo-pants", name: "Cargo & Utility Pants", bengaliName: "কার্গো প্যান্ট", description: "Articulated knees, canvas ripstop, and heavy-duty bar-tacks" },
-      { id: "overshirts", slug: "overshirts", name: "Overshirts & Shackets", bengaliName: "ওভারশার্ট ও জ্যাকেট", description: "Heavyweight canvas and brushed flannel utility shirts" },
+      { id: "formal-shirts", slug: "formal-shirts", name: "Formal & Dress Shirts", description: "High-count poplin, twill, French cuffs and fused collars" },
+      { id: "casual-shirts", slug: "casual-shirts", name: "Casual Oxford Shirts", description: "Camp collars, chambray, washed linen, and yarn-dyed checks" },
+      { id: "chinos", slug: "chinos", name: "Chinos & Trousers", description: "Tailored stretch twill trousers with clean curtain waistband" },
+      { id: "cargo-pants", slug: "cargo-pants", name: "Cargo & Utility Pants", description: "Articulated knees, canvas ripstop, and heavy-duty bar-tacks" },
+      { id: "overshirts", slug: "overshirts", name: "Overshirts & Shackets", description: "Heavyweight canvas and brushed flannel utility shirts" },
     ],
     womens: [
-      { id: "blouses", slug: "blouses", name: "Blouses & Tunics", bengaliName: "ব্লাউজ ও টিউনিকে", description: "Fluid viscose, modal, TENCEL™ and cotton voile shirts" },
-      { id: "dresses", slug: "dresses", name: "Structured Dresses", bengaliName: "ড্রেস ও স্কার্ট", description: "Woven poplin, seersucker, and linen daytime dresses" },
-      { id: "trousers", slug: "trousers", name: "Chinos & Wide-Leg Pants", bengaliName: "ট্রাউজার্স", description: "High-rise tailored trousers and linen summer pants" },
+      { id: "blouses", slug: "blouses", name: "Blouses & Tunics", description: "Fluid viscose, modal, TENCEL™ and cotton voile shirts" },
+      { id: "dresses", slug: "dresses", name: "Structured Dresses", description: "Woven poplin, seersucker, and linen daytime dresses" },
+      { id: "trousers", slug: "trousers", name: "Chinos & Wide-Leg Pants", description: "High-rise tailored trousers and linen summer pants" },
     ],
     boys: [
-      { id: "shirts", slug: "shirts", name: "Woven Shirts", bengaliName: "শার্ট", description: "Smart casual check and solid oxford button-downs" },
-      { id: "pants", slug: "pants", name: "Chino Pants & Shorts", bengaliName: "প্যান্ট ও শর্টস", description: "Adjustable waistband cotton twill bottoms" },
+      { id: "shirts", slug: "shirts", name: "Woven Shirts", description: "Smart casual check and solid oxford button-downs" },
+      { id: "pants", slug: "pants", name: "Chino Pants & Shorts", description: "Adjustable waistband cotton twill bottoms" },
     ],
     girls: [
-      { id: "dresses", slug: "dresses", name: "Woven Dresses", bengaliName: "ড্রেস", description: "Cotton seersucker and printed poplin dresses" },
-      { id: "blouses", slug: "blouses", name: "Tops & Blouses", bengaliName: "টপস", description: "Ruffle collar and delicate woven shirts" },
+      { id: "dresses", slug: "dresses", name: "Woven Dresses", description: "Cotton seersucker and printed poplin dresses" },
+      { id: "blouses", slug: "blouses", name: "Tops & Blouses", description: "Ruffle collar and delicate woven shirts" },
     ],
     kids: [
-      { id: "dungarees", slug: "dungarees", name: "Baby Dungarees", bengaliName: "ডাঙ্গারিস", description: "Lined cotton twill and corduroy baby dungarees" },
+      { id: "dungarees", slug: "dungarees", name: "Baby Dungarees", description: "Lined cotton twill and corduroy baby dungarees" },
     ],
   },
   denim: {
     mens: [
-      { id: "jeans", slug: "jeans", name: "5-Pocket Jeans", bengaliName: "জিন্স প্যান্ট", description: "Regular, slim, straight, and tapered denim jeans" },
-      { id: "jackets", slug: "jackets", name: "Denim Trucker Jackets", bengaliName: "ডেনিম জ্যাকেট", description: "Vintage wash, enzyme rinse, and classic shank jackets" },
-      { id: "shorts", slug: "shorts", name: "Denim Shorts", bengaliName: "ডেনিম শর্টস", description: "Frayed hems, laser whiskers, and comfort stretch bermudas" },
-      { id: "shirts", slug: "shirts", name: "Western Denim Shirts", bengaliName: "ডেনিম শার্ট", description: "Pearl snap lightweight chambray and indigo shirts" },
+      { id: "jeans", slug: "jeans", name: "5-Pocket Jeans", description: "Regular, slim, straight, and tapered denim jeans" },
+      { id: "jackets", slug: "jackets", name: "Denim Trucker Jackets", description: "Vintage wash, enzyme rinse, and classic shank jackets" },
+      { id: "shorts", slug: "shorts", name: "Denim Shorts", description: "Frayed hems, laser whiskers, and comfort stretch bermudas" },
+      { id: "shirts", slug: "shirts", name: "Western Denim Shirts", description: "Pearl snap lightweight chambray and indigo shirts" },
     ],
     womens: [
-      { id: "jeans", slug: "jeans", name: "Skinny & Flare Jeans", bengaliName: "জিন্স প্যান্ট", description: "High-rise skinny, mom fit, and wide-leg flare denim" },
-      { id: "jackets", slug: "jackets", name: "Denim Jackets & Shackets", bengaliName: "ডেনিম জ্যাকেট", description: "Oversized, cropped, and distressed wash trucker jackets" },
-      { id: "skirts", slug: "skirts", name: "Denim Skirts & Pinafores", bengaliName: "ডেনিম স্কার্ট", description: "Button-front A-line and midi slit denim skirts" },
+      { id: "jeans", slug: "jeans", name: "Skinny & Flare Jeans", description: "High-rise skinny, mom fit, and wide-leg flare denim" },
+      { id: "jackets", slug: "jackets", name: "Denim Jackets & Shackets", description: "Oversized, cropped, and distressed wash trucker jackets" },
+      { id: "skirts", slug: "skirts", name: "Denim Skirts & Pinafores", description: "Button-front A-line and midi slit denim skirts" },
     ],
     boys: [
-      { id: "jeans", slug: "jeans", name: "Regular & Slim Jeans", bengaliName: "জিন্স", description: "Comfort stretch with interior adjustable waistbands" },
-      { id: "jackets", slug: "jackets", name: "Denim Jackets", bengaliName: "জ্যাকেট", description: "Sturdy indigo jackets with chest flap pockets" },
+      { id: "jeans", slug: "jeans", name: "Regular & Slim Jeans", description: "Comfort stretch with interior adjustable waistbands" },
+      { id: "jackets", slug: "jackets", name: "Denim Jackets", description: "Sturdy indigo jackets with chest flap pockets" },
     ],
     girls: [
-      { id: "jeans", slug: "jeans", name: "Fashion Denim Jeans", bengaliName: "জিন্স", description: "High-stretch denim with embroidery and soft washes" },
-      { id: "pinafores", slug: "pinafores", name: "Denim Pinafores", bengaliName: "পিনাফোর", description: "Layering denim dresses with metal buckle adjusters" },
+      { id: "jeans", slug: "jeans", name: "Fashion Denim Jeans", description: "High-stretch denim with embroidery and soft washes" },
+      { id: "pinafores", slug: "pinafores", name: "Denim Pinafores", description: "Layering denim dresses with metal buckle adjusters" },
     ],
     kids: [
-      { id: "overalls", slug: "overalls", name: "Baby Denim Overalls", bengaliName: "বেবি ওভারল", description: "Ultra-soft washed baby dungarees with crotch snaps" },
+      { id: "overalls", slug: "overalls", name: "Baby Denim Overalls", description: "Ultra-soft washed baby dungarees with crotch snaps" },
     ],
   },
   sweater: {
     mens: [
-      { id: "pullovers", slug: "pullovers", name: "Crewneck & V-Neck Pullovers", bengaliName: "প্যুলওভার সোয়েটার", description: "12GG/14GG fine gauge combed cotton and wool pullovers" },
-      { id: "cable-knits", slug: "cable-knits", name: "Chunky Cable-Knit Sweaters", bengaliName: "কেবল-নিট সোয়েটার", description: "3GG/5GG heavy Aran cable and structure knit sweaters" },
-      { id: "cardigans", slug: "cardigans", name: "Button Cardigans", bengaliName: "কার্ডিগান", description: "Engineered rib placket button-down casual cardigans" },
-      { id: "quarter-zips", slug: "quarter-zips", name: "Quarter-Zip Sweaters", bengaliName: "কোয়ার্টার-জিপ সোয়েটার", description: "Stand collar sweaters with nylon coil or antique metal zips" },
-      { id: "turtlenecks", slug: "turtlenecks", name: "Turtlenecks & Rollnecks", bengaliName: "টার্টলনেক সোয়েটার", description: "Fine gauge layering sweaters with shape-recovery collars" },
+      { id: "pullovers", slug: "pullovers", name: "Crewneck & V-Neck Pullovers", description: "12GG/14GG fine gauge combed cotton and wool pullovers" },
+      { id: "cable-knits", slug: "cable-knits", name: "Chunky Cable-Knit Sweaters", description: "3GG/5GG heavy Aran cable and structure knit sweaters" },
+      { id: "cardigans", slug: "cardigans", name: "Button Cardigans", description: "Engineered rib placket button-down casual cardigans" },
+      { id: "quarter-zips", slug: "quarter-zips", name: "Quarter-Zip Sweaters", description: "Stand collar sweaters with nylon coil or antique metal zips" },
+      { id: "turtlenecks", slug: "turtlenecks", name: "Turtlenecks & Rollnecks", description: "Fine gauge layering sweaters with shape-recovery collars" },
     ],
     womens: [
-      { id: "pullovers", slug: "pullovers", name: "Fine Knit Pullovers", bengaliName: "প্যুলওভার", description: "Soft cotton/viscose and cashmere-touch lightweight knits" },
-      { id: "cable-knits", slug: "cable-knits", name: "Chunky Oversized Sweaters", bengaliName: "চাঙ্কি সোয়েটার", description: "Drop shoulder warm winter cable knits and ribbed textures" },
-      { id: "cardigans", slug: "cardigans", name: "Longline Cardigans", bengaliName: "লং কার্ডিগান", description: "Open front duster cardigans with patch pockets" },
+      { id: "pullovers", slug: "pullovers", name: "Fine Knit Pullovers", description: "Soft cotton/viscose and cashmere-touch lightweight knits" },
+      { id: "cable-knits", slug: "cable-knits", name: "Chunky Oversized Sweaters", description: "Drop shoulder warm winter cable knits and ribbed textures" },
+      { id: "cardigans", slug: "cardigans", name: "Longline Cardigans", description: "Open front duster cardigans with patch pockets" },
     ],
     boys: [
-      { id: "pullovers", slug: "pullovers", name: "School & Casual Sweaters", bengaliName: "সোয়েটার", description: "Durable anti-pilling crewneck and V-neck school sweaters" },
+      { id: "pullovers", slug: "pullovers", name: "School & Casual Sweaters", description: "Durable anti-pilling crewneck and V-neck school sweaters" },
     ],
     girls: [
-      { id: "cardigans", slug: "cardigans", name: "Button Cardigans", bengaliName: "কার্ডিগান", description: "Fine gauge pastel and pointelle knit cardigans" },
+      { id: "cardigans", slug: "cardigans", name: "Button Cardigans", description: "Fine gauge pastel and pointelle knit cardigans" },
     ],
     kids: [
-      { id: "baby-knits", slug: "baby-knits", name: "Baby Knitted Sets", bengaliName: "বেবি নিট সেট", description: "Ultra-soft cotton yarn cardigans and hooded rompers" },
+      { id: "baby-knits", slug: "baby-knits", name: "Baby Knitted Sets", description: "Ultra-soft cotton yarn cardigans and hooded rompers" },
     ],
   },
   "various-items": {
     mens: [
-      { id: "caps", slug: "caps", name: "Caps & Headwear", bengaliName: "ক্যাপ ও হ্যাট", description: "6-panel baseball caps, dad hats, and bucket hats" },
-      { id: "socks", slug: "socks", name: "Socks & Footwear Accessories", bengaliName: "মোজাসমূহ", description: "Combed cotton cushion athletic socks and business crew socks" },
-      { id: "bags", slug: "bags", name: "Canvas Totes & Bags", bengaliName: "ক্যানভাস ব্যাগ", description: "Heavy canvas shopping totes, drawstring bags, and travel pouches" },
-      { id: "workwear", slug: "workwear", name: "Workwear & Uniforms", bengaliName: "ওয়ার্কওয়্যার ও এপ্রন", description: "Heavy twill kitchen aprons, barista wear, and work accessories" },
+      { id: "caps", slug: "caps", name: "Caps & Headwear", description: "6-panel baseball caps, dad hats, and bucket hats" },
+      { id: "socks", slug: "socks", name: "Socks & Footwear Accessories", description: "Combed cotton cushion athletic socks and business crew socks" },
+      { id: "bags", slug: "bags", name: "Canvas Totes & Bags", description: "Heavy canvas shopping totes, drawstring bags, and travel pouches" },
+      { id: "workwear", slug: "workwear", name: "Workwear & Uniforms", description: "Heavy twill kitchen aprons, barista wear, and work accessories" },
     ],
     womens: [
-      { id: "caps", slug: "caps", name: "Caps & Sun Hats", bengaliName: "হ্যাট ও ক্যাপ", description: "Washed chino caps, wide-brim sun hats, and bucket hats" },
-      { id: "socks", slug: "socks", name: "Ankle & Crew Socks", bengaliName: "মোজা", description: "Fine combed cotton socks with silicone heel-grip" },
-      { id: "bags", slug: "bags", name: "Eco Totes & Shoppers", bengaliName: "ইকো টোট ব্যাগ", description: "Screen-printed organic cotton canvas bags and jute shoppers" },
+      { id: "caps", slug: "caps", name: "Caps & Sun Hats", description: "Washed chino caps, wide-brim sun hats, and bucket hats" },
+      { id: "socks", slug: "socks", name: "Ankle & Crew Socks", description: "Fine combed cotton socks with silicone heel-grip" },
+      { id: "bags", slug: "bags", name: "Eco Totes & Shoppers", description: "Screen-printed organic cotton canvas bags and jute shoppers" },
     ],
     boys: [
-      { id: "caps", slug: "caps", name: "Youth Caps", bengaliName: "ক্যাপ", description: "Adjustable velcro and snapback youth baseball caps" },
-      { id: "socks", slug: "socks", name: "Athletic Socks", bengaliName: "মোজা", description: "Ribbed athletic crew socks with arch support" },
+      { id: "caps", slug: "caps", name: "Youth Caps", description: "Adjustable velcro and snapback youth baseball caps" },
+      { id: "socks", slug: "socks", name: "Athletic Socks", description: "Ribbed athletic crew socks with arch support" },
     ],
     girls: [
-      { id: "caps", slug: "caps", name: "Sun Hats & Caps", bengaliName: "হ্যাট ও ক্যাপ", description: "Cotton bucket hats and embroidered fashion caps" },
-      { id: "socks", slug: "socks", name: "Ankle Socks", bengaliName: "মোজা", description: "Soft combed cotton pastel socks" },
+      { id: "caps", slug: "caps", name: "Sun Hats & Caps", description: "Cotton bucket hats and embroidered fashion caps" },
+      { id: "socks", slug: "socks", name: "Ankle Socks", description: "Soft combed cotton pastel socks" },
     ],
     kids: [
-      { id: "booties", slug: "booties", name: "Baby Booties & Caps", bengaliName: "বেবি ক্যাপ ও বুটিজ", description: "Soft knit cotton newborn caps and non-slip socks" },
+      { id: "booties", slug: "booties", name: "Baby Booties & Caps", description: "Soft knit cotton newborn caps and non-slip socks" },
     ],
   },
 };

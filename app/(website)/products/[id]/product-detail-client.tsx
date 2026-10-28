@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { 
   ChevronRight, 
@@ -11,10 +12,52 @@ import {
   Package, 
   Factory, 
   ShieldCheck, 
-  ArrowUpRight 
+  ArrowUpRight,
+  Flame,
+  PackageCheck,
+  Sparkles
 } from "lucide-react";
 import { openQuoteModal } from "@/components/website/quote-modal";
 import { WhatsAppIcon } from "@/components/icons/whatsapp-icon";
+
+function DetailDealCountdown({ hours = 48 }: { hours?: number }) {
+  const [timeLeft, setTimeLeft] = useState<{ hours: string; minutes: string; seconds: string }>({
+    hours: "24",
+    minutes: "00",
+    seconds: "00",
+  });
+
+  useEffect(() => {
+    const calculateTime = () => {
+      const now = new Date();
+      const cycleMs = hours * 3600 * 1000;
+      const epoch = now.getTime();
+      const remainingMs = cycleMs - (epoch % cycleMs);
+      const totalSec = Math.max(0, Math.floor(remainingMs / 1000));
+      const h = Math.floor(totalSec / 3600);
+      const m = Math.floor((totalSec % 3600) / 60);
+      const s = totalSec % 60;
+      setTimeLeft({
+        hours: String(h).padStart(2, "0"),
+        minutes: String(m).padStart(2, "0"),
+        seconds: String(s).padStart(2, "0"),
+      });
+    };
+    calculateTime();
+    const interval = setInterval(calculateTime, 1000);
+    return () => clearInterval(interval);
+  }, [hours]);
+
+  return (
+    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-rose-500/10 border border-[#E94D65]/30 text-[#E94D65]">
+      <Flame className="w-4 h-4 animate-pulse text-[#E94D65] shrink-0" />
+      <span className="text-[11px] font-semibold uppercase tracking-wider">Offer Closes In:</span>
+      <span className="font-mono font-bold text-xs sm:text-sm tracking-wider">
+        {timeLeft.hours}h : {timeLeft.minutes}m : {timeLeft.seconds}s
+      </span>
+    </div>
+  );
+}
 
 interface ProductDetailClientProps {
   product: any;
@@ -188,28 +231,49 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
                 {product.name}
               </h1>
 
-              {/* Price / Offer Display */}
-              <div className="pt-2 flex items-baseline gap-3">
-                {product.offer_price ? (
-                  <>
-                    <span className="text-2xl sm:text-3xl font-bold text-foreground">
+              {/* Price & Offer Time Display */}
+              {product.is_hot_deal || product.offer_price ? (
+                <div className="p-4 rounded-2xl bg-gradient-to-br from-rose-500/10 via-rose-500/5 to-muted/30 border border-[#E94D65]/30 space-y-3 shadow-xs">
+                  <div className="flex items-center justify-between gap-2 flex-wrap">
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-[#E94D65] text-white text-[11px] font-bold uppercase tracking-wider shadow-xs">
+                      <Flame className="w-3.5 h-3.5 fill-white text-white" />
+                      <span>{product.deal_badge || "HOT DEAL • TIME-BOUND OFFER"}</span>
+                    </span>
+                    <DetailDealCountdown hours={product.expires_in_hours || 48} />
+                  </div>
+
+                  <div className="flex items-baseline gap-3 flex-wrap">
+                    <span className="text-3xl sm:text-4xl font-bold text-foreground">
                       {product.offer_price}
                     </span>
                     {product.original_price && (
-                      <span className="text-sm sm:text-base text-muted-foreground line-through">
+                      <span className="text-base sm:text-lg text-muted-foreground line-through">
                         {product.original_price}
                       </span>
                     )}
-                    <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
-                      Promotional FOB
+                    <span className="text-xs font-semibold text-[#E94D65] bg-[#E94D65]/10 px-2.5 py-0.5 rounded-full border border-[#E94D65]/25">
+                      Export Deal
                     </span>
-                  </>
-                ) : (
+                  </div>
+
+                  {product.stock_quantity && (
+                    <div className="inline-flex items-center gap-1.5 text-xs font-medium text-foreground/80 bg-background/60 px-3 py-1 rounded-xl border border-border/50">
+                      <PackageCheck className="w-4 h-4 text-[#E94D65]" />
+                      <span>Available Batch: <strong>{product.stock_quantity}</strong></span>
+                    </div>
+                  )}
+
+                  <p className="text-[11px] text-muted-foreground leading-normal">
+                    Special export allocation. Pricing is locked until the countdown timer expires.
+                  </p>
+                </div>
+              ) : (
+                <div className="pt-2 flex items-baseline gap-3">
                   <span className="text-sm font-medium text-muted-foreground">
                     Custom FOB Costing Available upon Tech-Pack Submission
                   </span>
-                )}
-              </div>
+                </div>
+              )}
             </div>
 
             {/* Quick Sourcing Metrics Grid */}

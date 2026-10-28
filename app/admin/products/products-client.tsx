@@ -250,6 +250,7 @@ export function ProductsClient({ initialProducts, categories }: ProductsClientPr
               <th className="py-3 px-4">Product Details</th>
               <th className="py-3 px-4">Category</th>
               <th className="py-3 px-4">Specifications</th>
+              <th className="py-3 px-4">Price (FOB)</th>
               <th className="py-3 px-4">Badge</th>
               <th className="py-3 px-4 text-center">Hot Deal</th>
               <th className="py-3 px-4 text-right">Actions</th>
@@ -258,7 +259,7 @@ export function ProductsClient({ initialProducts, categories }: ProductsClientPr
           <tbody className="divide-y divide-border/40">
             {filtered.length === 0 ? (
               <tr>
-                <td colSpan={6} className="py-12 text-center text-xs text-muted-foreground">
+                <td colSpan={7} className="py-12 text-center text-xs text-muted-foreground">
                   No products found matching your search.
                 </td>
               </tr>
@@ -301,6 +302,16 @@ export function ProductsClient({ initialProducts, categories }: ProductsClientPr
 
                   <td className="py-3.5 px-4 text-[11px] text-muted-foreground max-w-xs truncate">
                     {p.specs || "Standard fabric"}
+                  </td>
+
+                  <td className="py-3.5 px-4">
+                    {p.offer_price ? (
+                      <span className="font-semibold text-foreground font-mono text-xs">
+                        {p.offer_price}
+                      </span>
+                    ) : (
+                      <span className="text-muted-foreground font-mono text-[11px]">Quote / RFQ</span>
+                    )}
                   </td>
 
                   <td className="py-3.5 px-4">
@@ -516,64 +527,81 @@ export function ProductsClient({ initialProducts, categories }: ProductsClientPr
                 />
               </div>
 
-              {/* Hot Deal Offer Pricing Section */}
-              <div className="p-3.5 rounded-2xl bg-muted/40 border border-border/70 space-y-3">
-                <div className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    id="hotDealCheck"
-                    checked={formData.is_hot_deal}
-                    onChange={(e) => setFormData({ ...formData, is_hot_deal: e.target.checked })}
-                    className="rounded border-border accent-rose-500"
-                  />
-                  <label htmlFor="hotDealCheck" className="text-xs font-semibold text-foreground flex items-center gap-1.5 cursor-pointer">
-                    <Flame className="w-3.5 h-3.5 text-rose-500 fill-rose-500" />
-                    <span>Hot Deal / Promotional Offer Product</span>
+              {/* Product Pricing & Costing (FOB) */}
+              <div className="p-4 rounded-2xl bg-muted/40 border border-border/70 space-y-3.5">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                    <span>Product Pricing &amp; Costing (FOB Chittagong)</span>
                   </label>
+                  <span className="text-[11px] text-muted-foreground font-mono">Dynamic Price Control</span>
                 </div>
 
-                {formData.is_hot_deal && (
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-border/50">
-                    <div className="space-y-1">
-                      <label className="text-[11px] font-medium text-foreground block">
-                        Offer Price *
-                      </label>
-                      <input
-                        type="text"
-                        value={formData.offer_price}
-                        onChange={(e) => setFormData({ ...formData, offer_price: e.target.value })}
-                        placeholder="e.g. $4.20 / pc"
-                        className="w-full px-3 py-1.5 bg-background border border-border rounded-xl text-xs text-foreground font-semibold text-rose-600 focus:outline-none focus:border-rose-500"
-                      />
-                    </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-medium text-foreground block">
+                      FOB Price / Offer Price *
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.offer_price}
+                      onChange={(e) => setFormData({ ...formData, offer_price: e.target.value })}
+                      placeholder="e.g. $4.20 / pc or $3.80 - $5.50 / pc"
+                      className="w-full px-3.5 py-2 bg-background border border-border rounded-xl text-xs text-foreground font-semibold focus:outline-none focus:border-foreground"
+                    />
+                    <span className="text-[10px] text-muted-foreground block">
+                      Displayed on catalog cards &amp; product detail page
+                    </span>
+                  </div>
 
-                    <div className="space-y-1">
-                      <label className="text-[11px] font-medium text-muted-foreground block">
-                        Regular Price
-                      </label>
-                      <input
-                        type="text"
-                        value={formData.original_price}
-                        onChange={(e) => setFormData({ ...formData, original_price: e.target.value })}
-                        placeholder="e.g. $5.80 / pc"
-                        className="w-full px-3 py-1.5 bg-background border border-border rounded-xl text-xs text-muted-foreground focus:outline-none focus:border-foreground"
-                      />
-                    </div>
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-medium text-muted-foreground block">
+                      Original / Regular Price (Strikethrough)
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.original_price}
+                      onChange={(e) => setFormData({ ...formData, original_price: e.target.value })}
+                      placeholder="e.g. $5.80 / pc"
+                      className="w-full px-3.5 py-2 bg-background border border-border rounded-xl text-xs text-muted-foreground focus:outline-none focus:border-foreground"
+                    />
+                    <span className="text-[10px] text-muted-foreground block">
+                      Optional MSRP or pre-discount benchmark
+                    </span>
+                  </div>
+                </div>
 
-                    <div className="space-y-1">
-                      <label className="text-[11px] font-medium text-muted-foreground block">
-                        Deal Badge
+                {/* Hot Deal / Stock Lot Offer Toggle */}
+                <div className="pt-2 border-t border-border/50 space-y-2.5">
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      id="hotDealCheck"
+                      checked={formData.is_hot_deal}
+                      onChange={(e) => setFormData({ ...formData, is_hot_deal: e.target.checked })}
+                      className="rounded border-border accent-rose-500 cursor-pointer"
+                    />
+                    <label htmlFor="hotDealCheck" className="text-xs font-semibold text-foreground flex items-center gap-1.5 cursor-pointer">
+                      <Flame className="w-3.5 h-3.5 text-rose-500 fill-rose-500" />
+                      <span>Promote in Global &ldquo;Hot Deals&rdquo; Section (Across All Pages)</span>
+                    </label>
+                  </div>
+
+                  {formData.is_hot_deal && (
+                    <div className="pt-1">
+                      <label className="text-[11px] font-medium text-muted-foreground block mb-1">
+                        Promotional Badge / Stock Lot Tag
                       </label>
                       <input
                         type="text"
                         value={formData.deal_badge}
                         onChange={(e) => setFormData({ ...formData, deal_badge: e.target.value })}
-                        placeholder="e.g. 28% OFF / Clearance"
-                        className="w-full px-3 py-1.5 bg-background border border-border rounded-xl text-xs text-foreground focus:outline-none focus:border-foreground"
+                        placeholder="e.g. HOT DEAL, 40% OFF, EXPORT STOCK LOT, CANCELLED ORDER"
+                        className="w-full sm:w-2/3 px-3 py-1.5 bg-background border border-border rounded-xl text-xs text-foreground focus:outline-none focus:border-rose-500"
                       />
                     </div>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
 
               <div className="flex items-center gap-2 pt-1">

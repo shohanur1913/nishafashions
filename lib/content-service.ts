@@ -140,7 +140,7 @@ export async function getSiteSettings(): Promise<Record<string, string>> {
 }
 
 export interface HotDealProduct {
-  id: number;
+  id: number | string;
   category_slug: string;
   category_title?: string;
   name: string;
@@ -152,10 +152,75 @@ export interface HotDealProduct {
   original_price?: string;
   deal_badge?: string;
   is_featured?: boolean;
+  stock_quantity?: string;
+  expires_in_hours?: number;
 }
 
+export const FALLBACK_HOT_DEALS: HotDealProduct[] = [
+  {
+    id: "cat-knit-0",
+    category_slug: "knit",
+    category_title: "Knitwear • Export Stock Lot",
+    name: "Export Stock Lot: 100% Combed Cotton Heavyweight Crewneck Tees (220 GSM)",
+    detail: "Direct export surplus from an overseas cancelled production run. Bio-washed, pre-shrunk, soft hand-feel. Ready for immediate container loading or brand relabeling.",
+    badge: "Export Stock Lot",
+    specs: "220 GSM • 100% Combed Cotton Single Jersey • Size Ratio: S-XXL",
+    image_src: "/images/category-knit.png",
+    offer_price: "$2.35 / pc",
+    original_price: "$4.20 / pc",
+    deal_badge: "44% OFF • STOCK LOT",
+    stock_quantity: "4,500 pcs ready",
+    expires_in_hours: 36,
+  },
+  {
+    id: "cat-denim-0",
+    category_slug: "denim",
+    category_title: "Denim • Cancelled Order Overrun",
+    name: "Export Surplus: Classic 5-Pocket Indigo Denim Jeans (12.5oz)",
+    detail: "Grade-A export quality with authentic vintage enzyme wash and antique brass rivets. 100% passed inline and final AQL 2.5 inspection.",
+    badge: "Overrun Lot",
+    specs: "12.5oz Ring Spun Comfort Stretch • Enzyme Rinse • YKK Zipper",
+    image_src: "/images/category-denim.png",
+    offer_price: "$5.80 / pc",
+    original_price: "$9.60 / pc",
+    deal_badge: "40% OFF • LIMITED TIME",
+    stock_quantity: "2,800 pcs ready",
+    expires_in_hours: 48,
+  },
+  {
+    id: "cat-sweater-0",
+    category_slug: "sweater",
+    category_title: "Sweater • Overrun Batch",
+    name: "Overrun Stock Lot: Heavyweight Loopback French Terry Hoodies (340 GSM)",
+    detail: "Heavyweight street-fit hoodies featuring double-layered hood, kangaroo pocket, ribbed cuffs and flatlock reinforcement stitching.",
+    badge: "Flash Allocation",
+    specs: "340 GSM French Terry 80/20 CVC • Preshrunk • Export Grade",
+    image_src: "/images/category-sweater.png",
+    offer_price: "$5.90 / pc",
+    original_price: "$9.80 / pc",
+    deal_badge: "40% OFF • STOCK LOT",
+    stock_quantity: "1,800 pcs ready",
+    expires_in_hours: 24,
+  },
+  {
+    id: "cat-woven-0",
+    category_slug: "woven",
+    category_title: "Woven • Factory Clearance",
+    name: "Factory Clearance: Yarn-Dyed Oxford Weave Casual Button-Down Shirts",
+    detail: "Finely woven long-sleeve oxford shirts with tailored collar, button cuffs, and single-needle tailoring for international retail departments.",
+    badge: "Immediate Port Dispatch",
+    specs: "100% Combed Cotton Oxford • Fused Interlining • AQL 2.5",
+    image_src: "/images/category-woven.png",
+    offer_price: "$3.95 / pc",
+    original_price: "$6.50 / pc",
+    deal_badge: "39% OFF • LIMITED TIME",
+    stock_quantity: "3,200 pcs ready",
+    expires_in_hours: 56,
+  },
+];
+
 /**
- * Fetch products currently marked as Hot Deals for the homepage
+ * Fetch products currently marked as Hot Deals for the website
  */
 export async function getHotDeals(): Promise<HotDealProduct[]> {
   try {
@@ -166,10 +231,13 @@ export async function getHotDeals(): Promise<HotDealProduct[]> {
       WHERE p.is_hot_deal = TRUE AND p.is_published = TRUE 
       ORDER BY p.sort_order ASC, p.id DESC
     `);
-    return products || [];
+    if (products && products.length > 0) {
+      return products;
+    }
+    return FALLBACK_HOT_DEALS;
   } catch (err) {
-    console.warn("Error fetching hot deals from DB:", err);
-    return [];
+    console.warn("Error fetching hot deals from DB, using fallback:", err);
+    return FALLBACK_HOT_DEALS;
   }
 }
 
@@ -190,8 +258,35 @@ export function resolveImageString(img: any): string {
  * Fetch a single product by ID or slug with category specifications (DB with Taxonomy Fallback)
  */
 export async function getProductById(id: number | string) {
+  // 1. Check if ID directly matches a Hot Deal in FALLBACK_HOT_DEALS
+  const fallbackHotDeal = FALLBACK_HOT_DEALS.find((d) => String(d.id) === String(id));
+  if (fallbackHotDeal) {
+    const cat = categoriesCatalog.find((c) => c.slug.toLowerCase() === fallbackHotDeal.category_slug.toLowerCase());
+    return {
+      id: fallbackHotDeal.id,
+      name: fallbackHotDeal.name,
+      detail: fallbackHotDeal.detail || "Direct export surplus from an overseas cancelled production run. Bio-washed, pre-shrunk, soft hand-feel. Ready for immediate container loading or brand relabeling.",
+      specs: fallbackHotDeal.specs,
+      badge: fallbackHotDeal.badge || "Export Stock Lot",
+      image_src: fallbackHotDeal.image_src,
+      category_slug: fallbackHotDeal.category_slug,
+      category_title: fallbackHotDeal.category_title,
+      category_moq: "1,000 pcs (Stock Lot)",
+      category_lead_time: "Immediate Dispatch (3-5 Days)",
+      category_capacity: "Ready in Warehouse",
+      offer_price: fallbackHotDeal.offer_price,
+      original_price: fallbackHotDeal.original_price,
+      deal_badge: fallbackHotDeal.deal_badge || "HOT DEAL",
+      is_hot_deal: true,
+      stock_quantity: fallbackHotDeal.stock_quantity,
+      expires_in_hours: fallbackHotDeal.expires_in_hours || 48,
+      fabrics: cat?.fabrics || ["100% Export Combed Cotton", "Bio-washed", "Pre-shrunk"],
+      constructions: cat?.constructions || ["Single Jersey", "Curved Hem", "Reinforced Seams"],
+      certifications: cat?.certifications || ["OEKO-TEX Standard 100", "BSCI Audited", "SEDEX"],
+    };
+  }
 
-  // 1. Try DB lookup first
+  // 2. Try DB lookup first
   try {
     const isNum = !isNaN(Number(id));
     const products: any = await query(`
@@ -209,6 +304,10 @@ export async function getProductById(id: number | string) {
       const p = products[0];
       return {
         ...p,
+        is_hot_deal: Boolean(p.is_hot_deal),
+        offer_price: p.offer_price || "",
+        original_price: p.original_price || "",
+        deal_badge: p.deal_badge || (p.is_hot_deal ? "HOT DEAL" : ""),
         fabrics: p.fabrics_json ? JSON.parse(p.fabrics_json) : [],
         constructions: p.constructions_json ? JSON.parse(p.constructions_json) : [],
         certifications: p.certifications_json ? JSON.parse(p.certifications_json) : [],

@@ -184,7 +184,7 @@ export function CategoryExplorerClient({ categoryData, allCategories }: Category
               </span>
               <ChevronRight className="w-3 h-3 opacity-40 shrink-0" />
               <span className="text-primary font-medium">
-                {activeDemoInfo.label} ({activeDemoInfo.bengaliLabel})
+                {activeDemoInfo.label}
               </span>
               {activeSubMeta && (
                 <>
@@ -227,9 +227,6 @@ export function CategoryExplorerClient({ categoryData, allCategories }: Category
               <h1 className="font-serif text-2xl sm:text-4xl font-light text-foreground tracking-tight">
                 {categoryData.title} Sourcing &amp; Manufacturing
               </h1>
-              <span className="text-[11px] font-semibold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
-                {categoryData.badge}
-              </span>
             </div>
             <p className="text-xs sm:text-sm text-muted-foreground font-light leading-relaxed">
               {categoryData.heroIntro}
@@ -288,11 +285,6 @@ export function CategoryExplorerClient({ categoryData, allCategories }: Category
                     <span className="text-sm sm:text-base font-bold tracking-tight">
                       {demo.label}
                     </span>
-                    <span className={`text-[10px] px-1.5 py-0.5 rounded-md font-mono ${
-                      isSelected ? "bg-white/20 text-white" : "bg-muted text-muted-foreground"
-                    }`}>
-                      {demo.bengaliLabel}
-                    </span>
                   </div>
                   <span className={`text-[11px] line-clamp-1 mt-1 ${
                     isSelected ? "text-white/80" : "text-muted-foreground"
@@ -309,16 +301,11 @@ export function CategoryExplorerClient({ categoryData, allCategories }: Category
       {/* LEVEL 3: Product Subcategory / Family Picker (T-Shirts, Polo Shirts, Tank Tops, Hoodies, etc.) */}
       <section className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-screen-2xl pt-2 pb-6">
         <div className="p-4 sm:p-5 rounded-2xl bg-muted/30 border border-border/70 space-y-3">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border/40 pb-2.5">
-            <div className="flex items-center gap-2">
-              <Shirt className="w-4 h-4 text-primary" />
-              <h3 className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-foreground">
-                Step 2: Choose {activeDemoInfo.label} Product Family
-              </h3>
-            </div>
-            <span className="text-[11px] text-muted-foreground">
-              Select specific garment category to inspect style variations
-            </span>
+          <div className="flex items-center gap-2 border-b border-border/40 pb-2.5">
+            <Shirt className="w-4 h-4 text-primary" />
+            <h3 className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-foreground">
+              Step 2: Choose {activeDemoInfo.label} Product Family
+            </h3>
           </div>
 
           {/* Subcategory Pills */}
@@ -349,11 +336,6 @@ export function CategoryExplorerClient({ categoryData, allCategories }: Category
                   }`}
                 >
                   <span>{sub.name}</span>
-                  <span className={`text-[10px] px-1.5 py-0.2 rounded-md ${
-                    isSelected ? "bg-white/20 text-white" : "bg-muted text-muted-foreground"
-                  }`}>
-                    {sub.bengaliName}
-                  </span>
                 </button>
               );
             })}
@@ -363,22 +345,13 @@ export function CategoryExplorerClient({ categoryData, allCategories }: Category
 
       {/* LEVEL 4: Product Cuts / Style Variations Grid (V-Neck, Round Neck, Drop Shoulder, Cut & Sew, etc.) */}
       <section className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-screen-2xl">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4 pb-2 border-b border-border/40">
-          <div>
-            <h2 className="text-base sm:text-xl font-serif font-light text-foreground tracking-tight flex items-center gap-2">
-              <span>{activeDemoInfo.label} {activeSubMeta ? activeSubMeta.name : "Collection"}</span>
-              <span className="text-xs font-mono font-medium text-muted-foreground px-2 py-0.5 rounded-full bg-muted">
-                {filteredProducts.length} export styles
-              </span>
-            </h2>
-            <p className="text-xs text-muted-foreground">
-              {activeSubMeta?.description || `Commercial ${categoryData.title} styles available for foreign private label manufacturing`}
-            </p>
-          </div>
-
-          <div className="text-[11px] text-muted-foreground shrink-0">
-            Click any style to view full tech pack, GSM, MOQ &amp; FOB quote
-          </div>
+        <div className="flex items-center justify-between gap-2 mb-4 pb-2 border-b border-border/40">
+          <h2 className="text-base sm:text-xl font-serif font-light text-foreground tracking-tight flex items-center gap-2">
+            <span>{activeDemoInfo.label} {activeSubMeta ? activeSubMeta.name : "Collection"}</span>
+            <span className="text-xs font-mono font-medium text-muted-foreground px-2 py-0.5 rounded-full bg-muted">
+              {filteredProducts.length} export styles
+            </span>
+          </h2>
         </div>
 
         {/* Product Cards Grid */}
@@ -410,15 +383,6 @@ export function CategoryExplorerClient({ categoryData, allCategories }: Category
                     </div>
                   )}
 
-                  {/* Top Badges */}
-                  <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between pointer-events-none">
-                    <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider bg-background/90 text-foreground backdrop-blur-xs border border-border/60 shadow-2xs">
-                      {prod.badge}
-                    </span>
-                    <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-semibold bg-primary/90 text-primary-foreground backdrop-blur-xs shadow-2xs">
-                      {prod.demographicLabel}
-                    </span>
-                  </div>
                 </Link>
 
                 {/* Card Content & Commercial Details */}

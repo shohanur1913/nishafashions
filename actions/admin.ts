@@ -454,6 +454,7 @@ export async function deleteProductAction(id: number) {
 export async function updateEnquiryStatusAction(id: number, status: string) {
   await requireAdmin();
   await execute(`UPDATE enquiries SET status = ? WHERE id = ?`, [status, id]);
+  revalidatePath("/admin");
   revalidatePath("/admin/enquiries");
   return { success: true };
 }
@@ -461,6 +462,7 @@ export async function updateEnquiryStatusAction(id: number, status: string) {
 export async function deleteEnquiryAction(id: number) {
   await requireAdmin();
   await execute(`DELETE FROM enquiries WHERE id = ?`, [id]);
+  revalidatePath("/admin");
   revalidatePath("/admin/enquiries");
   return { success: true };
 }
@@ -635,6 +637,7 @@ export async function replyEnquiryEmailAction(params: {
   const nextStatus = params.newStatus || "quoted";
   await execute(`UPDATE enquiries SET status = ? WHERE id = ?`, [nextStatus, params.enquiryId]);
 
+  revalidatePath("/admin");
   revalidatePath("/admin/enquiries");
   return { success: true, messageId: sendResult.messageId };
 }

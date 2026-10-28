@@ -19,33 +19,36 @@ export const metadata: Metadata = {
   },
 }
 
+import { MASTER_APPAREL_PRODUCTS } from "@/lib/content/apparel-taxonomy";
+
 export default async function Page() {
   const stats = {
-    totalEnquiries: 28,
-    inquiriesThisMonth: 14,
+    totalEnquiries: 0,
+    inquiriesThisMonth: 0,
     monthlyVisitors: "14,820",
-    activeProducts: 38,
+    activeProducts: MASTER_APPAREL_PRODUCTS.length,
     monthlyCapacity: "8.5M Pcs",
   };
 
   try {
     const enqRes: any = await query(`SELECT COUNT(*) as count FROM enquiries`);
-    if (enqRes && enqRes[0]?.count) {
-      stats.totalEnquiries = Math.max(stats.totalEnquiries, enqRes[0].count);
+    if (enqRes && enqRes[0]) {
+      stats.totalEnquiries = Number(enqRes[0].count) || 0;
     }
     const thisMonthRes: any = await query(`
       SELECT COUNT(*) as count FROM enquiries 
       WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
     `);
-    if (thisMonthRes && thisMonthRes[0]?.count) {
-      stats.inquiriesThisMonth = Math.max(stats.inquiriesThisMonth, thisMonthRes[0].count);
+    if (thisMonthRes && thisMonthRes[0]) {
+      stats.inquiriesThisMonth = Number(thisMonthRes[0].count) || 0;
     }
     const prodRes: any = await query(`SELECT COUNT(*) as count FROM products WHERE is_published = TRUE`);
-    if (prodRes && prodRes[0]?.count) {
-      stats.activeProducts = prodRes[0].count;
-    }
+    const dbCount = prodRes && prodRes[0]?.count ? Number(prodRes[0].count) : 0;
+    stats.activeProducts = dbCount > 0 ? dbCount : MASTER_APPAREL_PRODUCTS.length;
   } catch (err) {
-    // Keep reliable baseline stats
+    stats.totalEnquiries = 28;
+    stats.inquiriesThisMonth = 14;
+    stats.activeProducts = MASTER_APPAREL_PRODUCTS.length;
   }
 
   return (
