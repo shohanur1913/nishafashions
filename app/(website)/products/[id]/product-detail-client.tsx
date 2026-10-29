@@ -231,13 +231,13 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
                 {product.name}
               </h1>
 
-              {/* Price & Offer Time Display */}
-              {product.is_hot_deal || product.offer_price ? (
-                <div className="p-4 rounded-2xl bg-gradient-to-br from-rose-500/10 via-rose-500/5 to-muted/30 border border-[#E94D65]/30 space-y-3 shadow-xs">
+              {/* Price & Offer Time Display - STRICTLY for Hot Deals only */}
+              {Boolean(product.is_hot_deal) ? (
+                <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-rose-500/10 via-rose-500/5 to-muted/30 border border-[#E94D65]/30 space-y-3.5 shadow-xs">
                   <div className="flex items-center justify-between gap-2 flex-wrap">
                     <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-[#E94D65] text-white text-[11px] font-bold uppercase tracking-wider shadow-xs">
                       <Flame className="w-3.5 h-3.5 fill-white text-white" />
-                      <span>{product.deal_badge || "HOT DEAL • TIME-BOUND OFFER"}</span>
+                      <span>{product.deal_badge || "HOT DEAL"}</span>
                     </span>
                     <DetailDealCountdown hours={product.expires_in_hours || 48} />
                   </div>
@@ -252,7 +252,7 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
                       </span>
                     )}
                     <span className="text-xs font-semibold text-[#E94D65] bg-[#E94D65]/10 px-2.5 py-0.5 rounded-full border border-[#E94D65]/25">
-                      Export Deal
+                      Limited Allocation
                     </span>
                   </div>
 
@@ -262,16 +262,19 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
                       <span>Available Batch: <strong>{product.stock_quantity}</strong></span>
                     </div>
                   )}
-
-                  <p className="text-[11px] text-muted-foreground leading-normal">
-                    Special export allocation. Pricing is locked until the countdown timer expires.
-                  </p>
                 </div>
               ) : (
-                <div className="pt-2 flex items-baseline gap-3">
-                  <span className="text-sm font-medium text-muted-foreground">
-                    Custom FOB Costing Available upon Tech-Pack Submission
+                /* Regular Catalog Product - NO countdown timer, NO offer close time */
+                <div className="py-2.5 flex items-baseline gap-3 flex-wrap">
+                  <span className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">Indicative FOB:</span>
+                  <span className="text-2xl sm:text-3xl font-bold text-foreground font-mono">
+                    {product.priceRange || product.price || product.fob_price || "Inquire for FOB Quote"}
                   </span>
+                  {product.category_moq && (
+                    <span className="text-xs text-muted-foreground font-medium">
+                      (MOQ: {product.category_moq})
+                    </span>
+                  )}
                 </div>
               )}
             </div>
@@ -446,8 +449,8 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
                   <h4 className="font-serif text-sm font-normal text-foreground truncate group-hover:text-primary transition-colors">
                     {rel.name}
                   </h4>
-                  {rel.offer_price ? (
-                    <p className="text-xs font-semibold text-foreground">{rel.offer_price}</p>
+                  {rel.priceRange || rel.price || rel.fob_price ? (
+                    <p className="text-xs font-semibold text-foreground font-mono">{rel.priceRange || rel.price || rel.fob_price}</p>
                   ) : (
                     <p className="text-[11px] text-muted-foreground">FOB on Inquiry</p>
                   )}

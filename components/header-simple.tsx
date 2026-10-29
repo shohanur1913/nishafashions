@@ -222,15 +222,6 @@ export function HeaderSimple({
                     </span>
                     <ArrowRight className="w-3.5 h-3.5 text-muted-foreground opacity-0 group-hover/item:opacity-100 group-hover/item:translate-x-0.5 transition-all" />
                   </Link>
-                  <Link
-                    href="/hot-deals"
-                    className="flex items-center justify-between gap-4 group/item px-3 py-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/15 border border-[#E94D65]/20 transition-colors whitespace-nowrap mt-1"
-                  >
-                    <span className="font-semibold text-[#E94D65] flex items-center gap-1.5 text-sm">
-                      <span>🔥 Hot Deals & Offers</span>
-                    </span>
-                    <ArrowRight className="w-3.5 h-3.5 text-[#E94D65] group-hover/item:translate-x-0.5 transition-transform" />
-                  </Link>
                 </div>
                 <div className="mt-2 pt-2 border-t border-border/60 px-1">
                   <Link
@@ -244,7 +235,6 @@ export function HeaderSimple({
               </div>
             </div>
 
-            <Link href="/hot-deals" className="text-[#E94D65] hover:opacity-85 transition-opacity py-2 font-semibold">Hot Deals</Link>
             <Link href="/services" className="hover:text-accent transition-colors py-2">Services</Link>
             <Link href="/#process" className="hover:text-accent transition-colors py-2">How We Work</Link>
             <Link href="/contact" className="hover:text-accent transition-colors py-2">Contact</Link>
@@ -350,10 +340,6 @@ export function HeaderSimple({
                   </AnimatePresence>
                 </div>
 
-                <Link href="/hot-deals" onClick={close} className="py-3 text-base font-semibold text-[#E94D65] hover:opacity-85 border-b border-border flex items-center justify-between">
-                  <span>🔥 Hot Deals & Offers</span>
-                  <span className="px-2 py-0.5 rounded-full text-[10px] bg-rose-500/10 border border-[#E94D65]/25 text-[#E94D65] font-bold">LIMITED</span>
-                </Link>
                 <Link href="/services" onClick={close} className="py-3 text-base font-semibold text-foreground hover:text-accent border-b border-border">Services</Link>
                 <Link href="/#process" onClick={close} className="py-3 text-base font-semibold text-foreground hover:text-accent border-b border-border">How We Work</Link>
                 <Link href="/contact" onClick={close} className="py-3 text-base font-semibold text-foreground hover:text-accent border-b border-border mb-4">Contact</Link>

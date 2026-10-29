@@ -408,8 +408,10 @@ export async function getProductById(id: number | string) {
       category_moq: taxonomyProduct.moq,
       category_lead_time: taxonomyProduct.leadTime,
       category_capacity: taxonomyProduct.productionCapacity,
-      offer_price: taxonomyProduct.priceRange,
+      priceRange: taxonomyProduct.priceRange,
+      offer_price: "",
       original_price: "",
+      is_hot_deal: false,
       demographic: taxonomyProduct.demographic,
       demographicLabel: taxonomyProduct.demographicLabel,
       subcategoryId: taxonomyProduct.subcategoryId,
@@ -492,8 +494,10 @@ export async function getProductById(id: number | string) {
           category_moq: cat.moq,
           category_lead_time: cat.leadTime,
           category_capacity: cat.productionCapacity,
-          offer_price: "Inquire for FOB Chittagong",
+          priceRange: "Inquire for FOB Chittagong",
+          offer_price: "",
           original_price: "",
+          is_hot_deal: false,
           fabrics: cat.fabrics,
           constructions: cat.constructions,
           certifications: cat.certifications,
@@ -508,7 +512,7 @@ export async function getProductById(id: number | string) {
 
 
 /**
- * Fetch related products from the same category
+ * Fetch related products from the same category (excludes hot deals)
  */
 export async function getRelatedProducts(categorySlug: string, currentProductId: number | string, limit: number = 4) {
   try {
@@ -516,7 +520,7 @@ export async function getRelatedProducts(categorySlug: string, currentProductId:
       SELECT p.*, c.title as category_title 
       FROM products p 
       LEFT JOIN categories c ON p.category_slug = c.slug 
-      WHERE p.category_slug = ? AND p.id != ? AND p.is_published = TRUE 
+      WHERE p.category_slug = ? AND p.id != ? AND p.is_published = TRUE AND (p.is_hot_deal IS FALSE OR p.is_hot_deal = 0)
       ORDER BY p.sort_order ASC, p.id DESC 
       LIMIT ?
     `, [categorySlug, currentProductId, limit]);
@@ -541,7 +545,9 @@ export async function getRelatedProducts(categorySlug: string, currentProductId:
       image_src: p.image_src,
       category_slug: p.categorySlug,
       category_title: p.categoryTitle,
-      offer_price: p.priceRange,
+      priceRange: p.priceRange,
+      offer_price: "",
+      is_hot_deal: false,
     }));
   }
 

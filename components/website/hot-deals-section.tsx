@@ -66,17 +66,17 @@ export function HotDealsSection({ deals }: HotDealsSectionProps) {
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-screen-2xl relative z-10">
         {/* Section Header - Only Title and Explore Button (No extra text, no badges) */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-6 mb-10 sm:mb-14">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10 sm:mb-14">
           {/* Extra Large Burning Fire Title */}
-          <div className="flex items-center gap-3 sm:gap-5">
+          <div className="flex items-center gap-4 sm:gap-6">
             {/* Multi-layered animated burning torch flame in theme color */}
             <span className="relative inline-flex items-center justify-center shrink-0">
-              <span className="absolute inset-0 rounded-full bg-[#E94D65]/40 blur-lg animate-pulse pointer-events-none" />
+              <span className="absolute inset-0 rounded-full bg-[#E94D65]/40 blur-xl animate-pulse pointer-events-none" />
               
               <svg
                 viewBox="0 0 24 24"
                 fill="none"
-                className="w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 drop-shadow-[0_0_24px_rgba(233,77,101,0.9)] animate-flame-wobble shrink-0"
+                className="w-14 h-14 sm:w-20 sm:h-20 md:w-24 md:h-24 drop-shadow-[0_0_30px_rgba(233,77,101,0.95)] animate-flame-wobble shrink-0"
               >
                 <path
                   d="M12 2C9.5 5 7 8 7 12C7 15.5 9.24 18.5 12 19.8C14.76 18.5 17 15.5 17 12C17 8 14.5 5 12 2Z"
@@ -110,15 +110,15 @@ export function HotDealsSection({ deals }: HotDealsSectionProps) {
               </svg>
             </span>
 
-            <h2 className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-extrabold tracking-tight leading-none">
-              <ThreeFireTitle text="Hot Deals." textClassName="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl" />
+            <h2 className="font-serif text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-black tracking-tight leading-none">
+              <ThreeFireTitle text="Hot Deals." textClassName="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-black" />
             </h2>
           </div>
 
           {/* Action Button: Explore Hot Deals */}
           <Link
             href="/hot-deals"
-            className="group inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3.5 rounded-full bg-[#E94D65] hover:bg-[#d63d55] text-white font-medium text-sm sm:text-base shadow-lg shadow-[#E94D65]/25 hover:shadow-xl hover:shadow-[#E94D65]/35 transition-all duration-300 shrink-0"
+            className="group inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-4 rounded-full bg-[#E94D65] hover:bg-[#d63d55] text-white font-semibold text-sm sm:text-base shadow-lg shadow-[#E94D65]/25 hover:shadow-xl hover:shadow-[#E94D65]/35 transition-all duration-300 shrink-0"
           >
             <span>Explore Hot Deals & Offers</span>
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
