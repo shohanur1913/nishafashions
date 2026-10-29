@@ -6,11 +6,13 @@ import * as THREE from "three";
 interface ThreeFireTitleProps {
   text?: string;
   className?: string;
+  textClassName?: string;
 }
 
 export function ThreeFireTitle({
   text = "Hot Deals.",
   className = "",
+  textClassName = "",
 }: ThreeFireTitleProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLSpanElement>(null);
@@ -505,7 +507,7 @@ export function ThreeFireTitle({
       */}
       <span
         ref={textRef}
-        className="relative z-10 burning-fire-text font-serif font-bold sm:font-extrabold tracking-tight"
+        className={`relative z-10 burning-fire-text font-serif font-bold sm:font-extrabold tracking-tight ${textClassName}`}
       >
         {text}
       </span>
