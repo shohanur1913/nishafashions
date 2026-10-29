@@ -1,192 +1,127 @@
 # Nisha Fashions Wear (NFW)
 
-Corporate website for **Nisha Fashions Wear** — a Bangladesh-based apparel supplier, sourcing and export partner for international buyers.
-
-Public website and a future Admin CMS live in a single Next.js App Router repository, deployed to Vercel. Content is currently typed local data (`lib/content/*`) shaped like the planned database tables, so a CMS can replace it with minimal component changes.
-
-> **Business truth:** NFW does **not** own or operate a factory. It works through selected/trusted factory partners, managing product development, sourcing, costing, production supervision, quality control and export coordination. Copy, imagery and metadata must never imply factory ownership, and no certifications, statistics, awards, clients or testimonials may be invented.
+Official corporate web platform and procurement management system for **Nisha Fashions Wear** — a premier Bangladesh-based apparel manufacturing, sourcing, and export partner for international clothing brands and retail buyers worldwide.
 
 ---
 
-## Stack
+## Overview
 
-| Layer | Technology | Notes |
+The platform features:
+- **Public B2B Web Storefront**: Comprehensive garment manufacturing showcase, export categories (Knitwear, Woven, Denim, Sweaters), tech packs, compliance certifications, and interactive inquiry workflows.
+- **Hot Deals & Export Allocations**: Dedicated clearance and volume allocation center with FOB pricing and direct RFQ channels.
+- **Admin Management Portal (`/admin`)**: Real-time management for catalog styles, export surplus, buyer inquiries/RFQs, traffic analytics, and site content.
+- **Database-Driven Architecture**: Powered by MySQL with secure server actions and session authentication.
+
+---
+
+## Tech Stack
+
+| Component | Technology | Description |
 |---|---|---|
-| Framework | Next.js `16.3.8` (App Router) | React Server Components by default |
-| Language | TypeScript `^5` (strict) | `tsconfig.json`, `@/*` → repo root |
-| UI | Tailwind CSS `^4` | CSS variables / semantic tokens in `app/globals.css`, PostCSS plugin `@tailwindcss/postcss` |
-| Components | shadcn/ui (`new-york`, CSS variables) | Only components actually used are installed |
-| Icons | Lucide React | |
-| Animations | `motion` / `framer-motion` | Kept for interaction transitions; respect `prefers-reduced-motion` |
-| WebGL | `ogl` + `d3` + `topojson-client` | Globe/map visuals in `components/ui`, `components/shadcnmaps` |
-| Lint | ESLint `^9` + `eslint-config-next` | Flat config, `core-web-vitals` + `typescript` |
-| Hosting | Vercel | `nishafashions.com` and `/admin` |
-| Database (planned) | Supabase Postgres + Drizzle ORM + Supabase Auth/Storage | Not installed yet — see [Roadmap](#roadmap) |
-
-Registry aliases configured in `components.json`: `@shadcnmaps`, `@scrollxui`, `@reactframe`.
-
-### Node / npm
-
-Node `20+` (developed on Node 24.15.0), npm 11+.
+| **Framework** | Next.js 16 (App Router) | React 19 Server Components & Actions |
+| **Language** | TypeScript | Fully type-safe codebase |
+| **Styling** | Tailwind CSS & CSS Variables | Responsive, modern editorial design |
+| **Database** | MySQL | Relational storage for products, inquiries, and site content |
+| **UI Components** | Lucide React, Framer Motion, Radix Primitives | Accessible and fluid interactive controls |
+| **Data Visuals** | Recharts & Three.js | Performance charts and WebGL visual elements |
 
 ---
 
-## Getting started
+## Getting Started
+
+### 1. Prerequisites
+- **Node.js**: `v20.x` or higher
+- **npm**: `v10.x` or higher
+- **MySQL**: `v8.x` or MariaDB `10.x+`
+
+### 2. Installation
+Clone the repository and install all project dependencies:
 
 ```bash
 npm install
-npm run dev        # http://localhost:3000
 ```
 
-Other scripts:
+### 3. Environment Configuration
+Create a `.env` file in the root directory (refer to `.env.example`):
+
+```env
+# Database Configuration
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=your_password
+DB_NAME=nishafashions
+
+# Authentication
+JWT_SECRET=your_jwt_secret_key_here
+ADMIN_DEFAULT_EMAIL=admin@nishafashions.com
+ADMIN_DEFAULT_PASSWORD=admin123
+```
+
+### 4. Database Setup
+Import the provided `database.sql` schema into your MySQL server:
 
 ```bash
-npm run build      # production build
-npm run start      # serve production build
-npm run lint       # eslint
-npx tsc --noEmit  # typecheck
+mysql -u root -p nishafashions < database.sql
 ```
 
-Editing files under `app/` hot-reloads the dev server.
+### 5. Running the Application
+
+- **Development server**:
+  ```bash
+  npm run dev
+  ```
+  Accessible at [http://localhost:3000](http://localhost:3000)
+
+- **Production build**:
+  ```bash
+  npm run build
+  npm run start
+  ```
 
 ---
 
-## Project structure
+## Key Routes
+
+- `/` — Homepage (Company profile, core categories, factory certifications, hot deals CTA)
+- `/products` — Full export catalog and garment technical specifications
+- `/hot-deals` — Time-limited factory surplus, stock lots, and volume offers
+- `/about` — Factory infrastructure, sourcing network, quality standards
+- `/services` — Sampling, tech-pack drafting, manufacturing, and logistics
+- `/contact` — Global export inquiries, RFQ form, direct factory contact
+- `/admin` — Management portal (inquiries, styles, analytics, settings)
+
+---
+
+## Project Structure
 
 ```text
-/
-├── app/
-│   ├── layout.tsx              # root layout, fonts (Inter + Newsreader), metadata
-│   ├── globals.css             # Tailwind v4 theme + semantic tokens
-│   ├── not-found.tsx
-│   ├── favicon.ico
-│   └── (website)/
-│       ├── layout.tsx          # public site shell (header/footer)
-│       ├── page.tsx            # homepage
-│       ├── about/  awards/  contact/  products/  services/
-├── components/
-│   ├── ui/                     # shadcn/ui primitives + visual components
-│   ├── website/                # homepage & page sections
-│   ├── shadcnmaps/             # map components + world map data
-│   └── header-simple.tsx
-├── lib/
-│   ├── content/                # site.ts (business data, nav, links), images.ts
-│   ├── cn.ts  utils.ts  icons.tsx  motion.ts  use-controllable-state.ts
-├── styles/stealth.css
-├── public/images/              # photography assets (referenced via lib/content/images.ts)
-├── .agents/                    # project docs: ARCHITECTURE, RULES, DESIGN, PDO, MEMORY, TASK
-├── AGENTS.md  CLAUDE.md        # agent instructions
-├── components.json  eslint.config.mjs  next.config.ts  postcss.config.mjs  tsconfig.json
+├── actions/             # Server actions (inquiries, catalog mutations, admin)
+├── app/                 # Next.js App Router (pages, layouts, routes, API)
+│   ├── (website)/       # Public storefront routes
+│   ├── admin/           # Administrative portal & CMS
+│   └── api/             # API endpoints
+├── components/          # Reusable UI components & section blocks
+├── hooks/               # Custom React hooks
+├── lib/                 # Database client, content services, utilities
+├── public/              # Static assets, photography, and company media
+├── scripts/             # Database backup & deployment utilities
+└── database.sql         # Base database schema & seed data
 ```
 
-`app/admin/` (Admin CMS) is **not** built yet.
+---
+
+## Production Deployment
+
+The project can be deployed on any Node.js hosting platform (Vercel, AWS, DigitalOcean, or cPanel Node.js Selector):
+
+1. Set up production MySQL database.
+2. Configure environment variables in your hosting environment.
+3. Run `npm run build`.
+4. Start the service with `npm run start` or via process managers like PM2 (`server.js`).
 
 ---
 
-## Routes
+## Copyright & License
 
-```text
-/            homepage
-/about       /products      /services      /awards      /contact
-```
-
-`/products` currently lists categories; product detail routes (`/products/[slug]`) are pending.
-
----
-
-## Content & data
-
-`lib/content/site.ts` is the single source for company name, contact details, address, nav links and quote/WhatsApp/email links. Never repeat those values inside components.
-
-| Constant | Purpose |
-|---|---|
-| `site` | name, short name, tagline, categories line, experience, URL, email, phone (display + E.164), address |
-| `links` | `quote`, `whatsapp` (pre-filled `wa.me`), `email`, `phone`, `quoteEmail` |
-| `mainNav`, `footerNav` | navigation arrays (`NavLink`) |
-
-`lib/content/images.ts` is the single source for imagery paths; files live in `public/images/`. Interim artwork is placeholder still-life apparel photography (garments, fabric, packing — no people, no factory floors). Replace by editing that module and `public/images/` only.
-
-Content shape mirrors the future tables in `.agents/ARCHITECTURE.md` (`categories`, `site_settings`, `pages`, `enquiries`), so the CMS can replace local data without reshaping components.
-
----
-
-## Environment variables
-
-No `.env` file is required for the current public site. The only variable read today is optional:
-
-```env
-NEXT_PUBLIC_SITE_URL=https://www.nishafashions.com
-```
-
-Defaults to `https://www.nishafashions.com` when unset. `.env*` files are git-ignored; copy `.env.example` if you need a starting point.
-
-When the backend lands (`.agents/ARCHITECTURE.md` §19):
-
-```env
-NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
-DATABASE_URL=                       # server-only
-SUPABASE_SERVICE_ROLE_KEY=          # server-only, never exposed to the browser
-```
-
-Secrets stay server-side and in Vercel environment variables — never in git, never in client bundles. Only `NEXT_PUBLIC_*` values may reach the browser.
-
----
-
-## Conventions
-
-From `.agents/RULES.md` (authoritative):
-
-- App Router only, RSC by default; `"use client"` only when interaction requires it.
-- TypeScript strict; avoid `any` without a documented reason.
-- Tailwind tokens via CSS variables; theme changes belong in `globals.css`, not component internals.
-- Standard shadcn/ui components used as-is via `variant`/`size`/`className`. No bespoke primitives (`PremiumButton`, `GlassCard`, …).
-- Install only the shadcn components in use. No additional UI or animation libraries.
-- `next/image` for imagery, `next/font` for fonts (self-hosted, no layout shift).
-- Content in `lib/content/`; business data never hardcoded inside reusable components.
-- Exactly one `<h1>` per page, semantic HTML, correct heading order, alt text, visible focus, keyboard support.
-- Mobile-first, verify 320 → 1440px, no horizontal overflow.
-- Visual direction: compact, editorial, photography-led. Neutral palette + one deep burgundy accent. No gradients (except a photographic scrim), glassmorphism, glow, particles, parallax or oversized pills.
-- Lint, typecheck and production build must pass before a task is complete.
-
-Agent-facing instruction files: `AGENTS.md` (re-added by `next dev`, keep it committed) and `CLAUDE.md`.
-
----
-
-## Project documentation
-
-| File | Contents |
-|---|---|
-| `.agents/ARCHITECTURE.md` | Final architecture: stack, routes, DB tables, Drizzle rules, auth, security, SEO, deployment |
-| `.agents/RULES.md` | Permanent development rules |
-| `.agents/DESIGN.md` | Visual reference and its translation to NFW tokens |
-| `.agents/PDO.md` | Product/business + content outline |
-| `.agents/MEMORY.md` | Current durable project understanding and decisions log |
-| `.agents/TASK.md` | Living implementation checklist (Phase 1 = public homepage) |
-| `.agents/skills/design-system-apple.md` | Design system reference |
-
-Deviation from an architecture decision must be documented in `MEMORY.md` (and `ARCHITECTURE.md` if structural).
-
----
-
-## Deployment
-
-Vercel. Import the repository, set environment variables in the project settings, deploy. `nishafashions.com` (canonical `www`) serves both the public site and `/admin` — no separate frontend deployment.
-
----
-
-## Roadmap
-
-1. **Phase 1 — public homepage.** Sections, responsive/a11y/SEO/performance passes, production build.
-2. **Phase 2 — public pages.** About, Products (+ category/product detail), Services, How We Work, Contact with enquiry form.
-3. **Phase 3 — backend.** Supabase Postgres + Drizzle schema and migrations, Auth, Storage.
-4. **Phase 4 — Admin CMS.** `/admin` (dashboard, pages, categories, products, media, enquiries, settings), protected server-side, Zod-validated Server Actions, `revalidatePath` on mutation.
-5. **Phase 5 — SEO.** `app/sitemap.ts`, `app/robots.ts`, product metadata from database, Organization JSON-LD.
-
-Do not start a later phase until the previous one is signed off (`.agents/TASK.md`).
-
----
-
-## License
-
-Private project. All rights reserved.
+Copyright &copy; Nisha Fashions Wear. All rights reserved. Private and confidential commercial property.

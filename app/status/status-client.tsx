@@ -80,7 +80,7 @@ export function StatusClient({ initialData }: { initialData: StatusData }) {
 
   const isAllGood = data.isOperational;
 
-  // Generate 60 days mock bars for the classic status page aesthetic
+  // Generate 60 days historical uptime bars for status display
   const days = Array.from({ length: 60 });
 
   return (

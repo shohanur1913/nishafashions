@@ -46,9 +46,11 @@ async function main() {
   console.log("4. Copying .env.example...");
   fs.copyFileSync(path.join(rootDir, ".env.example"), path.join(standaloneDir, ".env.example"));
 
-  // 5. Copy CPANEL_DEPLOY_GUIDE.md
-  console.log("5. Copying CPANEL_DEPLOY_GUIDE.md...");
-  fs.copyFileSync(path.join(rootDir, "CPANEL_DEPLOY_GUIDE.md"), path.join(standaloneDir, "CPANEL_DEPLOY_GUIDE.md"));
+  // 5. Copy CPANEL_DEPLOY_GUIDE.md if present
+  const cpanelGuide = path.join(rootDir, "CPANEL_DEPLOY_GUIDE.md");
+  if (fs.existsSync(cpanelGuide)) {
+    fs.copyFileSync(cpanelGuide, path.join(standaloneDir, "CPANEL_DEPLOY_GUIDE.md"));
+  }
 
   // 6. Delete any local .env files from standalone so private credentials are not packaged
   const envFilesToDelete = [".env", ".env.local", ".env.production", ".env.development"];
