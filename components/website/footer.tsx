@@ -89,6 +89,7 @@ export function Footer({ logoImage }: { logoImage?: string }) {
                 <li><Link href="/categories/denim" className="hover:text-white transition-colors">Denim & Bottoms</Link></li>
                 <li><Link href="/categories/sweater" className="hover:text-white transition-colors">Sweaters</Link></li>
                 <li><Link href="/categories/various-items" className="hover:text-white transition-colors">Various Items & Workwear</Link></li>
+                <li><Link href="/hot-deals" className="text-[#E94D65] hover:underline transition-colors font-medium">🔥 Hot Deals & Offers</Link></li>
               </ul>
             </div>
 

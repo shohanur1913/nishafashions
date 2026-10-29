@@ -22,7 +22,7 @@ import { Partners } from "@/components/website/partners";
 import { Stages } from "@/components/website/stages";
 import { Categories } from "@/components/website/categories";
 import { About } from "@/components/website/about";
-import { HotDealsSection } from "@/components/website/hot-deals-section";
+import { HotDealsTeaser } from "@/components/website/hot-deals-teaser";
 
 // Dynamically import heavy WebGL/Canvas/Animation components to optimize load time
 const ProductsWall = dynamic(() => import("@/components/website/products-wall").then(m => m.ProductsWall));
@@ -49,7 +49,7 @@ export default async function Homepage() {
       <ProductsWall />
       <About />
       <Compliance />
-      <HotDealsSection deals={hotDeals} />
+      <HotDealsTeaser dealCount={hotDeals.length} />
       <GlobeWireframeDemo />
     </>
   );
