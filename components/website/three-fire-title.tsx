@@ -53,8 +53,8 @@ export function ThreeFireTitle({
     let canvasHeight = 80;
     let textPixels: Array<{ x: number; y: number }> = [];
 
-    // Subtle gentle flame aura behind the letters (never covers text)
-    const FLAME_COUNT = 60;
+    // Flame aura behind the letters (boosted subtly for warmth)
+    const FLAME_COUNT = 90;
     const flameGeo = new THREE.BufferGeometry();
     const flamePos = new Float32Array(FLAME_COUNT * 3);
     const flameColor = new Float32Array(FLAME_COUNT * 3);
@@ -87,8 +87,8 @@ export function ThreeFireTitle({
       const maxLife = 0.6 + Math.random() * 0.5;
       const life = fullRandomProgress ? Math.random() * maxLife : 0;
 
-      const vy = 16 + Math.random() * 20;
-      const vx = (Math.random() - 0.5) * 6;
+      const vy = 20 + Math.random() * 26;
+      const vx = (Math.random() - 0.5) * 8;
 
       flameData[idx] = {
         x: sx + vx * life,
@@ -99,13 +99,13 @@ export function ThreeFireTitle({
         vy,
         life,
         maxLife,
-        size: 2.2 + Math.random() * 2.8,
+        size: 2.8 + Math.random() * 3.6,
         seed: Math.random() * 500,
       };
     };
 
     // Sparkling floating embers rising up from the letters
-    const EMBER_COUNT = 45;
+    const EMBER_COUNT = 55;
     const emberGeo = new THREE.BufferGeometry();
     const emberPos = new Float32Array(EMBER_COUNT * 3);
     const emberColor = new Float32Array(EMBER_COUNT * 3);
@@ -241,7 +241,7 @@ export function ThreeFireTitle({
         vColor = aColor;
         vAlpha = aAlpha;
         vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-        gl_PointSize = aSize * 1.5;
+        gl_PointSize = aSize * 1.8;
         gl_Position = projectionMatrix * mvPosition;
       }
     `;
@@ -386,8 +386,8 @@ export function ThreeFireTitle({
         const currentSize = p.size * (0.85 + Math.sin(progress * Math.PI) * 0.4);
         sizeAttr.setX(i, currentSize);
 
-        // Soft, non-intrusive alpha so text remains 100% visible
-        const alpha = Math.sin(progress * Math.PI) * 0.38;
+        // Vibrant yet clean alpha so flame is nicely visible while text remains 100% readable
+        const alpha = Math.sin(progress * Math.PI) * 0.52;
         alphaAttr.setX(i, alpha);
       }
 
@@ -434,7 +434,7 @@ export function ThreeFireTitle({
         eColAttr.setXYZ(i, sparkColor.r * twinkle, sparkColor.g * twinkle, sparkColor.b * twinkle);
 
         eSizeAttr.setX(i, ep.size * (1 - progress * 0.35));
-        eAlphaAttr.setX(i, (1 - progress) * 0.75 * twinkle);
+        eAlphaAttr.setX(i, (1 - progress) * 0.88 * twinkle);
       }
 
       ePosAttr.needsUpdate = true;

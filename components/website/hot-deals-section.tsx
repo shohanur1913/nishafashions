@@ -30,7 +30,7 @@ export function HotDealsSection({ deals }: HotDealsSectionProps) {
               <svg
                 viewBox="0 0 24 24"
                 fill="none"
-                className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 drop-shadow-[0_0_20px_rgba(233,77,101,0.95)] animate-flame-wobble shrink-0"
+                className="w-9 h-9 sm:w-11 sm:h-11 md:w-13 md:h-13 drop-shadow-[0_0_24px_rgba(233,77,101,0.95)] animate-flame-wobble shrink-0"
               >
                 {/* Outer Multi-Tongue Burning Flame */}
                 <path
