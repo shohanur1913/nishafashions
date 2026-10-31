@@ -49,14 +49,12 @@ export function ThreeFireTitle({
     const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 10);
     camera.position.z = 1;
 
-    let canvasWidth = 300;
-    let canvasHeight = 100;
+    let canvasWidth = 260;
+    let canvasHeight = 80;
     let textPixels: Array<{ x: number; y: number }> = [];
 
-    // ----------------------------------------------------
-    // 1. FLAME PARTICLES (Licking out from the letter strokes)
-    // ----------------------------------------------------
-    const FLAME_COUNT = 220;
+    // Subtle gentle flame aura behind the letters (never covers text)
+    const FLAME_COUNT = 60;
     const flameGeo = new THREE.BufferGeometry();
     const flamePos = new Float32Array(FLAME_COUNT * 3);
     const flameColor = new Float32Array(FLAME_COUNT * 3);
@@ -82,15 +80,15 @@ export function ThreeFireTitle({
 
       if (textPixels.length > 0) {
         const pt = textPixels[Math.floor(Math.random() * textPixels.length)];
-        sx = pt.x + (Math.random() - 0.5) * 3;
-        sy = pt.y + (Math.random() - 0.5) * 2;
+        sx = pt.x + (Math.random() - 0.5) * 4;
+        sy = pt.y + Math.random() * 2;
       }
 
-      const maxLife = 0.55 + Math.random() * 0.45;
+      const maxLife = 0.6 + Math.random() * 0.5;
       const life = fullRandomProgress ? Math.random() * maxLife : 0;
 
-      const vy = 20 + Math.random() * 28;
-      const vx = (Math.random() - 0.5) * 9;
+      const vy = 16 + Math.random() * 20;
+      const vx = (Math.random() - 0.5) * 6;
 
       flameData[idx] = {
         x: sx + vx * life,
@@ -101,15 +99,13 @@ export function ThreeFireTitle({
         vy,
         life,
         maxLife,
-        size: 5.5 + Math.random() * 7.5,
+        size: 2.2 + Math.random() * 2.8,
         seed: Math.random() * 500,
       };
     };
 
-    // ----------------------------------------------------
-    // 2. SPARKS & EMBERS (Flying upward out of the letter glyphs)
-    // ----------------------------------------------------
-    const EMBER_COUNT = 65;
+    // Sparkling floating embers rising up from the letters
+    const EMBER_COUNT = 45;
     const emberGeo = new THREE.BufferGeometry();
     const emberPos = new Float32Array(EMBER_COUNT * 3);
     const emberColor = new Float32Array(EMBER_COUNT * 3);
@@ -141,29 +137,26 @@ export function ThreeFireTitle({
 
       if (textPixels.length > 0) {
         const pt = textPixels[Math.floor(Math.random() * textPixels.length)];
-        sx = pt.x + (Math.random() - 0.5) * 4;
-        sy = pt.y + Math.random() * 3;
+        sx = pt.x + (Math.random() - 0.5) * 6;
+        sy = pt.y + Math.random() * 4;
       }
 
-      const maxLife = 0.9 + Math.random() * 0.9;
+      const maxLife = 0.8 + Math.random() * 0.9;
       const life = fullRandomProgress ? Math.random() * maxLife : 0;
 
       emberData[idx] = {
         x: sx,
-        y: sy + (life * 35),
-        vx: (Math.random() - 0.5) * 14,
-        vy: 34 + Math.random() * 42,
+        y: sy + (life * 30),
+        vx: (Math.random() - 0.5) * 10,
+        vy: 24 + Math.random() * 32,
         life,
         maxLife,
-        size: 2.2 + Math.random() * 2.8,
+        size: 1.6 + Math.random() * 2.2,
         colorIdx: Math.floor(Math.random() * emberPalette.length),
         wobbleSpeed: 2 + Math.random() * 3,
       };
     };
 
-    // -----------------------------------------------------------------
-    // Extract exact letter contours by rasterizing text onto offscreen 2D canvas
-    // -----------------------------------------------------------------
     const updateTextPixels = () => {
       if (!canvas || !textEl) return;
       const cRect = canvas.getBoundingClientRect();
@@ -206,11 +199,11 @@ export function ThreeFireTitle({
       const data = imgData.data;
       const sampled: Array<{ x: number; y: number }> = [];
 
-      const step = 2;
+      const step = 3;
       for (let py = 0; py < offscreen.height; py += step) {
         for (let px = 0; px < offscreen.width; px += step) {
           const idx = (py * offscreen.width + px) * 4;
-          if (data[idx + 3] > 100) {
+          if (data[idx + 3] > 110) {
             sampled.push({
               x: px,
               y: canvasHeight - py,
@@ -237,9 +230,6 @@ export function ThreeFireTitle({
       });
     }
 
-    // ----------------------------------------------------
-    // Custom Shaders for Vibrant, Glowing Normal-Blending Fire
-    // ----------------------------------------------------
     const fireVertexShader = `
       attribute float aSize;
       attribute float aAlpha;
@@ -251,7 +241,7 @@ export function ThreeFireTitle({
         vColor = aColor;
         vAlpha = aAlpha;
         vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-        gl_PointSize = aSize * 2.2;
+        gl_PointSize = aSize * 1.5;
         gl_Position = projectionMatrix * mvPosition;
       }
     `;
@@ -266,9 +256,9 @@ export function ThreeFireTitle({
         if (dist > 0.5) discard;
 
         float intensity = smoothstep(0.5, 0.05, dist);
-        float core = smoothstep(0.22, 0.0, dist) * 0.45;
-        vec3 col = mix(vColor, vec3(1.0, 0.98, 0.85), core);
-        float alpha = min(1.0, (vAlpha * intensity * 1.5) + (core * vAlpha));
+        float core = smoothstep(0.2, 0.0, dist) * 0.4;
+        vec3 col = mix(vColor, vec3(1.0, 0.98, 0.88), core);
+        float alpha = min(1.0, (vAlpha * intensity * 1.3) + core);
         gl_FragColor = vec4(col, alpha);
       }
     `;
@@ -305,24 +295,22 @@ export function ThreeFireTitle({
     const emberPoints = new THREE.Points(emberGeo, emberMat);
     scene.add(emberPoints);
 
-    // Multi-stage fire color gradients
-    const cWhiteHot = new THREE.Color("#FFF3B0"); // Core heat at base
-    const cFlameCoral = new THREE.Color("#FF5E7E"); // Fiery rose coral
-    const cFlameRose = new THREE.Color("#E94D65"); // Primary brand flame
-    const cFlameDeep = new THREE.Color("#C1121F"); // Deep tip ember
+    const cWhiteHot = new THREE.Color("#FFF6CC");
+    const cFlameCoral = new THREE.Color("#FF5E7E");
+    const cFlameRose = new THREE.Color("#E94D65");
+    const cFlameDeep = new THREE.Color("#C1121F");
     const tempColor = new THREE.Color();
 
     const getFlameColor = (progress: number, target: THREE.Color) => {
-      if (progress < 0.25) {
-        target.copy(cWhiteHot).lerp(cFlameCoral, progress / 0.25);
-      } else if (progress < 0.65) {
-        target.copy(cFlameCoral).lerp(cFlameRose, (progress - 0.25) / 0.4);
+      if (progress < 0.3) {
+        target.copy(cWhiteHot).lerp(cFlameCoral, progress / 0.3);
+      } else if (progress < 0.7) {
+        target.copy(cFlameCoral).lerp(cFlameRose, (progress - 0.3) / 0.4);
       } else {
-        target.copy(cFlameRose).lerp(cFlameDeep, (progress - 0.65) / 0.35);
+        target.copy(cFlameRose).lerp(cFlameDeep, (progress - 0.7) / 0.3);
       }
     };
 
-    // Mouse Interaction
     let mouseX = -9999;
     let mouseY = -9999;
     let isHovering = false;
@@ -343,9 +331,6 @@ export function ThreeFireTitle({
     container.addEventListener("mousemove", handlePointerMove);
     container.addEventListener("mouseleave", handlePointerLeave);
 
-    // ----------------------------------------------------
-    // Animation Render Loop
-    // ----------------------------------------------------
     let animationFrameId: number;
     let lastTime = performance.now();
     let isVisible = true;
@@ -361,7 +346,7 @@ export function ThreeFireTitle({
 
       const tSec = time * 0.001;
 
-      // 1. Update Flames
+      // 1. Update Flames (Subtle warm glow behind text)
       const posAttr = flameGeo.getAttribute("position") as THREE.BufferAttribute;
       const colAttr = flameGeo.getAttribute("aColor") as THREE.BufferAttribute;
       const sizeAttr = flameGeo.getAttribute("aSize") as THREE.BufferAttribute;
@@ -379,17 +364,17 @@ export function ThreeFireTitle({
         const progress = p.life / p.maxLife;
 
         p.y += p.vy * delta;
-        const flutter = Math.sin(tSec * 4 + p.seed) * 6 * (1 - progress * 0.4);
+        const flutter = Math.sin(tSec * 3 + p.seed) * 4 * (1 - progress * 0.4);
         p.x += (p.vx + flutter) * delta;
 
         if (isHovering) {
           const dx = p.x - mouseX;
           const dy = p.y - mouseY;
           const distSq = dx * dx + dy * dy;
-          if (distSq < 4500 && distSq > 0) {
-            const force = (1 - Math.sqrt(distSq) / 67) * 45;
+          if (distSq < 3600 && distSq > 0) {
+            const force = (1 - Math.sqrt(distSq) / 60) * 35;
             p.x += (dx / Math.sqrt(distSq)) * force * delta;
-            p.y += 25 * delta;
+            p.y += 18 * delta;
           }
         }
 
@@ -398,10 +383,11 @@ export function ThreeFireTitle({
         getFlameColor(progress, tempColor);
         colAttr.setXYZ(i, tempColor.r, tempColor.g, tempColor.b);
 
-        const currentSize = p.size * (0.8 + Math.sin(progress * Math.PI) * 0.5);
+        const currentSize = p.size * (0.85 + Math.sin(progress * Math.PI) * 0.4);
         sizeAttr.setX(i, currentSize);
 
-        const alpha = Math.sin(progress * Math.PI) * 0.9;
+        // Soft, non-intrusive alpha so text remains 100% visible
+        const alpha = Math.sin(progress * Math.PI) * 0.38;
         alphaAttr.setX(i, alpha);
       }
 
@@ -410,7 +396,7 @@ export function ThreeFireTitle({
       sizeAttr.needsUpdate = true;
       alphaAttr.needsUpdate = true;
 
-      // 2. Update Embers
+      // 2. Update Embers (Sparks flying up)
       const ePosAttr = emberGeo.getAttribute("position") as THREE.BufferAttribute;
       const eColAttr = emberGeo.getAttribute("aColor") as THREE.BufferAttribute;
       const eSizeAttr = emberGeo.getAttribute("aSize") as THREE.BufferAttribute;
@@ -428,27 +414,27 @@ export function ThreeFireTitle({
         const progress = ep.life / ep.maxLife;
 
         ep.y += ep.vy * delta;
-        ep.x += (ep.vx + Math.sin(tSec * ep.wobbleSpeed + i) * 8) * delta;
+        ep.x += (ep.vx + Math.sin(tSec * ep.wobbleSpeed + i) * 6) * delta;
 
         if (isHovering) {
           const dx = ep.x - mouseX;
           const dy = ep.y - mouseY;
           const distSq = dx * dx + dy * dy;
-          if (distSq < 5500 && distSq > 0) {
-            const force = (1 - Math.sqrt(distSq) / 74) * 55;
+          if (distSq < 4500 && distSq > 0) {
+            const force = (1 - Math.sqrt(distSq) / 67) * 45;
             ep.x += (dx / Math.sqrt(distSq)) * force * delta;
-            ep.y += 35 * delta;
+            ep.y += 25 * delta;
           }
         }
 
         ePosAttr.setXYZ(i, ep.x, ep.y, 0);
 
         const sparkColor = emberPalette[ep.colorIdx];
-        const twinkle = 0.75 + Math.sin(tSec * 16 + i * 2) * 0.25;
+        const twinkle = 0.7 + Math.sin(tSec * 14 + i * 2) * 0.3;
         eColAttr.setXYZ(i, sparkColor.r * twinkle, sparkColor.g * twinkle, sparkColor.b * twinkle);
 
         eSizeAttr.setX(i, ep.size * (1 - progress * 0.35));
-        eAlphaAttr.setX(i, (1 - progress) * 0.95 * twinkle);
+        eAlphaAttr.setX(i, (1 - progress) * 0.75 * twinkle);
       }
 
       ePosAttr.needsUpdate = true;
@@ -497,22 +483,23 @@ export function ThreeFireTitle({
     >
       {/* 
         Three.js Fire Particle Canvas:
-        Overlayed right over the letters with Normal Blending.
-        Particles spawn strictly from letter contours and lick upward organically.
+        Placed BEHIND text (z-0) with pointer-events-none.
+        Particles spawn as delicate halo and sparks rising upward without covering letters.
       */}
       <canvas
         ref={canvasRef}
         aria-hidden="true"
-        className="pointer-events-none absolute -left-8 -right-8 -top-12 -bottom-4 z-20 w-[calc(100%+64px)] h-[calc(100%+64px)]"
+        className="pointer-events-none absolute -left-6 -right-6 -top-10 -bottom-2 z-0 w-[calc(100%+48px)] h-[calc(100%+48px)]"
       />
 
       {/* 
         Burning Title Text: 
-        Rendered with elegant serif typography matching site headers, with fiery gradient styling.
+        Rendered IN FRONT (z-20) with razor-sharp typography and fiery gradient.
+        100% crystal-clear readability!
       */}
       <span
         ref={textRef}
-        className={`relative z-10 burning-fire-text font-serif tracking-tight ${textClassName}`}
+        className={`relative z-20 burning-fire-text font-serif tracking-tight select-text ${textClassName}`}
       >
         {text}
       </span>
