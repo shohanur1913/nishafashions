@@ -67,8 +67,8 @@ export function HotDealsSection({ deals }: HotDealsSectionProps) {
               </svg>
             </span>
 
-            <h2 className="font-serif text-2xl sm:text-4xl md:text-5xl font-light text-foreground tracking-tight leading-tight">
-              <ThreeFireTitle text="Hot Deals." textClassName="text-2xl sm:text-4xl md:text-5xl font-light" />
+            <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold sm:font-extrabold text-foreground tracking-tight leading-tight">
+              <ThreeFireTitle text="Hot Deals." textClassName="text-3xl sm:text-4xl md:text-5xl font-bold sm:font-extrabold" />
             </h2>
           </div>
 

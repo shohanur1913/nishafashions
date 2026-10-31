@@ -181,7 +181,7 @@ export function ThreeFireTitle({
       const style = window.getComputedStyle(textEl);
       const fontSize = style.fontSize || "48px";
       const fontFamily = style.fontFamily || "serif";
-      const fontWeight = style.fontWeight || "300";
+      const fontWeight = style.fontWeight || "800";
       const fontStyle = style.fontStyle || "normal";
 
       ctx.clearRect(0, 0, offscreen.width, offscreen.height);
@@ -499,7 +499,7 @@ export function ThreeFireTitle({
       */}
       <span
         ref={textRef}
-        className={`relative z-20 burning-fire-text font-serif tracking-tight select-text ${textClassName}`}
+        className={`relative z-20 burning-fire-text font-serif font-bold sm:font-extrabold tracking-tight select-text ${textClassName}`}
       >
         {text}
       </span>

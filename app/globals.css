@@ -296,18 +296,20 @@
 
 /* Professional Burning Text matching brand theme color (#E94D65) */
 .burning-fire-text {
+  font-weight: 800;
   background: linear-gradient(
     180deg,
-    #D42B49 0%,
-    #E94D65 35%,
-    #FF6B8B 70%,
+    #B5173B 0%,
+    #D42B49 20%,
+    #E94D65 50%,
+    #FF6B8B 80%,
     #FFAEC0 100%
   );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   display: inline-block;
-  filter: drop-shadow(0 0 12px rgba(233, 77, 101, 0.45));
+  filter: drop-shadow(0 0 16px rgba(233, 77, 101, 0.5)) drop-shadow(0 2px 6px rgba(181, 23, 59, 0.35));
 }
 
 :is(.dark) .burning-fire-text {
@@ -321,7 +323,7 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  filter: drop-shadow(0 0 14px rgba(233, 77, 101, 0.7));
+  filter: drop-shadow(0 0 18px rgba(233, 77, 101, 0.8));
 }
 
 @keyframes ember-rise-1 {
