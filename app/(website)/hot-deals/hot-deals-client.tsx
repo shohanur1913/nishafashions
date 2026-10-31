@@ -166,7 +166,7 @@ export function HotDealsClient({ initialDeals }: HotDealsClientProps) {
                   </defs>
                 </svg>
               </span>
-              <ThreeFireTitle text="Hot Deals." />
+              <ThreeFireTitle text="Hot Deals." textClassName="text-3xl sm:text-4xl lg:text-5xl font-light" />
             </span>
           </div>
 

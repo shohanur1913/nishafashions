@@ -43,7 +43,7 @@ export function ThreeFireTitle({
       return;
     }
 
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
 
     const scene = new THREE.Scene();
     const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 10);
@@ -53,86 +53,10 @@ export function ThreeFireTitle({
     let canvasHeight = 100;
     let textPixels: Array<{ x: number; y: number }> = [];
 
-    // -----------------------------------------------------------------
-    // Extract exact letter contours by rasterizing text onto offscreen 2D canvas
-    // This guarantees particles emerge directly from each letter shape (no square box!)
-    // -----------------------------------------------------------------
-    const updateTextPixels = () => {
-      if (!canvas || !textEl) return;
-      const cRect = canvas.getBoundingClientRect();
-      const tRect = textEl.getBoundingClientRect();
-
-      canvasWidth = Math.max(cRect.width, 100);
-      canvasHeight = Math.max(cRect.height, 50);
-
-      renderer.setSize(canvasWidth, canvasHeight, false);
-      camera.left = 0;
-      camera.right = canvasWidth;
-      camera.top = canvasHeight;
-      camera.bottom = 0;
-      camera.updateProjectionMatrix();
-
-      // Create offscreen canvas with exact dimensions
-      const offscreen = document.createElement("canvas");
-      offscreen.width = Math.round(canvasWidth);
-      offscreen.height = Math.round(canvasHeight);
-      const ctx = offscreen.getContext("2d", { willReadFrequently: true });
-      if (!ctx) return;
-
-      const style = window.getComputedStyle(textEl);
-      const fontSize = style.fontSize || "40px";
-      const fontFamily = style.fontFamily || "serif";
-      const fontWeight = style.fontWeight || "700";
-      const fontStyle = "normal";
-
-      ctx.clearRect(0, 0, offscreen.width, offscreen.height);
-      ctx.font = `${fontStyle} ${fontWeight} ${fontSize} ${fontFamily}`;
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillStyle = "#ffffff";
-
-      // Calculate center position of DOM text relative to the canvas
-      const textCenterX = (tRect.left + tRect.width / 2) - cRect.left;
-      const textCenterY = (tRect.top + tRect.height / 2) - cRect.top;
-
-      ctx.fillText(text, textCenterX, textCenterY);
-
-      // Scan for non-transparent pixels that belong to the letters
-      const imgData = ctx.getImageData(0, 0, offscreen.width, offscreen.height);
-      const data = imgData.data;
-      const sampled: Array<{ x: number; y: number }> = [];
-
-      // Step by 2 pixels for optimal performance and dense contour coverage
-      const step = 2;
-      for (let py = 0; py < offscreen.height; py += step) {
-        for (let px = 0; px < offscreen.width; px += step) {
-          const idx = (py * offscreen.width + px) * 4;
-          if (data[idx + 3] > 120) {
-            // Three.js orthographic coordinates has y=0 at bottom
-            sampled.push({
-              x: px,
-              y: canvasHeight - py,
-            });
-          }
-        }
-      }
-
-      textPixels = sampled;
-    };
-
-    updateTextPixels();
-
-    // Re-sample when custom web fonts finish rendering
-    if (document.fonts) {
-      document.fonts.ready.then(() => {
-        updateTextPixels();
-      });
-    }
-
     // ----------------------------------------------------
     // 1. FLAME PARTICLES (Licking out from the letter strokes)
     // ----------------------------------------------------
-    const FLAME_COUNT = 150;
+    const FLAME_COUNT = 220;
     const flameGeo = new THREE.BufferGeometry();
     const flamePos = new Float32Array(FLAME_COUNT * 3);
     const flameColor = new Float32Array(FLAME_COUNT * 3);
@@ -153,7 +77,6 @@ export function ThreeFireTitle({
     }> = [];
 
     const resetFlame = (idx: number, fullRandomProgress = false) => {
-      // Pick a random pixel belonging strictly to a letter stroke
       let sx = canvasWidth / 2;
       let sy = canvasHeight / 2;
 
@@ -165,10 +88,9 @@ export function ThreeFireTitle({
 
       const maxLife = 0.55 + Math.random() * 0.45;
       const life = fullRandomProgress ? Math.random() * maxLife : 0;
-      const progress = life / maxLife;
 
-      const vy = 18 + Math.random() * 26;
-      const vx = (Math.random() - 0.5) * 8;
+      const vy = 20 + Math.random() * 28;
+      const vx = (Math.random() - 0.5) * 9;
 
       flameData[idx] = {
         x: sx + vx * life,
@@ -179,19 +101,15 @@ export function ThreeFireTitle({
         vy,
         life,
         maxLife,
-        size: 4.5 + Math.random() * 6.5,
+        size: 5.5 + Math.random() * 7.5,
         seed: Math.random() * 500,
       };
     };
 
-    for (let i = 0; i < FLAME_COUNT; i++) {
-      resetFlame(i, true);
-    }
-
     // ----------------------------------------------------
     // 2. SPARKS & EMBERS (Flying upward out of the letter glyphs)
     // ----------------------------------------------------
-    const EMBER_COUNT = 55;
+    const EMBER_COUNT = 65;
     const emberGeo = new THREE.BufferGeometry();
     const emberPos = new Float32Array(EMBER_COUNT * 3);
     const emberColor = new Float32Array(EMBER_COUNT * 3);
@@ -206,8 +124,16 @@ export function ThreeFireTitle({
       life: number;
       maxLife: number;
       size: number;
+      colorIdx: number;
       wobbleSpeed: number;
     }> = [];
+
+    const emberPalette = [
+      new THREE.Color("#FFE494"), // Warm gold spark
+      new THREE.Color("#FF9F1C"), // Intense orange ember
+      new THREE.Color("#E94D65"), // Brand flame rose
+      new THREE.Color("#FFFFFF"), // Hot white spark
+    ];
 
     const resetEmber = (idx: number, fullRandomProgress = false) => {
       let sx = canvasWidth / 2;
@@ -226,20 +152,93 @@ export function ThreeFireTitle({
         x: sx,
         y: sy + (life * 35),
         vx: (Math.random() - 0.5) * 14,
-        vy: 32 + Math.random() * 40,
+        vy: 34 + Math.random() * 42,
         life,
         maxLife,
-        size: 1.8 + Math.random() * 2.5,
+        size: 2.2 + Math.random() * 2.8,
+        colorIdx: Math.floor(Math.random() * emberPalette.length),
         wobbleSpeed: 2 + Math.random() * 3,
       };
     };
 
-    for (let i = 0; i < EMBER_COUNT; i++) {
-      resetEmber(i, true);
+    // -----------------------------------------------------------------
+    // Extract exact letter contours by rasterizing text onto offscreen 2D canvas
+    // -----------------------------------------------------------------
+    const updateTextPixels = () => {
+      if (!canvas || !textEl) return;
+      const cRect = canvas.getBoundingClientRect();
+      const tRect = textEl.getBoundingClientRect();
+
+      canvasWidth = Math.max(cRect.width, 100);
+      canvasHeight = Math.max(cRect.height, 50);
+
+      renderer.setSize(canvasWidth, canvasHeight, false);
+      camera.left = 0;
+      camera.right = canvasWidth;
+      camera.top = canvasHeight;
+      camera.bottom = 0;
+      camera.updateProjectionMatrix();
+
+      const offscreen = document.createElement("canvas");
+      offscreen.width = Math.round(canvasWidth);
+      offscreen.height = Math.round(canvasHeight);
+      const ctx = offscreen.getContext("2d", { willReadFrequently: true });
+      if (!ctx) return;
+
+      const style = window.getComputedStyle(textEl);
+      const fontSize = style.fontSize || "48px";
+      const fontFamily = style.fontFamily || "serif";
+      const fontWeight = style.fontWeight || "300";
+      const fontStyle = style.fontStyle || "normal";
+
+      ctx.clearRect(0, 0, offscreen.width, offscreen.height);
+      ctx.font = `${fontStyle} ${fontWeight} ${fontSize} ${fontFamily}`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillStyle = "#ffffff";
+
+      const textCenterX = (tRect.left + tRect.width / 2) - cRect.left;
+      const textCenterY = (tRect.top + tRect.height / 2) - cRect.top;
+
+      ctx.fillText(text, textCenterX, textCenterY);
+
+      const imgData = ctx.getImageData(0, 0, offscreen.width, offscreen.height);
+      const data = imgData.data;
+      const sampled: Array<{ x: number; y: number }> = [];
+
+      const step = 2;
+      for (let py = 0; py < offscreen.height; py += step) {
+        for (let px = 0; px < offscreen.width; px += step) {
+          const idx = (py * offscreen.width + px) * 4;
+          if (data[idx + 3] > 100) {
+            sampled.push({
+              x: px,
+              y: canvasHeight - py,
+            });
+          }
+        }
+      }
+
+      if (sampled.length > 0) {
+        textPixels = sampled;
+        for (let i = 0; i < FLAME_COUNT; i++) resetFlame(i, true);
+        for (let i = 0; i < EMBER_COUNT; i++) resetEmber(i, true);
+      }
+    };
+
+    for (let i = 0; i < FLAME_COUNT; i++) resetFlame(i, true);
+    for (let i = 0; i < EMBER_COUNT; i++) resetEmber(i, true);
+
+    updateTextPixels();
+
+    if (document.fonts) {
+      document.fonts.ready.then(() => {
+        updateTextPixels();
+      });
     }
 
     // ----------------------------------------------------
-    // Custom Point Shaders for Soft Gaussian Fire Bloom
+    // Custom Shaders for Vibrant, Glowing Normal-Blending Fire
     // ----------------------------------------------------
     const fireVertexShader = `
       attribute float aSize;
@@ -252,7 +251,7 @@ export function ThreeFireTitle({
         vColor = aColor;
         vAlpha = aAlpha;
         vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-        gl_PointSize = aSize * 2.0;
+        gl_PointSize = aSize * 2.2;
         gl_Position = projectionMatrix * mvPosition;
       }
     `;
@@ -266,8 +265,11 @@ export function ThreeFireTitle({
         float dist = length(coord);
         if (dist > 0.5) discard;
 
-        float intensity = pow(1.0 - (dist * 2.0), 2.2);
-        gl_FragColor = vec4(vColor * intensity, vAlpha * intensity);
+        float intensity = smoothstep(0.5, 0.05, dist);
+        float core = smoothstep(0.22, 0.0, dist) * 0.45;
+        vec3 col = mix(vColor, vec3(1.0, 0.98, 0.85), core);
+        float alpha = min(1.0, (vAlpha * intensity * 1.5) + (core * vAlpha));
+        gl_FragColor = vec4(col, alpha);
       }
     `;
 
@@ -275,7 +277,7 @@ export function ThreeFireTitle({
       vertexShader: fireVertexShader,
       fragmentShader: fireFragmentShader,
       transparent: true,
-      blending: THREE.AdditiveBlending,
+      blending: THREE.NormalBlending,
       depthWrite: false,
     });
 
@@ -291,7 +293,7 @@ export function ThreeFireTitle({
       vertexShader: fireVertexShader,
       fragmentShader: fireFragmentShader,
       transparent: true,
-      blending: THREE.AdditiveBlending,
+      blending: THREE.NormalBlending,
       depthWrite: false,
     });
 
@@ -303,13 +305,21 @@ export function ThreeFireTitle({
     const emberPoints = new THREE.Points(emberGeo, emberMat);
     scene.add(emberPoints);
 
-    // Color Transitions matching exact brand theme (#E94D65)
-    const colorThemePrimary = new THREE.Color("#E94D65");
-    const colorThemeGlow = new THREE.Color("#FF607B");
+    // Multi-stage fire color gradients
+    const cWhiteHot = new THREE.Color("#FFF3B0"); // Core heat at base
+    const cFlameCoral = new THREE.Color("#FF5E7E"); // Fiery rose coral
+    const cFlameRose = new THREE.Color("#E94D65"); // Primary brand flame
+    const cFlameDeep = new THREE.Color("#C1121F"); // Deep tip ember
     const tempColor = new THREE.Color();
 
     const getFlameColor = (progress: number, target: THREE.Color) => {
-      target.copy(colorThemeGlow).lerp(colorThemePrimary, progress);
+      if (progress < 0.25) {
+        target.copy(cWhiteHot).lerp(cFlameCoral, progress / 0.25);
+      } else if (progress < 0.65) {
+        target.copy(cFlameCoral).lerp(cFlameRose, (progress - 0.25) / 0.4);
+      } else {
+        target.copy(cFlameRose).lerp(cFlameDeep, (progress - 0.65) / 0.35);
+      }
     };
 
     // Mouse Interaction
@@ -341,7 +351,7 @@ export function ThreeFireTitle({
     let isVisible = true;
 
     const render = (time: number) => {
-      const delta = Math.min((time - lastTime) / 1000, 0.05);
+      const delta = Math.min((time - lastTime) * 0.001, 0.05);
       lastTime = time;
 
       if (!isVisible) {
@@ -368,12 +378,10 @@ export function ThreeFireTitle({
 
         const progress = p.life / p.maxLife;
 
-        // Rise upwards with slight sine flutter
         p.y += p.vy * delta;
         const flutter = Math.sin(tSec * 4 + p.seed) * 6 * (1 - progress * 0.4);
         p.x += (p.vx + flutter) * delta;
 
-        // Interactive mouse wind
         if (isHovering) {
           const dx = p.x - mouseX;
           const dy = p.y - mouseY;
@@ -390,12 +398,10 @@ export function ThreeFireTitle({
         getFlameColor(progress, tempColor);
         colAttr.setXYZ(i, tempColor.r, tempColor.g, tempColor.b);
 
-        // Natural flame shape: starts tight at letter stroke, expands slightly, then tapers
         const currentSize = p.size * (0.8 + Math.sin(progress * Math.PI) * 0.5);
         sizeAttr.setX(i, currentSize);
 
-        // Alpha fades cleanly as it burns out
-        const alpha = Math.sin(progress * Math.PI) * 0.45;
+        const alpha = Math.sin(progress * Math.PI) * 0.9;
         alphaAttr.setX(i, alpha);
       }
 
@@ -437,13 +443,12 @@ export function ThreeFireTitle({
 
         ePosAttr.setXYZ(i, ep.x, ep.y, 0);
 
-        tempColor.set("#E94D65");
-
-        const twinkle = 0.7 + Math.sin(tSec * 14 + i) * 0.3;
-        eColAttr.setXYZ(i, tempColor.r * twinkle, tempColor.g * twinkle, tempColor.b * twinkle);
+        const sparkColor = emberPalette[ep.colorIdx];
+        const twinkle = 0.75 + Math.sin(tSec * 16 + i * 2) * 0.25;
+        eColAttr.setXYZ(i, sparkColor.r * twinkle, sparkColor.g * twinkle, sparkColor.b * twinkle);
 
         eSizeAttr.setX(i, ep.size * (1 - progress * 0.35));
-        eAlphaAttr.setX(i, (1 - progress) * 0.8 * twinkle);
+        eAlphaAttr.setX(i, (1 - progress) * 0.95 * twinkle);
       }
 
       ePosAttr.needsUpdate = true;
@@ -492,22 +497,22 @@ export function ThreeFireTitle({
     >
       {/* 
         Three.js Fire Particle Canvas:
-        Overlayed right over the letters with Additive Blending.
-        Particles spawn strictly from letter strokes and lick upward organically (no square box!).
+        Overlayed right over the letters with Normal Blending.
+        Particles spawn strictly from letter contours and lick upward organically.
       */}
       <canvas
         ref={canvasRef}
         aria-hidden="true"
-        className="pointer-events-none absolute -inset-x-8 -top-10 -bottom-4 z-20 h-[calc(100%+56px)] w-[calc(100%+64px)]"
+        className="pointer-events-none absolute -left-8 -right-8 -top-12 -bottom-4 z-20 w-[calc(100%+64px)] h-[calc(100%+64px)]"
       />
 
       {/* 
         Burning Title Text: 
-        Rendered with bold serif typography (NOT italic) and crisp molten flame styling.
+        Rendered with elegant serif typography matching site headers, with fiery gradient styling.
       */}
       <span
         ref={textRef}
-        className={`relative z-10 burning-fire-text font-serif font-bold sm:font-extrabold tracking-tight ${textClassName}`}
+        className={`relative z-10 burning-fire-text font-serif tracking-tight ${textClassName}`}
       >
         {text}
       </span>

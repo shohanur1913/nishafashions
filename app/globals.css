@@ -296,19 +296,18 @@
 
 /* Professional Burning Text matching brand theme color (#E94D65) */
 .burning-fire-text {
-  font-weight: 750;
   background: linear-gradient(
     180deg,
     #D42B49 0%,
     #E94D65 35%,
     #FF6B8B 70%,
-    #FF8FA3 100%
+    #FFAEC0 100%
   );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   display: inline-block;
-  filter: drop-shadow(0 2px 8px rgba(233, 77, 101, 0.35));
+  filter: drop-shadow(0 0 12px rgba(233, 77, 101, 0.45));
 }
 
 :is(.dark) .burning-fire-text {
