@@ -6,24 +6,16 @@ import { ThreeFireTitle } from "./three-fire-title";
 import { ArrowRight } from "lucide-react";
 
 interface HotDealsSectionProps {
-  deals: HotDealProduct[];
+  deals?: HotDealProduct[];
 }
 
-
-
 export function HotDealsSection({ deals }: HotDealsSectionProps) {
-  if (!deals || deals.length === 0) {
-    return null;
-  }
-
-  
-
   return (
     <section className="relative w-full py-8 sm:py-12 lg:py-12 bg-background border-t border-border/40 overflow-hidden">
       {/* Ambient background fiery warm glow */}
-      <div 
-        aria-hidden="true" 
-        className="pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 h-[28rem] w-[46rem] rounded-full bg-gradient-to-br from-orange-500/10 via-rose-500/10 to-transparent blur-3xl" 
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 h-[28rem] w-[46rem] rounded-full bg-gradient-to-br from-orange-500/10 via-rose-500/10 to-transparent blur-3xl"
       />
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-screen-2xl relative z-10">
@@ -34,7 +26,7 @@ export function HotDealsSection({ deals }: HotDealsSectionProps) {
             {/* Animated burning torch flame in theme color */}
             <span className="relative inline-flex items-center justify-center shrink-0">
               <span className="absolute inset-0 rounded-full bg-[#E94D65]/40 blur-lg animate-pulse pointer-events-none" />
-              
+
               <svg
                 viewBox="0 0 24 24"
                 fill="none"

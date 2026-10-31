@@ -53,8 +53,17 @@ next-env.d.ts
 *.rar
 *.7z
 
+# Delivery & client handover files
+/Delivery/
+Delivery/
+
 # AI agent & workflow files
 .agents/
 AGENTS.md
 CLAUDE.md
+skills-lock.json
+
+# Tutorial & screen capture scripts
+scripts/capture-*.js
+scripts/generate-*.js
 
